@@ -1,0 +1,164 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 222.2 47.4% 11.2%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 222.2 84% 4.9%;
+
+    --radius: 0.5rem;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Helvetica Neue', sans-serif;
+    @apply bg-background text-foreground;
+    line-height: 1.6;
+    letter-spacing: -0.01em;
+  }
+
+  /* Typography Scale - Professional Multi-Language Support */
+  h1 {
+    @apply text-5xl md:text-6xl lg:text-7xl font-bold text-foreground;
+    line-height: 1.1;
+    letter-spacing: -0.025em;
+  }
+
+  h2 {
+    @apply text-3xl md:text-4xl lg:text-5xl font-bold text-foreground;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  h3 {
+    @apply text-xl md:text-2xl lg:text-3xl font-semibold text-foreground;
+    line-height: 1.3;
+    letter-spacing: -0.015em;
+  }
+
+  h4 {
+    @apply text-lg md:text-xl font-semibold text-foreground;
+    line-height: 1.4;
+    letter-spacing: -0.01em;
+  }
+
+  h5 {
+    @apply text-base md:text-lg font-medium text-foreground;
+    line-height: 1.5;
+  }
+
+  h6 {
+    @apply text-sm md:text-base font-medium text-foreground;
+    line-height: 1.5;
+  }
+
+  p {
+    @apply text-base text-muted-foreground;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+
+  .text-lead {
+    @apply text-lg md:text-xl text-muted-foreground;
+    line-height: 1.8;
+  }
+
+  .text-small {
+    @apply text-sm text-muted-foreground;
+    line-height: 1.6;
+  }
+
+  .text-caption {
+    @apply text-xs text-muted-foreground;
+    line-height: 1.5;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-white hover:bg-gray-50 text-primary-600 border border-primary-600 font-semibold py-3 px-6 rounded-lg transition-colors duration-200;
+  }
+  
+  .section-padding {
+    @apply py-16 px-4 sm:px-6 lg:px-8;
+  }
+  
+  .container-max {
+    @apply max-w-7xl mx-auto;
+  }
+
+  .inset-shadow-2xs {
+    box-shadow: inset 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+
+  .blur-xs {
+    filter: blur(2px);
+  }
+
+  /* Product Card Components - Uniform sizing and alignment */
+  .product-card {
+    @apply bg-background/70 backdrop-blur-lg rounded-2xl shadow-xl overflow-hidden border border-border/20 hover:shadow-2xl transition-all duration-300 flex flex-col h-full;
+  }
+
+  .product-card-icon {
+    @apply h-56 bg-gradient-to-br from-primary-500/20 to-primary-700/20 flex items-center justify-center relative overflow-hidden;
+  }
+
+  .product-card-content {
+    @apply p-8 flex flex-col flex-grow;
+  }
+
+  .product-card-title {
+    @apply mb-4 min-h-[4rem] flex items-center;
+  }
+
+  .product-card-description {
+    @apply mb-6 flex-grow min-h-[3rem] flex items-start;
+  }
+
+  .product-card-button {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 hover:bg-accent hover:text-accent-foreground h-10 px-4 py-2 mt-auto;
+  }
+
+  /* Grid Layout for consistent card heights */
+  .product-grid {
+    @apply grid grid-cols-1 md:grid-cols-3 gap-8;
+  }
+
+  .product-grid > * {
+    @apply h-full;
+  }
+}

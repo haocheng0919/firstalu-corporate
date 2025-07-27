@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "products": "Products",
+    "news": "News",
+    "faq": "FAQ",
+    "contact": "Contact Us"
+  },
+  "home": {
+    "hero": {
+      "title": "First Aluminum Technology",
+      "subtitle": "Your Trusted Partner in Disposable Food Packaging Solutions",
+      "description": "We specialize in high-quality disposable food containers, chopsticks, and aluminum foil packaging for B2B wholesale. Minimum order quantity: 100 boxes.",
+      "cta": "View Our Products",
+      "contact": "Contact Us"
+    },
+    "features": {
+      "title": "Why Choose Us",
+      "quality": {
+        "title": "Premium Quality",
+        "description": "All our products meet international food safety standards with superior materials."
+      },
+      "wholesale": {
+        "title": "B2B Wholesale",
+        "description": "Competitive pricing for bulk orders with MOQ starting from 100 boxes."
+      },
+      "global": {
+        "title": "Global Reach",
+        "description": "Serving customers worldwide with reliable shipping and logistics."
+      }
+    }
+  },
+  "about": {
+    "title": "About First Aluminum Technology",
+    "subtitle": "Leading the Future of Food Packaging",
+    "description": "First Aluminum Technology is a premier B2B supplier specializing in disposable food packaging solutions. With years of experience in the industry, we provide high-quality aluminum foil containers, disposable food boxes, and eco-friendly chopsticks to businesses worldwide.",
+    "mission": {
+      "title": "Our Mission",
+      "description": "To provide sustainable, safe, and cost-effective food packaging solutions that meet the evolving needs of the global food service industry."
+    },
+    "values": {
+      "title": "Our Values",
+      "quality": "Quality Excellence",
+      "sustainability": "Environmental Responsibility", 
+      "service": "Customer-Centric Service"
+    }
+  },
+  "products": {
+    "title": "Our Products",
+    "subtitle": "Premium Disposable Food Packaging Solutions",
+    "categories": {
+      "containers": {
+        "title": "Aluminum Foil Containers",
+        "description": "Durable and heat-resistant containers perfect for takeaway and food delivery services."
+      },
+      "boxes": {
+        "title": "Disposable Food Boxes",
+        "description": "Eco-friendly food boxes available in various sizes for different food types."
+      },
+      "chopsticks": {
+        "title": "Disposable Utensils",
+        "description": "High-quality wooden and bamboo chopsticks for Asian cuisine restaurants."
+      }
+    },
+    "moq": "Minimum Order Quantity: 100 boxes per product"
+  },
+  "news": {
+    "title": "Latest News & Updates",
+    "subtitle": "Stay informed about industry trends and company updates"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "questions": {
+      "moq": {
+        "question": "What is your minimum order quantity?",
+        "answer": "Our minimum order quantity is 100 boxes per product to ensure competitive wholesale pricing."
+      },
+      "shipping": {
+        "question": "Do you ship internationally?",
+        "answer": "Yes, we ship worldwide. Shipping costs and delivery times vary by destination."
+      },
+      "samples": {
+        "question": "Can I request product samples?",
+        "answer": "Yes, we provide samples for quality evaluation. Please contact us for sample requests."
+      },
+      "customization": {
+        "question": "Do you offer custom packaging solutions?",
+        "answer": "Yes, we offer customization options including branding and specific size requirements."
+      }
+    }
+  },
+  "contact": {
+    "title": "Contact Us",
+    "subtitle": "Get in touch for wholesale inquiries",
+    "form": {
+      "name": "Full Name",
+      "email": "Email Address",
+      "company": "Company Name",
+      "message": "Message",
+      "submit": "Send Message"
+    },
+    "info": {
+      "address": "Business Address",
+      "phone": "Phone Number",
+      "email": "Email Address"
+    }
+  },
+  "footer": {
+    "description": "First Aluminum Technology - Your trusted partner in disposable food packaging solutions.",
+    "links": {
+      "company": "Company",
+      "products": "Products", 
+      "support": "Support"
+    },
+    "copyright": "© 2024 First Aluminum Technology. All rights reserved."
+  }
+}

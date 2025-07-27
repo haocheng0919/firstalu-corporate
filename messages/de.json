@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "Startseite",
+    "about": "Über uns",
+    "products": "Produkte",
+    "news": "Nachrichten",
+    "faq": "FAQ",
+    "contact": "Kontakt"
+  },
+  "home": {
+    "hero": {
+      "title": "First Aluminum Technology",
+      "subtitle": "Ihr vertrauensvoller Partner für Einweg-Lebensmittelverpackungen",
+      "description": "Wir spezialisieren uns auf hochwertige Einweg-Lebensmittelbehälter, Essstäbchen und Aluminiumfolienverpackungen für B2B-Großhandel. Mindestbestellmenge: 100 Kartons.",
+      "cta": "Unsere Produkte ansehen",
+      "contact": "Kontaktieren Sie uns"
+    },
+    "features": {
+      "title": "Warum uns wählen",
+      "quality": {
+        "title": "Premium-Qualität",
+        "description": "Alle unsere Produkte erfüllen internationale Lebensmittelsicherheitsstandards mit hochwertigen Materialien."
+      },
+      "wholesale": {
+        "title": "B2B-Großhandel",
+        "description": "Wettbewerbsfähige Preise für Großbestellungen mit MOQ ab 100 Kartons."
+      },
+      "global": {
+        "title": "Globale Reichweite",
+        "description": "Wir bedienen Kunden weltweit mit zuverlässigem Versand und Logistik."
+      }
+    }
+  },
+  "about": {
+    "title": "Über First Aluminum Technology",
+    "subtitle": "Die Zukunft der Lebensmittelverpackung anführen",
+    "description": "First Aluminum Technology ist ein führender B2B-Lieferant, der sich auf Einweg-Lebensmittelverpackungslösungen spezialisiert hat. Mit jahrelanger Erfahrung in der Branche bieten wir hochwertige Aluminiumfolienbehälter, Einweg-Lebensmittelboxen und umweltfreundliche Essstäbchen für Unternehmen weltweit.",
+    "mission": {
+      "title": "Unsere Mission",
+      "description": "Nachhaltige, sichere und kostengünstige Lebensmittelverpackungslösungen bereitzustellen, die den sich entwickelnden Bedürfnissen der globalen Foodservice-Industrie entsprechen."
+    },
+    "values": {
+      "title": "Unsere Werte",
+      "quality": "Qualitätsexzellenz",
+      "sustainability": "Umweltverantwortung",
+      "service": "Kundenorientierter Service"
+    }
+  },
+  "products": {
+    "title": "Unsere Produkte",
+    "subtitle": "Premium Einweg-Lebensmittelverpackungslösungen",
+    "categories": {
+      "containers": {
+        "title": "Aluminiumfolienbehälter",
+        "description": "Langlebige und hitzebeständige Behälter, perfekt für Takeaway und Lieferdienste."
+      },
+      "boxes": {
+        "title": "Einweg-Lebensmittelboxen",
+        "description": "Umweltfreundliche Lebensmittelboxen in verschiedenen Größen für verschiedene Lebensmittelarten."
+      },
+      "chopsticks": {
+        "title": "Einweg-Essstäbchen",
+        "description": "Hochwertige Holz- und Bambus-Essstäbchen für asiatische Küche-Restaurants."
+      }
+    },
+    "moq": "Mindestbestellmenge: 100 Kartons pro Produkt"
+  },
+  "news": {
+    "title": "Neueste Nachrichten & Updates",
+    "subtitle": "Bleiben Sie über Branchentrends und Unternehmens-Updates informiert"
+  },
+  "faq": {
+    "title": "Häufig gestellte Fragen",
+    "questions": {
+      "moq": {
+        "question": "Wie hoch ist Ihre Mindestbestellmenge?",
+        "answer": "Unsere Mindestbestellmenge beträgt 100 Kartons pro Produkt, um wettbewerbsfähige Großhandelspreise zu gewährleisten."
+      },
+      "shipping": {
+        "question": "Versenden Sie international?",
+        "answer": "Ja, wir versenden weltweit. Versandkosten und Lieferzeiten variieren je nach Zielort."
+      },
+      "samples": {
+        "question": "Kann ich Produktproben anfordern?",
+        "answer": "Ja, wir stellen Proben zur Qualitätsbewertung zur Verfügung. Bitte kontaktieren Sie uns für Probenanfragen."
+      },
+      "customization": {
+        "question": "Bieten Sie maßgeschneiderte Verpackungslösungen an?",
+        "answer": "Ja, wir bieten Anpassungsoptionen einschließlich Branding und spezifische Größenanforderungen."
+      }
+    }
+  },
+  "contact": {
+    "title": "Kontaktieren Sie uns",
+    "subtitle": "Kontaktieren Sie uns für Großhandelsanfragen",
+    "form": {
+      "name": "Vollständiger Name",
+      "email": "E-Mail-Adresse",
+      "company": "Firmenname",
+      "message": "Nachricht",
+      "submit": "Nachricht senden"
+    },
+    "info": {
+      "address": "Geschäftsadresse",
+      "phone": "Telefonnummer",
+      "email": "E-Mail-Adresse"
+    }
+  },
+  "footer": {
+    "description": "First Aluminum Technology - Ihr vertrauensvoller Partner für Einweg-Lebensmittelverpackungslösungen.",
+    "links": {
+      "company": "Unternehmen",
+      "products": "Produkte",
+      "support": "Support"
+    },
+    "copyright": "© 2024 First Aluminum Technology. Alle Rechte vorbehalten."
+  }
+}

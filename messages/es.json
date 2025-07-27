@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "Inicio",
+    "about": "Acerca de",
+    "products": "Productos",
+    "news": "Noticias",
+    "faq": "FAQ",
+    "contact": "Contacto"
+  },
+  "home": {
+    "hero": {
+      "title": "First Aluminum Technology",
+      "subtitle": "Su socio de confianza en soluciones de envases de alimentos desechables",
+      "description": "Nos especializamos en contenedores de alimentos desechables de alta calidad, palillos y envases de papel de aluminio para venta al por mayor B2B. Cantidad mínima de pedido: 100 cajas.",
+      "cta": "Ver nuestros productos",
+      "contact": "Contáctanos"
+    },
+    "features": {
+      "title": "Por qué elegirnos",
+      "quality": {
+        "title": "Calidad Premium",
+        "description": "Todos nuestros productos cumplen con los estándares internacionales de seguridad alimentaria con materiales superiores."
+      },
+      "wholesale": {
+        "title": "Venta al por mayor B2B",
+        "description": "Precios competitivos para pedidos al por mayor con MOQ desde 100 cajas."
+      },
+      "global": {
+        "title": "Alcance global",
+        "description": "Atendemos clientes en todo el mundo con envío y logística confiables."
+      }
+    }
+  },
+  "about": {
+    "title": "Acerca de First Aluminum Technology",
+    "subtitle": "Liderando el futuro del empaque de alimentos",
+    "description": "First Aluminum Technology es un proveedor B2B líder especializado en soluciones de envases de alimentos desechables. Con años de experiencia en la industria, proporcionamos contenedores de papel de aluminio de alta calidad, cajas de alimentos desechables y palillos ecológicos a empresas de todo el mundo.",
+    "mission": {
+      "title": "Nuestra misión",
+      "description": "Proporcionar soluciones de empaque de alimentos sostenibles, seguras y rentables que satisfagan las necesidades en evolución de la industria global de servicios de alimentos."
+    },
+    "values": {
+      "title": "Nuestros valores",
+      "quality": "Excelencia en calidad",
+      "sustainability": "Responsabilidad ambiental",
+      "service": "Servicio centrado en el cliente"
+    }
+  },
+  "products": {
+    "title": "Nuestros productos",
+    "subtitle": "Soluciones premium de envases de alimentos desechables",
+    "categories": {
+      "containers": {
+        "title": "Contenedores de papel de aluminio",
+        "description": "Contenedores duraderos y resistentes al calor perfectos para servicios de comida para llevar y entrega."
+      },
+      "boxes": {
+        "title": "Cajas de alimentos desechables",
+        "description": "Cajas de alimentos ecológicas disponibles en varios tamaños para diferentes tipos de alimentos."
+      },
+      "chopsticks": {
+        "title": "Palillos desechables",
+        "description": "Palillos de madera y bambú de alta calidad para restaurantes de cocina asiática."
+      }
+    },
+    "moq": "Cantidad mínima de pedido: 100 cajas por producto"
+  },
+  "news": {
+    "title": "Últimas noticias y actualizaciones",
+    "subtitle": "Manténgase informado sobre las tendencias de la industria y las actualizaciones de la empresa"
+  },
+  "faq": {
+    "title": "Preguntas frecuentes",
+    "questions": {
+      "moq": {
+        "question": "¿Cuál es su cantidad mínima de pedido?",
+        "answer": "Nuestra cantidad mínima de pedido es de 100 cajas por producto para garantizar precios competitivos al por mayor."
+      },
+      "shipping": {
+        "question": "¿Envían internacionalmente?",
+        "answer": "Sí, enviamos a todo el mundo. Los costos de envío y los tiempos de entrega varían según el destino."
+      },
+      "samples": {
+        "question": "¿Puedo solicitar muestras de productos?",
+        "answer": "Sí, proporcionamos muestras para evaluación de calidad. Póngase en contacto con nosotros para solicitudes de muestras."
+      },
+      "customization": {
+        "question": "¿Ofrecen soluciones de empaque personalizadas?",
+        "answer": "Sí, ofrecemos opciones de personalización incluyendo marca y requisitos de tamaño específicos."
+      }
+    }
+  },
+  "contact": {
+    "title": "Contáctanos",
+    "subtitle": "Póngase en contacto para consultas al por mayor",
+    "form": {
+      "name": "Nombre completo",
+      "email": "Dirección de correo electrónico",
+      "company": "Nombre de la empresa",
+      "message": "Mensaje",
+      "submit": "Enviar mensaje"
+    },
+    "info": {
+      "address": "Dirección comercial",
+      "phone": "Número de teléfono",
+      "email": "Dirección de correo electrónico"
+    }
+  },
+  "footer": {
+    "description": "First Aluminum Technology - Su socio de confianza en soluciones de envases de alimentos desechables.",
+    "links": {
+      "company": "Empresa",
+      "products": "Productos",
+      "support": "Soporte"
+    },
+    "copyright": "© 2024 First Aluminum Technology. Todos los derechos reservados."
+  }
+}

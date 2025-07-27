@@ -1,0 +1,118 @@
+{
+  "nav": {
+    "home": "Accueil",
+    "about": "À propos",
+    "products": "Produits",
+    "news": "Actualités",
+    "faq": "FAQ",
+    "contact": "Contact"
+  },
+  "home": {
+    "hero": {
+      "title": "First Aluminum Technology",
+      "subtitle": "Votre partenaire de confiance pour les solutions d'emballage alimentaire jetable",
+      "description": "Nous nous spécialisons dans les contenants alimentaires jetables de haute qualité, les baguettes et les emballages en papier d'aluminium pour la vente en gros B2B. Quantité minimale de commande : 100 boîtes.",
+      "cta": "Voir nos produits",
+      "contact": "Contactez-nous"
+    },
+    "features": {
+      "title": "Pourquoi nous choisir",
+      "quality": {
+        "title": "Qualité premium",
+        "description": "Tous nos produits répondent aux normes internationales de sécurité alimentaire avec des matériaux supérieurs."
+      },
+      "wholesale": {
+        "title": "Vente en gros B2B",
+        "description": "Prix compétitifs pour les commandes en gros avec MOQ à partir de 100 boîtes."
+      },
+      "global": {
+        "title": "Portée mondiale",
+        "description": "Nous servons des clients dans le monde entier avec une expédition et une logistique fiables."
+      }
+    }
+  },
+  "about": {
+    "title": "À propos de First Aluminum Technology",
+    "subtitle": "Mener l'avenir de l'emballage alimentaire",
+    "description": "First Aluminum Technology est un fournisseur B2B de premier plan spécialisé dans les solutions d'emballage alimentaire jetable. Avec des années d'expérience dans l'industrie, nous fournissons des contenants en papier d'aluminium de haute qualité, des boîtes alimentaires jetables et des baguettes écologiques aux entreprises du monde entier.",
+    "mission": {
+      "title": "Notre mission",
+      "description": "Fournir des solutions d'emballage alimentaire durables, sûres et rentables qui répondent aux besoins évolutifs de l'industrie mondiale des services alimentaires."
+    },
+    "values": {
+      "title": "Nos valeurs",
+      "quality": "Excellence de la qualité",
+      "sustainability": "Responsabilité environnementale",
+      "service": "Service centré sur le client"
+    }
+  },
+  "products": {
+    "title": "Nos produits",
+    "subtitle": "Solutions premium d'emballage alimentaire jetable",
+    "categories": {
+      "containers": {
+        "title": "Contenants en papier d'aluminium",
+        "description": "Contenants durables et résistants à la chaleur parfaits pour les services de plats à emporter et de livraison."
+      },
+      "boxes": {
+        "title": "Boîtes alimentaires jetables",
+        "description": "Boîtes alimentaires écologiques disponibles en différentes tailles pour différents types d'aliments."
+      },
+      "chopsticks": {
+        "title": "Baguettes jetables",
+        "description": "Baguettes en bois et bambou de haute qualité pour les restaurants de cuisine asiatique."
+      }
+    },
+    "moq": "Quantité minimale de commande : 100 boîtes par produit"
+  },
+  "news": {
+    "title": "Dernières nouvelles et mises à jour",
+    "subtitle": "Restez informé des tendances de l'industrie et des mises à jour de l'entreprise"
+  },
+  "faq": {
+    "title": "Questions fréquemment posées",
+    "questions": {
+      "moq": {
+        "question": "Quelle est votre quantité minimale de commande ?",
+        "answer": "Notre quantité minimale de commande est de 100 boîtes par produit pour garantir des prix de gros compétitifs."
+      },
+      "shipping": {
+        "question": "Expédiez-vous à l'international ?",
+        "answer": "Oui, nous expédions dans le monde entier. Les coûts d'expédition et les délais de livraison varient selon la destination."
+      },
+      "samples": {
+        "question": "Puis-je demander des échantillons de produits ?",
+        "answer": "Oui, nous fournissons des échantillons pour l'évaluation de la qualité. Veuillez nous contacter pour les demandes d'échantillons."
+      },
+      "customization": {
+        "question": "Offrez-vous des solutions d'emballage personnalisées ?",
+        "answer": "Oui, nous offrons des options de personnalisation incluant la marque et les exigences de taille spécifiques."
+      }
+    }
+  },
+  "contact": {
+    "title": "Contactez-nous",
+    "subtitle": "Contactez-nous pour les demandes de vente en gros",
+    "form": {
+      "name": "Nom complet",
+      "email": "Adresse e-mail",
+      "company": "Nom de l'entreprise",
+      "message": "Message",
+      "submit": "Envoyer le message"
+    },
+    "info": {
+      "address": "Adresse commerciale",
+      "phone": "Numéro de téléphone",
+      "email": "Adresse e-mail"
+    }
+  },
+  "footer": {
+    "description": "First Aluminum Technology - Votre partenaire de confiance pour les solutions d'emballage alimentaire jetable.",
+    "links": {
+      "company": "Entreprise",
+      "products": "Produits",
+      "support": "Support"
+    },
+    "copyright": "© 2024 First Aluminum Technology. Tous droits réservés."
+  }
+}
