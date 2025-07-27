@@ -229,9 +229,8 @@ export default function Home() {
             
             <AnimatedGroup preset="scale" className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="bg-background/70 backdrop-blur-lg rounded-2xl shadow-xl overflow-hidden border border-border/20 hover:shadow-2xl transition-all duration-300 flex flex-col">
-                <div className="h-56 bg-gradient-to-br from-primary-500/20 to-primary-700/20 flex items-center justify-center relative overflow-hidden">
-                  <img src="/disposablephoto/Screenshot 2025-07-27 at 1.02.08 PM.webp" alt="Eco-Friendly Products" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent"></div>
+                <div className="h-56 relative overflow-hidden">
+                  <img src="/disposablephoto/Aluminum Foil Products.webp" alt="Eco-Friendly Products" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                 </div>
                 <div className="p-8 flex flex-col flex-grow">
                   <div className="text-sm text-muted-foreground mb-2">December 15, 2024</div>
@@ -253,9 +252,8 @@ export default function Home() {
               </div>
               
               <div className="bg-background/70 backdrop-blur-lg rounded-2xl shadow-xl overflow-hidden border border-border/20 hover:shadow-2xl transition-all duration-300 flex flex-col">
-                <div className="h-56 bg-gradient-to-br from-primary-500/20 to-primary-700/20 flex items-center justify-center relative overflow-hidden">
-                  <img src="/disposablephoto/Screenshot 2025-07-27 at 1.04.17 PM.webp" alt="Factory Expansion" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent"></div>
+                <div className="h-56 relative overflow-hidden">
+                  <img src="/disposablephoto/Disposable Food Boxes.webp" alt="Factory Expansion" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                 </div>
                 <div className="p-8 flex flex-col flex-grow">
                   <div className="text-sm text-muted-foreground mb-2">December 10, 2024</div>
@@ -277,9 +275,8 @@ export default function Home() {
               </div>
               
               <div className="bg-background/70 backdrop-blur-lg rounded-2xl shadow-xl overflow-hidden border border-border/20 hover:shadow-2xl transition-all duration-300 flex flex-col">
-                <div className="h-56 bg-gradient-to-br from-primary-500/20 to-primary-700/20 flex items-center justify-center relative overflow-hidden">
-                  <img src="/disposablephoto/Screenshot 2025-07-27 at 12.30.43 PM.webp" alt="Global Partnership" className="absolute inset-0 w-full h-full object-cover" />
-                  <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 to-transparent"></div>
+                <div className="h-56 relative overflow-hidden">
+                  <img src="/disposablephoto/Baking Products.webp" alt="Global Partnership" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
                 </div>
                 <div className="p-8 flex flex-col flex-grow">
                   <div className="text-sm text-muted-foreground mb-2">December 5, 2024</div>
