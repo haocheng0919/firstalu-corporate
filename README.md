@@ -120,7 +120,7 @@ firstalu/
 ### Contact Information
 - **Email**: info@firstaluminum.com
 - **Phone**: +86 123 456 7890
-- **Address**: 123 Industrial Park Road, Guangzhou, China
+- **Address**: 123 Industrial Park Road, Luoyang, China
 - **Business Hours**: Monday-Friday 8:00 AM - 6:00 PM (CST)
 
 ## Deployment

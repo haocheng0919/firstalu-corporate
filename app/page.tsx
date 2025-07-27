@@ -390,7 +390,7 @@ export default function Home() {
                 <p className="mb-6">
                   Send us your inquiry and we'll respond within 24 hours.
                 </p>
-                <p className="text-primary-600 font-semibold">sales@firstaluminum.com</p>
+                <p className="text-primary-600 font-semibold">info@firstalu.com</p>
               </div>
               
               <div className="bg-background/70 backdrop-blur-lg rounded-2xl shadow-xl border border-border/20 p-8 text-center">
@@ -403,7 +403,7 @@ export default function Home() {
                 <p className="mb-6">
                   Speak directly with our sales team for immediate assistance.
                 </p>
-                <p className="text-primary-600 font-semibold">+86 123 456 7891</p>
+                <p className="text-primary-600 font-semibold">+86 379 6415 8188</p>
               </div>
               
               <div className="bg-background/70 backdrop-blur-lg rounded-2xl shadow-xl border border-border/20 p-8 text-center">
@@ -417,7 +417,7 @@ export default function Home() {
                 <p className="mb-6">
                   Schedule a visit to our manufacturing facility.
                 </p>
-                <p className="text-primary-600 font-semibold">Guangzhou, China</p>
+                <p className="text-primary-600 font-semibold">Luoyang, China</p>
               </div>
             </AnimatedGroup>
             
