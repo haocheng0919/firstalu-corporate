@@ -27,26 +27,47 @@ const transitionVariants = {
 }
 
 export function HeroSection() {
+    const scrollToNextSection = () => {
+        const heroSection = document.querySelector('section');
+        if (heroSection) {
+            const nextElement = heroSection.parentElement?.nextElementSibling;
+            if (nextElement) {
+                nextElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    };
+
     return (
         <>
             <HeroHeader />
             <main className="overflow-hidden">
+                {/* Full-screen background image */}
+                <div className="absolute inset-0 z-0">
+                    <img 
+                        src="/disposablephoto/Aluminum Foil Products.webp" 
+                        alt="Background" 
+                        className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-black/40"></div>
+                </div>
+                
                 <div
                     aria-hidden
-                    className="z-[2] absolute inset-0 pointer-events-none isolate opacity-50 contain-strict hidden lg:block">
+                    className="z-[2] absolute inset-0 pointer-events-none isolate opacity-30 contain-strict hidden lg:block">
                     <div className="w-[35rem] h-[80rem] -translate-y-[350px] absolute left-0 top-0 -rotate-45 rounded-full bg-[radial-gradient(68.54%_68.72%_at_55.02%_31.46%,hsla(0,0%,85%,.08)_0,hsla(0,0%,55%,.02)_50%,hsla(0,0%,45%,0)_80%)]" />
                     <div className="h-[80rem] absolute left-0 top-0 w-56 -rotate-45 rounded-full bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.06)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)] [translate:5%_-50%]" />
                     <div className="h-[80rem] -translate-y-[350px] absolute left-0 top-0 w-56 -rotate-45 bg-[radial-gradient(50%_50%_at_50%_50%,hsla(0,0%,85%,.04)_0,hsla(0,0%,45%,.02)_80%,transparent_100%)]" />
                 </div>
-                <section className="min-h-screen flex items-center">
+                
+                <section className="min-h-screen flex items-center relative z-10">
                     <div className="relative w-full">
                         <div className="mx-auto max-w-7xl px-6">
                             <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
                                 <AnimatedGroup variants={transitionVariants}>
-                                    <h1 className="mt-8 max-w-4xl mx-auto text-balance">
+                                    <h1 className="mt-8 max-w-4xl mx-auto text-balance text-white">
                                         First Aluminum Technology
                                     </h1>
-                                    <p className="text-lead mx-auto mt-8 max-w-2xl text-balance">
+                                    <p className="text-lead mx-auto mt-8 max-w-2xl text-balance text-white/90">
                                         Premium disposable food packaging solutions for B2B wholesale. Serving global markets with quality aluminum foil, containers, and eco-friendly tableware.
                                     </p>
                                 </AnimatedGroup>
@@ -66,11 +87,11 @@ export function HeroSection() {
                                     className="mt-12 flex flex-col items-center justify-center gap-2 md:flex-row">
                                     <div
                                         key={1}
-                                        className="bg-foreground/10 rounded-[14px] border p-0.5">
+                                        className="bg-white/10 rounded-[14px] border border-white/20 p-0.5 backdrop-blur-sm">
                                         <Button
                                             asChild
                                             size="lg"
-                                            className="rounded-xl px-5 text-base">
+                                            className="rounded-xl px-5 text-base bg-white text-black hover:bg-white/90">
                                             <Link href="/products">
                                                 <span className="text-nowrap">View Products</span>
                                             </Link>
@@ -81,7 +102,7 @@ export function HeroSection() {
                                         asChild
                                         size="lg"
                                         variant="ghost"
-                                        className="h-10.5 rounded-xl px-5">
+                                        className="h-10.5 rounded-xl px-5 text-white hover:bg-white/10 border border-white/20">
                                         <Link href="/#contact">
                                             <span className="text-nowrap">Get Quote</span>
                                         </Link>
@@ -89,6 +110,26 @@ export function HeroSection() {
                                 </AnimatedGroup>
                             </div>
                         </div>
+                    </div>
+                    
+                    {/* Scroll down button */}
+                    <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-20">
+                        <button
+                            onClick={scrollToNextSection}
+                            className="flex flex-col items-center text-white/80 hover:text-white transition-colors duration-300 group"
+                            aria-label="Scroll to next section">
+                            <span className="text-sm mb-2 font-medium">Scroll Down</span>
+                            <div className="w-6 h-10 border-2 border-white/60 rounded-full flex justify-center">
+                                <div className="w-1 h-3 bg-white/60 rounded-full mt-2 animate-bounce"></div>
+                            </div>
+                            <svg 
+                                className="w-6 h-6 mt-2 group-hover:translate-y-1 transition-transform duration-300" 
+                                fill="none" 
+                                stroke="currentColor" 
+                                viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
+                            </svg>
+                        </button>
                     </div>
                 </section>
             </main>
@@ -130,7 +171,7 @@ const HeroHeader = () => {
             <nav
                 data-state={menuState && 'active'}
                 className="fixed z-20 w-full px-2 group">
-                <div className={cn('mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12', isScrolled && 'bg-background/50 max-w-4xl rounded-2xl border backdrop-blur-lg lg:px-5')}>
+                <div className={cn('mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12 bg-background/20 backdrop-blur-sm border border-white/10 rounded-2xl', isScrolled && 'bg-background/80 max-w-4xl border-border backdrop-blur-lg lg:px-5')}>
                     <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
                         <div className="flex w-full justify-between lg:w-auto">
                             <Link
@@ -143,7 +184,8 @@ const HeroHeader = () => {
                             <button
                                 onClick={() => setMenuState(!menuState)}
                                 aria-label={menuState == true ? 'Close Menu' : 'Open Menu'}
-                                className="relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden">
+                                className={cn("relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden", 
+                                    isScrolled ? "text-muted-foreground" : "text-white")}>
                                 <Menu className="in-data-[state=active]:rotate-180 group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
                                 <X className="group-data-[state=active]:rotate-0 group-data-[state=active]:scale-100 group-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
                             </button>
@@ -155,7 +197,7 @@ const HeroHeader = () => {
                                     <li key={index}>
                                         <Link
                                             href={item.href}
-                                            className="text-muted-foreground hover:text-accent-foreground block duration-150">
+                                            className={cn("block duration-150", isScrolled ? "text-muted-foreground hover:text-accent-foreground" : "text-white/90 hover:text-white")}>
                                             <span>{item.name}</span>
                                         </Link>
                                     </li>
@@ -166,7 +208,10 @@ const HeroHeader = () => {
                         <div className="hidden lg:block relative">
                             <button 
                                 onClick={() => setLanguageDropdown(!languageDropdown)}
-                                className="flex items-center space-x-2 px-4 py-2 bg-muted hover:bg-accent rounded-full text-muted-foreground hover:text-accent-foreground duration-150 border">
+                                className={cn("flex items-center space-x-2 px-4 py-2 rounded-full duration-150 border", 
+                                    isScrolled 
+                                        ? "bg-muted hover:bg-accent text-muted-foreground hover:text-accent-foreground border-border" 
+                                        : "bg-white/10 hover:bg-white/20 text-white/90 hover:text-white border-white/20")}>
                                 <span className="font-medium">{selectedLanguage}</span>
                                 <svg className={`w-4 h-4 transition-transform ${languageDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"></path>
