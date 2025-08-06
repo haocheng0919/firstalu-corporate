@@ -4,15 +4,7 @@ import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-
-const menuItems = [
-    { name: 'Home', href: '/' },
-    { name: 'About', href: '/about' },
-    { name: 'Products', href: '/products' },
-    { name: 'News', href: '/news' },
-    { name: 'FAQ', href: '/#faq' },
-    { name: 'Contact', href: '/#contact' },
-]
+import { useLanguage } from '@/lib/language-context'
 
 interface PageHeaderProps {
     title: string
@@ -24,14 +16,25 @@ export function PageHeader({ title, description, backgroundImage }: PageHeaderPr
     const [menuState, setMenuState] = React.useState(false)
     const [isScrolled, setIsScrolled] = React.useState(false)
     const [languageDropdown, setLanguageDropdown] = React.useState(false)
-    const [selectedLanguage, setSelectedLanguage] = React.useState('English')
+    const { language, setLanguage, t } = useLanguage()
+
+    const menuItems = [
+        { name: t('nav.home'), href: '/' },
+        { name: t('nav.about'), href: '/about' },
+        { name: t('nav.products'), href: '/products' },
+        { name: t('nav.news'), href: '/news' },
+        { name: t('nav.faq'), href: '/#faq' },
+        { name: t('nav.contact'), href: '/#contact' },
+    ]
 
     const languages = [
         { code: 'en', name: 'English' },
-        { code: 'es', name: 'Spanish' },
-        { code: 'fr', name: 'French' },
-        { code: 'de', name: 'German' }
+        { code: 'es', name: 'Español' },
+        { code: 'fr', name: 'Français' },
+        { code: 'de', name: 'Deutsch' }
     ]
+
+    const selectedLanguage = languages.find(lang => lang.code === language)?.name || 'English'
 
     React.useEffect(() => {
         const handleScroll = () => {
@@ -95,7 +98,7 @@ export function PageHeader({ title, description, backgroundImage }: PageHeaderPr
                                         <button
                                             key={language.code}
                                             onClick={() => {
-                                                setSelectedLanguage(language.name)
+                                                setLanguage(language.code as any)
                                                 setLanguageDropdown(false)
                                             }}
                                             className="w-full text-left px-4 py-2 hover:bg-muted text-sm first:rounded-t-lg last:rounded-b-lg">

@@ -5,6 +5,7 @@ import { ArrowRight, ChevronRight, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { AnimatedGroup } from '@/components/ui/animated-group'
 import { cn } from '@/lib/utils'
+import { useLanguage } from '@/lib/language-context'
 
 const transitionVariants = {
     item: {
@@ -27,6 +28,8 @@ const transitionVariants = {
 }
 
 export function HeroSection() {
+    const { t } = useLanguage()
+    
     const scrollToNextSection = () => {
         const heroSection = document.querySelector('section');
         if (heroSection) {
@@ -65,10 +68,10 @@ export function HeroSection() {
                             <div className="text-center sm:mx-auto lg:mr-auto lg:mt-0">
                                 <AnimatedGroup variants={transitionVariants}>
                                     <h1 className="mt-8 max-w-4xl mx-auto text-balance text-white">
-                                        First Aluminum Technology
+                                        {t('home.hero.title')}
                                     </h1>
                                     <p className="text-lead mx-auto mt-8 max-w-2xl text-balance text-white/90">
-                                        Premium disposable food packaging solutions for B2B wholesale. Serving global markets with quality aluminum foil, containers, and eco-friendly tableware.
+                                        {t('home.hero.description')}
                                     </p>
                                 </AnimatedGroup>
 
@@ -93,7 +96,7 @@ export function HeroSection() {
                                             size="lg"
                                             className="rounded-xl px-5 text-base bg-white text-black hover:bg-white/90">
                                             <Link href="/products">
-                                                <span className="text-nowrap">View Products</span>
+                                                <span className="text-nowrap">{t('home.hero.cta')}</span>
                                             </Link>
                                         </Button>
                                     </div>
@@ -104,7 +107,7 @@ export function HeroSection() {
                                         variant="ghost"
                                         className="h-10.5 rounded-xl px-5 text-white hover:bg-white/10 border border-white/20">
                                         <Link href="/#contact">
-                                            <span className="text-nowrap">Get Quote</span>
+                                            <span className="text-nowrap">{t('home.hero.contact')}</span>
                                         </Link>
                                     </Button>
                                 </AnimatedGroup>
@@ -137,20 +140,20 @@ export function HeroSection() {
     )
 }
 
-const menuItems = [
-    { name: 'Home', href: '/' },
-    { name: 'About', href: '/about' },
-    { name: 'Products', href: '/products' },
-    { name: 'News', href: '/news' },
-    { name: 'FAQ', href: '/#faq' },
-    { name: 'Contact', href: '/#contact' },
-]
-
 const HeroHeader = () => {
     const [menuState, setMenuState] = React.useState(false)
     const [isScrolled, setIsScrolled] = React.useState(false)
     const [languageDropdown, setLanguageDropdown] = React.useState(false)
-    const [selectedLanguage, setSelectedLanguage] = React.useState('English')
+    const { language, setLanguage, t } = useLanguage()
+
+    const menuItems = [
+        { name: t('nav.home'), href: '/' },
+        { name: t('nav.about'), href: '/about' },
+        { name: t('nav.products'), href: '/products' },
+        { name: t('nav.news'), href: '/news' },
+        { name: t('nav.faq'), href: '/#faq' },
+        { name: t('nav.contact'), href: '/#contact' },
+    ]
 
     const languages = [
         { code: 'en', name: 'English' },
@@ -158,6 +161,8 @@ const HeroHeader = () => {
         { code: 'fr', name: 'French' },
         { code: 'de', name: 'German' }
     ]
+
+    const selectedLanguage = languages.find(lang => lang.code === language)?.name || 'English'
 
     React.useEffect(() => {
         const handleScroll = () => {
@@ -220,15 +225,15 @@ const HeroHeader = () => {
                             
                             {languageDropdown && (
                                 <div className="absolute top-full right-0 mt-2 w-40 bg-background border rounded-lg shadow-lg z-50">
-                                    {languages.map((language) => (
+                                    {languages.map((lang) => (
                                         <button
-                                            key={language.code}
+                                            key={lang.code}
                                             onClick={() => {
-                                                setSelectedLanguage(language.name)
+                                                setLanguage(lang.code as any)
                                                 setLanguageDropdown(false)
                                             }}
                                             className="w-full text-left px-4 py-2 hover:bg-muted text-sm first:rounded-t-lg last:rounded-b-lg">
-                                            {language.name}
+                                            {lang.name}
                                         </button>
                                     ))}
                                 </div>

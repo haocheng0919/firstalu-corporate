@@ -1,8 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useLanguage } from '@/lib/language-context';
 
 const Footer = () => {
+  const { t } = useLanguage();
+
   return (
     <footer className="bg-secondary-900 text-white">
       <div className="container-max section-padding">
@@ -18,22 +21,22 @@ const Footer = () => {
               <span className="text-xl font-bold">First Aluminum Technology</span>
             </div>
             <p className="text-secondary-300 mb-4 max-w-md">
-              First Aluminum Technology - Your trusted partner in disposable food packaging solutions.
+              {t('footer.description')}
             </p>
           </div>
 
           {/* Company Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Company</h3>
+            <h3 className="text-lg font-semibold mb-4 text-white">{t('footer.company')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/about" className="text-secondary-300 hover:text-white transition-colors">
-                  About
+                  {t('nav.about')}
                 </Link>
               </li>
               <li>
                 <Link href="/news" className="text-secondary-300 hover:text-white transition-colors">
-                  News
+                  {t('nav.news')}
                 </Link>
               </li>
             </ul>
@@ -41,16 +44,16 @@ const Footer = () => {
 
           {/* Support Links */}
           <div>
-            <h3 className="text-lg font-semibold mb-4">Support</h3>
+            <h3 className="text-lg font-semibold mb-4 text-white">{t('footer.support')}</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/faq" className="text-secondary-300 hover:text-white transition-colors">
-                  FAQ
+                  {t('nav.faq')}
                 </Link>
               </li>
               <li>
                 <Link href="/contact" className="text-secondary-300 hover:text-white transition-colors">
-                  Contact
+                  {t('nav.contact')}
                 </Link>
               </li>
             </ul>
@@ -58,9 +61,9 @@ const Footer = () => {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t border-secondary-700 mt-8 pt-8 text-center">
+        <div className="border-t border-secondary-700 mt-8 pt-8">
           <p className="text-secondary-300">
-            © 2024 First Aluminum Technology. All rights reserved.
+            {t('footer.copyright')}
           </p>
         </div>
       </div>

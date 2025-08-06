@@ -1,80 +1,85 @@
+'use client'
+
 import { PageHeader } from '@/components/ui/page-header';
 import Footer from '../../components/Footer';
 import Link from 'next/link';
+import { useLanguage } from '@/lib/language-context';
 
 export default function News() {
+  const { t } = useLanguage();
+  
   const newsArticles = [
     {
       id: 1,
-      title: "Sustainable Packaging: The Future of Food Service Industry",
-      excerpt: "Exploring how eco-friendly packaging solutions are revolutionizing the food service industry and meeting consumer demands for sustainability.",
-      date: "December 15, 2024",
-      category: "Sustainability",
-      readTime: "5 min read",
-      image: "🌱"
+      title: t('news.articles.article1.title'),
+      excerpt: t('news.articles.article1.excerpt'),
+      date: t('news.articles.article1.date'),
+      category: t('news.categories.sustainability'),
+      readTime: t('news.articles.article1.readTime'),
+      image: "/disposablephoto/news1.webp"
     },
     {
       id: 2,
-      title: "New Product Launch: Premium Bamboo Chopsticks Collection",
-      excerpt: "We're excited to announce our latest addition to the chopsticks line - premium bamboo chopsticks with enhanced durability and finish.",
-      date: "December 10, 2024",
-      category: "Product Launch",
-      readTime: "3 min read",
-      image: "🥢"
+      title: t('news.articles.article2.title'),
+      excerpt: t('news.articles.article2.excerpt'),
+      date: t('news.articles.article2.date'),
+      category: t('news.categories.productLaunch'),
+      readTime: t('news.articles.article2.readTime'),
+      image: "/disposablephoto/news2.webp"
     },
     {
       id: 3,
-      title: "Food Safety Standards: What Every Restaurant Owner Should Know",
-      excerpt: "A comprehensive guide to food safety standards and how choosing the right packaging can help maintain food quality and safety.",
-      date: "December 5, 2024",
-      category: "Food Safety",
-      readTime: "7 min read",
-      image: "🛡️"
+      title: t('news.articles.article3.title'),
+      excerpt: t('news.articles.article3.excerpt'),
+      date: t('news.articles.article3.date'),
+      category: t('news.categories.foodSafety'),
+      readTime: t('news.articles.article3.readTime'),
+      image: "/disposablephoto/news3.webp"
     },
     {
       id: 4,
-      title: "Global Expansion: Now Serving 50+ Countries Worldwide",
-      excerpt: "First Aluminum Technology reaches a new milestone by expanding our services to over 50 countries, bringing quality packaging solutions globally.",
-      date: "November 28, 2024",
-      category: "Company News",
-      readTime: "4 min read",
-      image: "🌍"
+      title: t('news.articles.article4.title'),
+      excerpt: t('news.articles.article4.excerpt'),
+      date: t('news.articles.article4.date'),
+      category: t('news.categories.companyNews'),
+      readTime: t('news.articles.article4.readTime'),
+      image: "/disposablephoto/news4.webp"
     },
     {
       id: 5,
-      title: "The Rise of Food Delivery: Packaging Solutions for Modern Needs",
-      excerpt: "How the food delivery boom is changing packaging requirements and what businesses need to consider for optimal customer experience.",
-      date: "November 20, 2024",
-      category: "Industry Trends",
-      readTime: "6 min read",
-      image: "🚚"
+      title: t('news.articles.article5.title'),
+      excerpt: t('news.articles.article5.excerpt'),
+      date: t('news.articles.article5.date'),
+      category: t('news.categories.industryTrends'),
+      readTime: t('news.articles.article5.readTime'),
+      image: "/disposablephoto/news5.webp"
     },
     {
       id: 6,
-      title: "Quality Assurance: Our ISO 9001:2015 Certification Journey",
-      excerpt: "Learn about our commitment to quality and the rigorous process behind achieving ISO 9001:2015 certification for our manufacturing processes.",
-      date: "November 15, 2024",
-      category: "Quality",
-      readTime: "5 min read",
-      image: "📋"
+      title: t('news.articles.article6.title'),
+      excerpt: t('news.articles.article6.excerpt'),
+      date: t('news.articles.article6.date'),
+      category: t('news.categories.quality'),
+      readTime: t('news.articles.article6.readTime'),
+      image: "/disposablephoto/news6.webp"
     }
   ];
 
   const categories = [
-    "All",
-    "Sustainability", 
-    "Product Launch",
-    "Food Safety",
-    "Company News",
-    "Industry Trends",
-    "Quality"
+    t('news.categories.all'),
+    t('news.categories.sustainability'),
+    t('news.categories.productLaunch'),
+    t('news.categories.foodSafety'),
+    t('news.categories.companyNews'),
+    t('news.categories.industryTrends'),
+    t('news.categories.quality')
   ];
 
   return (
     <>
       <PageHeader 
-        title="Latest News & Updates"
-        description="Stay informed about industry trends, company updates, and insights from the food packaging world"
+        title={t('news.title')}
+        description={t('news.subtitle')}
         backgroundImage="https://images.unsplash.com/photo-1504711434969-e33886168f5c?w=1920&h=1080&fit=crop&auto=format"
       />
       <main>
@@ -104,20 +109,20 @@ export default function News() {
             <div className="bg-gradient-to-r from-primary-600 to-primary-700 rounded-2xl overflow-hidden text-white">
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
                 <div className="p-8 lg:p-12">
-                  <div className="text-primary-200 text-sm font-medium mb-2">FEATURED ARTICLE</div>
+                  <div className="text-primary-200 text-sm font-medium mb-2">{t('news.featuredArticle')}</div>
                   <h2 className="text-6xl md:text-7xl lg:text-6xl xl:text-[5.25rem] font-bold mb-8">
-                    {newsArticles[0].title}
+                    {t('news.articles.article1.title')}
                   </h2>
                   <p className="text-lg text-primary-100 mb-6">
-                    {newsArticles[0].excerpt}
+                    {t('news.articles.article1.excerpt')}
                   </p>
                   <div className="flex items-center text-primary-200 text-sm mb-6">
-                    <span>{newsArticles[0].date}</span>
+                    <span>{t('news.articles.article1.date')}</span>
                     <span className="mx-2">•</span>
-                    <span>{newsArticles[0].readTime}</span>
+                    <span>{t('news.articles.article1.readTime')}</span>
                   </div>
                   <Link href={`/news/${newsArticles[0].id}`} className="bg-white text-primary-600 hover:bg-primary-50 font-semibold py-3 px-6 rounded-lg transition-colors duration-200 inline-block">
-                    Read Full Article
+                    {t('news.readFullArticle')}
                   </Link>
                 </div>
                 <div className="h-64 lg:h-full bg-primary-500 flex items-center justify-center">
@@ -133,10 +138,10 @@ export default function News() {
           <div className="container-max">
             <div className="text-center mb-16">
               <h2 className="text-6xl md:text-7xl lg:text-6xl xl:text-[5.25rem] font-bold text-foreground mb-8">
-                Recent Articles
+                {t('news.recentArticles')}
               </h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Discover the latest insights and updates from our industry experts
+                {t('news.recentArticlesSubtitle')}
               </p>
             </div>
             
@@ -169,7 +174,7 @@ export default function News() {
                         href={`/news/${article.id}`}
                         className="text-primary-600 hover:text-primary-700 font-medium text-sm"
                       >
-                        Read More →
+                        {t('news.readMore')} →
                       </Link>
                     </div>
                   </div>
