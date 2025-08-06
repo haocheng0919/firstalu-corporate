@@ -1,5 +1,8 @@
 'use client'
 
+// Force dynamic rendering to prevent static generation issues with Supabase
+export const dynamic = 'force-dynamic'
+
 import { PageHeader } from '@/components/ui/page-header';
 import Footer from '../../components/Footer';
 import Link from 'next/link';
