@@ -7,7 +7,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import Footer from '../../components/Footer';
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { getProductCategories, getProducts, type ProductCategory, type Product } from '@/lib/supabase-service';
+import { getCategories as getProductCategories, getProducts, type AdaptedCategory as ProductCategory, type AdaptedProduct as Product } from '@/lib/supabase-service-adapted';
 import { useLanguage } from '@/lib/language-context';
 
 export default function Products() {
@@ -75,12 +75,12 @@ export default function Products() {
   }
 
   if (selectedCategory) {
-    const categoryProducts = products.filter(product => product.category === selectedCategory.slug);
+    const categoryProducts = products.filter(product => product.category_id === selectedCategory.id);
     
     return (
       <div className="min-h-screen bg-gray-50">
         <PageHeader 
-          title={selectedCategory.name} 
+          title={selectedCategory.name || selectedCategory.slug} 
           description={getCategoryDescription(selectedCategory.slug)}
         />
         
@@ -107,35 +107,35 @@ export default function Products() {
                   <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                     <div className="h-48 relative overflow-hidden">
                       <img 
-                        src={product.image_url || `/product_cat/${selectedCategory.slug}.webp`}
-                        alt={product.name}
+                        src={(product.images?.main) || `/product_cat/${selectedCategory.slug}.webp`}
+                        alt={product.name || product.slug}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                       />
                     </div>
                     <div className="p-6">
                       <div className="mb-4">
-                        <h3 className="text-xl font-semibold text-gray-900">{product.name}</h3>
-                        <p className="text-sm text-blue-600">{selectedCategory.name}</p>
+                        <h3 className="text-xl font-semibold text-gray-900">{product.name || product.slug}</h3>
+                        <p className="text-sm text-blue-600">{selectedCategory.name || selectedCategory.slug}</p>
                       </div>
                       
-                      <p className="text-gray-600 mb-4">{product.description || `High-quality ${product.name.toLowerCase()} for your business needs.`}</p>
+                      <p className="text-gray-600 mb-4">{product.description || product.intro || `High-quality ${(product.name || product.slug).toLowerCase()} for your business needs.`}</p>
                       
-                      {product.features && product.features.length > 0 && (
+                      {product.specs?.features && product.specs.features.length > 0 && (
                         <div className="mb-4">
                           <h4 className="font-semibold text-gray-900 mb-2">{t('products.productFeatures')}:</h4>
                           <div className="text-gray-600 space-y-1">
-                            {product.features.map((feature, index) => (
+                            {product.specs.features.map((feature: string, index: number) => (
                               <p key={index}>• {feature}</p>
                             ))}
                           </div>
                         </div>
                       )}
                       
-                      {product.sizes && product.sizes.length > 0 && (
+                      {product.specs?.sizes && product.specs.sizes.length > 0 && (
                         <div className="mb-4">
                           <h4 className="font-semibold text-gray-900 mb-2">{t('products.availableSizes')}:</h4>
                           <div className="flex flex-wrap gap-2">
-                            {product.sizes.map((size, index) => (
+                            {product.specs.sizes.map((size: string, index: number) => (
                               <span key={index} className="bg-gray-100 text-gray-700 px-2 py-1 rounded text-sm">
                                 {size}
                               </span>
@@ -191,12 +191,12 @@ export default function Products() {
                  </div>
                  <div className="p-6">
                    <div className="mb-2">
-                     <h3 className="text-xl font-semibold text-gray-900">{category.name}</h3>
+                     <h3 className="text-xl font-semibold text-gray-900">{category.name || category.slug}</h3>
                    </div>
                    <p className="text-gray-600 mb-4">{getCategoryDescription(category.slug)}</p>
                    <div className="flex items-center justify-between">
                      <span className="text-sm text-gray-500">
-                       {products.filter(product => product.category === category.slug).length} products
+                       {products.filter(product => product.category_id === category.id).length} products
                      </span>
                      <span className="text-blue-600 hover:text-blue-800 font-medium">
                        View Products →

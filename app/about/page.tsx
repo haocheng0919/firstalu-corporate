@@ -48,7 +48,13 @@ export default function About() {
               <AnimatedGroup preset="scale">
                 <div className="relative">
                   <div className="bg-background/70 backdrop-blur-lg rounded-3xl p-12 text-center shadow-xl border border-border/20">
-                    <div className="text-9xl mb-6">🏭</div>
+                    <div className="mb-6">
+                      <img 
+                        src="/about/factory.webp" 
+                        alt="First Aluminum Technology Factory" 
+                        className="w-full h-48 object-cover rounded-2xl mx-auto"
+                      />
+                    </div>
                     <h3 className="mb-4">
                       {t('about.manufacturing.title')}
                     </h3>

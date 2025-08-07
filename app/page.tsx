@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { HeroSection } from '@/components/blocks/hero-section-1';
+import { HeroSection } from '@/components/ui/hero-section-1';
 import { ModernSection } from '@/components/ui/modern-section';
 import { AnimatedGroup } from '@/components/ui/animated-group';
 import { Button } from '@/components/ui/button';
@@ -22,7 +22,7 @@ function FAQSection() {
       faqs: [
         {
           question: "Are you a trading company or a factory?",
-          answer: "We are a direct manufacturer with:\n• Main factory in China - Advanced production facilities\n• New factory in Malaysia - Strategic location for global markets\n\nThis dual-location setup allows us to offer:\n✓ Stable supply chain\n✓ Competitive pricing\n✓ Faster shipping to key markets (U.S., EU, Southeast Asia)\n✓ Flexible product origin options"
+          answer: "We are a direct manufacturer with:\n• Main factory in China - Advanced production facilities\n\nOur manufacturing setup allows us to offer:\n✓ Stable supply chain\n✓ Competitive pricing\n✓ Faster shipping to key markets (U.S., EU, Southeast Asia)\n✓ Flexible product origin options"
         },
         {
           question: "What certifications do your products have?",
@@ -88,7 +88,7 @@ function FAQSection() {
         },
         {
           question: "Can you offer Net 90 or a 10% discount?",
-          answer: "Value-Focused Partnership Approach:\n\nWhile Net 90 and large discounts aren't standard, we offer strategic value:\n\nValue-Added Options:\n• Free packaging upgrades and improvements\n• Bundled product solutions\n• Comprehensive logistics support\n• Technical consultation services\n\nStrategic Advantages:\n• Malaysia-origin products for U.S. tariff savings\n• Flexible terms for long-term partnerships\n• Volume-based pricing optimization\n\nOur Philosophy: Creating win-win partnerships focused on long-term value, not just lowest price."
+          answer: "Value-Focused Partnership Approach:\n\nWhile Net 90 and large discounts aren't standard, we offer strategic value:\n\nValue-Added Options:\n• Free packaging upgrades and improvements\n• Bundled product solutions\n• Comprehensive logistics support\n• Technical consultation services\n\nStrategic Advantages:\n• Flexible terms for long-term partnerships\n• Volume-based pricing optimization\n• Competitive pricing structure\n\nOur Philosophy: Creating win-win partnerships focused on long-term value, not just lowest price."
         }
       ]
     },
@@ -109,7 +109,7 @@ function FAQSection() {
         },
         {
           question: "Can you help with shipping and customs?",
-          answer: "Complete Logistics Support:\n\nShipping Terms Available:\n• FOB - Free On Board\n• CIF - Cost, Insurance, and Freight\n• DDP - Delivered Duty Paid\n\nDocumentation & Customs:\n• Full document preparation and booking support\n• HS code classification and customs assistance\n• Certificate of origin and trade documentation\n• Customs clearance guidance\n\nFlexible Options:\n• Dual origin capability (China or Malaysia)\n• Support for your appointed freight forwarder\n• Third-party logistics coordination\n• Express shipping for urgent orders"
+          answer: "Complete Logistics Support:\n\nShipping Terms Available:\n• FOB - Free On Board\n• CIF - Cost, Insurance, and Freight\n• DDP - Delivered Duty Paid\n\nDocumentation & Customs:\n• Full document preparation and booking support\n• HS code classification and customs assistance\n• Certificate of origin and trade documentation\n• Customs clearance guidance\n\nFlexible Options:\n• Support for your appointed freight forwarder\n• Third-party logistics coordination\n• Express shipping for urgent orders\n• Comprehensive logistics network"
         }
       ]
     },
@@ -126,7 +126,7 @@ function FAQSection() {
         },
         {
           question: "Why choose FirstAlu as your supplier?",
-          answer: "Your Strategic Advantage Partner:\n\n✅ Manufacturing Excellence\n• 100% factory direct with 10+ years export experience\n• BRC, BSCI, SEDEX, ISO certified operations\n• Dual-factory setup (China + Malaysia)\n\n✅ Customer-Centric Service\n• Dedicated communication team and quick response\n• Support for both large distributors and fast-growing brands\n• Flexible solutions tailored to your market needs\n\n✅ Strategic Benefits\n• U.S.-focused solutions via Malaysia plant for tariff optimization\n• Global logistics network for efficient delivery\n• Trusted by customers across EU, USA, LATAM, and ASEAN\n\n✅ Innovation & Quality\n• Continuous product development and improvement\n• Comprehensive customization capabilities\n• Sustainable packaging solutions for modern markets"
+          answer: "Your Strategic Advantage Partner:\n\n✅ Manufacturing Excellence\n• 100% factory direct with 10+ years export experience\n• BRC, BSCI, SEDEX, ISO certified operations\n• Advanced production facilities in China\n\n✅ Customer-Centric Service\n• Dedicated communication team and quick response\n• Support for both large distributors and fast-growing brands\n• Flexible solutions tailored to your market needs\n\n✅ Strategic Benefits\n• Competitive pricing and quality solutions\n• Global logistics network for efficient delivery\n• Trusted by customers across EU, USA, LATAM, and ASEAN\n\n✅ Innovation & Quality\n• Continuous product development and improvement\n• Comprehensive customization capabilities\n• Sustainable packaging solutions for modern markets"
         },
         {
           question: "How Can We Reach Aluminum Foil Product Manufacturers for Inquiries or Orders?",
@@ -143,7 +143,7 @@ function FAQSection() {
         },
         {
           question: "Which countries do you export to?",
-          answer: "Global Reach: 40+ Countries Served\n\nNorth America:\n• United States, Canada\n\nEurope:\n• United Kingdom, Germany, France, Spain, Poland\n• Netherlands, Belgium, Italy, Switzerland\n\nSoutheast Asia:\n• Malaysia, Thailand, Philippines, Vietnam\n• Singapore, Indonesia, Cambodia\n\nMiddle East:\n• UAE, Saudi Arabia, Kuwait, Qatar\n\nLatin America:\n• Chile, Brazil, Colombia, Peru, Mexico\n\nGrowing Markets:\n• Australia, New Zealand, South Africa\n• Expanding presence in emerging markets"
+          answer: "Global Reach: 40+ Countries Served\n\nNorth America:\n• United States, Canada\n\nEurope:\n• United Kingdom, Germany, France, Spain, Poland\n• Netherlands, Belgium, Italy, Switzerland\n\nSoutheast Asia:\n• Thailand, Philippines, Vietnam\n• Singapore, Indonesia, Cambodia\n\nMiddle East:\n• UAE, Saudi Arabia, Kuwait, Qatar\n\nLatin America:\n• Chile, Brazil, Colombia, Peru, Mexico\n\nGrowing Markets:\n• Australia, New Zealand, South Africa\n• Expanding presence in emerging markets"
         },
         {
           question: "Do Aluminum Foil Product Manufacturers Offer Recycling Programs for Their Goods?",
@@ -263,60 +263,7 @@ export default function Home() {
     <>
       <HeroSection />
       <main className="overflow-hidden">
-        {/* Features Section */}
-        <ModernSection 
-          className="py-24 md:py-36" 
-          backgroundImage="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1920&h=1080&fit=crop&auto=format"
-        >
-          <div className="mx-auto max-w-7xl px-6">
-            <AnimatedGroup preset="blur-slide" className="text-center mb-16">
-              <h2 className="mb-6">
-                {t('home.whyChooseUs.title')}
-              </h2>
-              <p className="text-lead max-w-2xl mx-auto">
-                {t('home.whyChooseUs.subtitle')}
-              </p>
-            </AnimatedGroup>
-            
-            <AnimatedGroup preset="slide" className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              <div className="text-center p-8 bg-background/50 backdrop-blur-sm rounded-2xl border shadow-lg">
-                <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h3 className="mb-4">{t('home.whyChooseUs.features.quality.title')}</h3>
-                <p>
-                  {t('home.whyChooseUs.features.quality.description')}
-                </p>
-              </div>
-              
-              <div className="text-center p-8 bg-background/50 backdrop-blur-sm rounded-2xl border shadow-lg">
-                <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
-                  </svg>
-                </div>
-                <h3 className="mb-4">{t('home.whyChooseUs.features.wholesale.title')}</h3>
-                <p>
-                  {t('home.whyChooseUs.features.wholesale.description')}
-                </p>
-              </div>
-              
-              <div className="text-center p-8 bg-background/50 backdrop-blur-sm rounded-2xl border shadow-lg">
-                <div className="w-20 h-20 bg-gradient-to-br from-primary-500 to-primary-700 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                </div>
-                <h3 className="mb-4">{t('home.whyChooseUs.features.global.title')}</h3>
-                <p>
-                  {t('home.whyChooseUs.features.global.description')}
-                </p>
-              </div>
-            </AnimatedGroup>
-          </div>
-        </ModernSection>
+
 
         {/* Products Preview Section */}
         <ModernSection 
