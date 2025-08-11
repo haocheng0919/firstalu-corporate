@@ -456,7 +456,6 @@ export default function EnhancedAdminPanel() {
       if (newPost) {
         setPosts([newPost, ...posts])
         setPostForm({
-          slug: '',
           date: new Date().toISOString().split('T')[0],
           tags: [],
           cover_url: '',
