@@ -11,7 +11,9 @@ import { Label } from '@/components/ui/label'
 import { Textarea } from '@/components/ui/textarea'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { MultiLangRichText } from '@/components/ui/multi-lang-rich-text'
 import { Trash2, Edit, Plus, Upload, X } from 'lucide-react'
+import { generateSlug } from '@/lib/utils'
 import { 
   type AdaptedProduct, 
   type AdaptedPost, 
@@ -105,8 +107,6 @@ function MultiLangInput({ label, value, onChange, type = 'input', placeholder, r
 
 // Enhanced form interfaces
 interface ProductForm {
-  slug: string
-  sku: string
   status: string
   category_id: string
   name: Record<string, string>
@@ -117,7 +117,6 @@ interface ProductForm {
 }
 
 interface PostForm {
-  slug: string
   date: string
   tags: string[]
   cover_url: string
@@ -130,7 +129,6 @@ interface PostForm {
 }
 
 interface CategoryForm {
-  slug: string
   name: Record<string, string>
 }
 
@@ -153,8 +151,6 @@ export default function EnhancedAdminPanel() {
   
   // State for forms
   const [productForm, setProductForm] = useState<ProductForm>({
-    slug: '',
-    sku: '',
     status: 'active',
     category_id: '',
     name: { en: '', es: '', de: '', fr: '' },
@@ -165,7 +161,6 @@ export default function EnhancedAdminPanel() {
   })
   
   const [postForm, setPostForm] = useState<PostForm>({
-    slug: '',
     date: new Date().toISOString().split('T')[0],
     tags: [],
     cover_url: '',
@@ -178,7 +173,6 @@ export default function EnhancedAdminPanel() {
   })
   
   const [categoryForm, setCategoryForm] = useState<CategoryForm>({
-    slug: '',
     name: { en: '', es: '', de: '', fr: '' }
   })
 
@@ -235,8 +229,6 @@ export default function EnhancedAdminPanel() {
   // Helper function to reset product form
   const resetProductForm = () => {
     setProductForm({
-      slug: '',
-      sku: '',
       status: 'active',
       category_id: '',
       name: { en: '', es: '', de: '', fr: '' },
@@ -250,7 +242,6 @@ export default function EnhancedAdminPanel() {
   // Helper function to reset category form
   const resetCategoryForm = () => {
     setCategoryForm({
-      slug: '',
       name: { en: '', es: '', de: '', fr: '' }
     })
   }
@@ -270,8 +261,8 @@ export default function EnhancedAdminPanel() {
 
   // Product functions
   const handleAddProduct = async () => {
-    if (!productForm.name.en || !productForm.slug) {
-      alert('请填写必填字段（英文名称和slug）')
+    if (!productForm.name.en) {
+      alert('请填写必填字段（英文名称）')
       return
     }
 
@@ -285,9 +276,12 @@ export default function EnhancedAdminPanel() {
         }
       }
 
+      // 自动生成slug
+      const slug = generateSlug(productForm.name.en)
+
       const productData = {
-        slug: productForm.slug,
-        sku: productForm.sku,
+        slug: slug,
+        sku: `SKU-${Date.now()}`, // 自动生成SKU
         status: productForm.status,
         category_id: productForm.category_id || undefined,
         images: imageUrl ? { main: imageUrl, alt: productForm.alt_text } : undefined,
@@ -326,15 +320,18 @@ export default function EnhancedAdminPanel() {
 
   // Category functions
   const handleAddCategory = async () => {
-    if (!categoryForm.slug || !categoryForm.name.en) {
-      alert('请填写必填字段（slug和英文名称）')
+    if (!categoryForm.name.en) {
+      alert('请填写必填字段（英文名称）')
       return
     }
 
     setLoading(true)
     try {
+      // 自动生成slug
+      const slug = generateSlug(categoryForm.name.en)
+
       const categoryData = {
-        slug: categoryForm.slug,
+        slug: slug,
         name: categoryForm.name.en,
         name_es: categoryForm.name.es,
         name_de: categoryForm.name.de,
@@ -415,8 +412,8 @@ export default function EnhancedAdminPanel() {
 
   // Post functions
   const handleAddPost = async () => {
-    if (!postForm.title.en || !postForm.slug) {
-      alert('请填写必填字段（英文标题和slug）')
+    if (!postForm.title.en) {
+      alert('请填写必填字段（英文标题）')
       return
     }
 
@@ -430,8 +427,11 @@ export default function EnhancedAdminPanel() {
         }
       }
 
+      // 自动生成slug
+      const slug = generateSlug(postForm.title.en)
+
       const postData = {
-        slug: postForm.slug,
+        slug: slug,
         date: postForm.date,
         tags: postForm.tags,
         cover_url: imageUrl || postForm.cover_url,
@@ -509,26 +509,6 @@ export default function EnhancedAdminPanel() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="product-slug">Slug *</Label>
-                  <Input
-                    id="product-slug"
-                    value={productForm.slug}
-                    onChange={(e) => setProductForm({...productForm, slug: e.target.value})}
-                    placeholder="product-slug"
-                  />
-                </div>
-                
-                <div>
-                  <Label htmlFor="product-sku">SKU</Label>
-                  <Input
-                    id="product-sku"
-                    value={productForm.sku}
-                    onChange={(e) => setProductForm({...productForm, sku: e.target.value})}
-                    placeholder="SKU123"
-                  />
-                </div>
-
-                <div>
                   <Label htmlFor="product-status">状态</Label>
                   <select
                     id="product-status"
@@ -565,19 +545,17 @@ export default function EnhancedAdminPanel() {
                   required
                 />
 
-                <MultiLangInput
+                <MultiLangRichText
                   label="产品简介"
                   value={productForm.intro}
                   onChange={(value) => setProductForm({...productForm, intro: value})}
-                  type="textarea"
                   placeholder="Product Introduction"
                 />
 
-                <MultiLangInput
+                <MultiLangRichText
                   label="产品描述"
                   value={productForm.description}
                   onChange={(value) => setProductForm({...productForm, description: value})}
-                  type="textarea"
                   placeholder="Product Description"
                 />
 
@@ -678,16 +656,6 @@ export default function EnhancedAdminPanel() {
                 <CardTitle>{editingCategory ? '编辑分类' : '添加新分类'}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <Label htmlFor="category-slug">Slug *</Label>
-                  <Input
-                    id="category-slug"
-                    value={categoryForm.slug}
-                    onChange={(e) => setCategoryForm({...categoryForm, slug: e.target.value})}
-                    placeholder="category-slug"
-                  />
-                </div>
-
                 <MultiLangInput
                   label="分类名称"
                   value={categoryForm.name}
@@ -773,16 +741,6 @@ export default function EnhancedAdminPanel() {
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="post-slug">Slug *</Label>
-                  <Input
-                    id="post-slug"
-                    value={postForm.slug}
-                    onChange={(e) => setPostForm({...postForm, slug: e.target.value})}
-                    placeholder="news-slug"
-                  />
-                </div>
-
-                <div>
                   <Label htmlFor="post-date">发布日期</Label>
                   <Input
                     id="post-date"
@@ -822,12 +780,11 @@ export default function EnhancedAdminPanel() {
                   placeholder="News Summary"
                 />
 
-                <MultiLangInput
+                <MultiLangRichText
                   label="新闻内容"
                   value={postForm.body_md}
                   onChange={(value) => setPostForm({...postForm, body_md: value})}
-                  type="textarea"
-                  placeholder="News Content (Markdown)"
+                  placeholder="News Content"
                 />
 
                 <MultiLangInput
@@ -856,7 +813,6 @@ export default function EnhancedAdminPanel() {
                       <Button variant="outline" onClick={() => {
                         setEditingPost(null)
                         setPostForm({
-                          slug: '',
                           date: new Date().toISOString().split('T')[0],
                           tags: [],
                           cover_url: '',

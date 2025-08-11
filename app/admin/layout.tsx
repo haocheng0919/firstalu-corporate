@@ -27,6 +27,13 @@ export default function AdminLayout({
     checkAuth()
   }, [router, pathname])
 
+  // Handle redirect when authenticated user is on login page
+  useEffect(() => {
+    if (isAuthenticated && pathname === '/admin/login') {
+      router.push('/admin')
+    }
+  }, [isAuthenticated, pathname, router])
+
   const handleLogout = () => {
     sessionStorage.removeItem('adminAuthenticated')
     router.push('/admin/login')
@@ -49,9 +56,7 @@ export default function AdminLayout({
     return null
   }
 
-  // If authenticated and on login page, redirect to admin
   if (isAuthenticated && pathname === '/admin/login') {
-    router.push('/admin')
     return null
   }
 
