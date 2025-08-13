@@ -112,8 +112,10 @@ interface ProductForm {
   name: Record<string, string>
   intro: Record<string, string>
   description: Record<string, string>
+  technical_specs: Record<string, any>
   alt_text: Record<string, string>
-  image?: File | null
+  thumbnail?: File | null
+  images?: File[] | null
 }
 
 interface PostForm {
@@ -130,6 +132,8 @@ interface PostForm {
 
 interface CategoryForm {
   name: Record<string, string>
+  description: Record<string, string>
+  thumbnail?: File | null
 }
 
 interface CarouselForm {
@@ -156,8 +160,10 @@ export default function EnhancedAdminPanel() {
     name: { en: '', es: '', de: '', fr: '' },
     intro: { en: '', es: '', de: '', fr: '' },
     description: { en: '', es: '', de: '', fr: '' },
+    technical_specs: {},
     alt_text: { en: '', es: '', de: '', fr: '' },
-    image: null
+    thumbnail: null,
+    images: null
   })
   
   const [postForm, setPostForm] = useState<PostForm>({
@@ -173,7 +179,9 @@ export default function EnhancedAdminPanel() {
   })
   
   const [categoryForm, setCategoryForm] = useState<CategoryForm>({
-    name: { en: '', es: '', de: '', fr: '' }
+    name: { en: '', es: '', de: '', fr: '' },
+    description: { en: '', es: '', de: '', fr: '' },
+    thumbnail: null
   })
 
   const [carouselForm, setCarouselForm] = useState<CarouselForm>({
@@ -234,19 +242,21 @@ export default function EnhancedAdminPanel() {
       name: { en: '', es: '', de: '', fr: '' },
       intro: { en: '', es: '', de: '', fr: '' },
       description: { en: '', es: '', de: '', fr: '' },
+      technical_specs: {},
       alt_text: { en: '', es: '', de: '', fr: '' },
-      image: null
+      thumbnail: null,
+      images: null
     })
   }
 
-  // Helper function to reset category form
   const resetCategoryForm = () => {
     setCategoryForm({
-      name: { en: '', es: '', de: '', fr: '' }
+      name: { en: '', es: '', de: '', fr: '' },
+      description: { en: '', es: '', de: '', fr: '' },
+      thumbnail: null
     })
   }
 
-  // Helper function to reset carousel form
   const resetCarouselForm = () => {
     setCarouselForm({
       title: { en: '', es: '', de: '', fr: '' },
@@ -268,11 +278,25 @@ export default function EnhancedAdminPanel() {
 
     setLoading(true)
     try {
-      let imageUrl = ''
-      if (productForm.image) {
-        const uploadedUrl = await uploadImage(productForm.image, 'products', `${Date.now()}-${productForm.image.name}`)
+      let thumbnailUrl = ''
+      let additionalImageUrls: string[] = []
+      
+      // Upload thumbnail
+      if (productForm.thumbnail) {
+        const uploadedUrl = await uploadImage(productForm.thumbnail, 'products', `${Date.now()}-thumbnail-${productForm.thumbnail.name}`)
         if (uploadedUrl) {
-          imageUrl = uploadedUrl
+          thumbnailUrl = uploadedUrl
+        }
+      }
+      
+      // Upload additional images
+      if (productForm.images && productForm.images.length > 0) {
+        for (let i = 0; i < productForm.images.length; i++) {
+          const file = productForm.images[i]
+          const uploadedUrl = await uploadImage(file, 'products', `${Date.now()}-${i}-${file.name}`)
+          if (uploadedUrl) {
+            additionalImageUrls.push(uploadedUrl)
+          }
         }
       }
 
@@ -284,7 +308,11 @@ export default function EnhancedAdminPanel() {
         sku: `SKU-${Date.now()}`, // 自动生成SKU
         status: productForm.status,
         category_id: productForm.category_id || undefined,
-        images: imageUrl ? { main: imageUrl, alt: productForm.alt_text } : undefined,
+        images: thumbnailUrl ? { 
+          main: thumbnailUrl, 
+          additional: additionalImageUrls,
+          alt: productForm.alt_text 
+        } : undefined,
         // Map multi-language fields
         name: productForm.name.en,
         name_es: productForm.name.es,
@@ -318,6 +346,143 @@ export default function EnhancedAdminPanel() {
     }
   }
 
+  const handleDeleteProduct = async (id: string, name: string) => {
+    if (!confirm(`确定要删除产品 "${name}" 吗？此操作不可撤销。`)) {
+      return
+    }
+
+    setLoading(true)
+    try {
+      const success = await deleteProduct(id)
+      if (success) {
+        setProducts(products.filter(p => p.id !== id))
+        alert('产品删除成功！')
+      } else {
+        alert('产品删除失败，请检查控制台错误')
+      }
+    } catch (error) {
+      console.error('Error deleting product:', error)
+      alert('产品删除失败')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleEditProduct = (product: AdaptedProduct) => {
+    setProductForm({
+      status: product.status || 'active',
+      category_id: product.category_id || '',
+      name: {
+        en: product.name || '',
+        es: product.name_es || '',
+        de: product.name_de || '',
+        fr: product.name_fr || ''
+      },
+      intro: {
+        en: product.intro || '',
+        es: product.intro_es || '',
+        de: product.intro_de || '',
+        fr: product.intro_fr || ''
+      },
+      description: {
+        en: product.description || '',
+        es: product.description_es || '',
+        de: product.description_de || '',
+        fr: product.description_fr || ''
+      },
+      technical_specs: product.technical_specs || {},
+      alt_text: {
+        en: '',
+        es: '',
+        de: '',
+        fr: ''
+      },
+      thumbnail: null,
+      images: null
+    })
+    setEditingProduct(product.id)
+  }
+
+  const handleUpdateProduct = async () => {
+    if (!editingProduct || !productForm.name.en) {
+      alert('请填写必填字段（英文名称）')
+      return
+    }
+
+    setLoading(true)
+    try {
+      let thumbnailUrl = undefined
+      let additionalImageUrls: string[] = []
+      
+      // Upload new thumbnail if provided
+      if (productForm.thumbnail) {
+        const uploadedUrl = await uploadImage(productForm.thumbnail, 'products', `${Date.now()}-thumbnail-${productForm.thumbnail.name}`)
+        if (uploadedUrl) {
+          thumbnailUrl = uploadedUrl
+        }
+      }
+      
+      // Upload new additional images if provided
+      if (productForm.images && productForm.images.length > 0) {
+        for (let i = 0; i < productForm.images.length; i++) {
+          const file = productForm.images[i]
+          const uploadedUrl = await uploadImage(file, 'products', `${Date.now()}-${i}-${file.name}`)
+          if (uploadedUrl) {
+            additionalImageUrls.push(uploadedUrl)
+          }
+        }
+      }
+
+      const productData: any = {
+        status: productForm.status,
+        category_id: productForm.category_id || undefined,
+        name: productForm.name.en,
+        name_es: productForm.name.es,
+        name_de: productForm.name.de,
+        name_fr: productForm.name.fr,
+        intro: productForm.intro.en,
+        intro_es: productForm.intro.es,
+        intro_de: productForm.intro.de,
+        intro_fr: productForm.intro.fr,
+        description: productForm.description.en,
+        description_es: productForm.description.es,
+        description_de: productForm.description.de,
+        description_fr: productForm.description.fr
+      }
+
+      // Only include images if new ones were uploaded
+      if (thumbnailUrl || additionalImageUrls.length > 0) {
+        productData.images = {
+          main: thumbnailUrl,
+          additional: additionalImageUrls,
+          alt: productForm.alt_text
+        }
+      }
+
+      console.log('Updating product with data:', productData)
+      
+      const updatedProduct = await updateProduct(editingProduct, productData)
+      if (updatedProduct) {
+        setProducts(products.map(p => p.id === editingProduct ? updatedProduct : p))
+        resetProductForm()
+        setEditingProduct(null)
+        alert('产品更新成功！')
+      } else {
+        alert('产品更新失败，请检查控制台错误')
+      }
+    } catch (error) {
+      console.error('Error updating product:', error)
+      alert('产品更新失败')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCancelEditProduct = () => {
+    setEditingProduct(null)
+    resetProductForm()
+  }
+
   // Category functions
   const handleAddCategory = async () => {
     if (!categoryForm.name.en) {
@@ -327,15 +492,30 @@ export default function EnhancedAdminPanel() {
 
     setLoading(true)
     try {
+      let thumbnailUrl = ''
+      
+      // Upload thumbnail if provided
+      if (categoryForm.thumbnail) {
+        const uploadedUrl = await uploadImage(categoryForm.thumbnail, 'categories', `${Date.now()}-thumbnail-${categoryForm.thumbnail.name}`)
+        if (uploadedUrl) {
+          thumbnailUrl = uploadedUrl
+        }
+      }
+
       // 自动生成slug
       const slug = generateSlug(categoryForm.name.en)
 
       const categoryData = {
         slug: slug,
+        thumbnail_url: thumbnailUrl,
         name: categoryForm.name.en,
         name_es: categoryForm.name.es,
         name_de: categoryForm.name.de,
-        name_fr: categoryForm.name.fr
+        name_fr: categoryForm.name.fr,
+        description: categoryForm.description.en,
+        description_es: categoryForm.description.es,
+        description_de: categoryForm.description.de,
+        description_fr: categoryForm.description.fr
       }
 
       console.log('Creating category with data:', categoryData)
@@ -354,6 +534,105 @@ export default function EnhancedAdminPanel() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleDeleteCategory = async (id: string, name: string) => {
+    if (!confirm(`确定要删除分类 "${name}" 吗？此操作不可撤销。`)) {
+      return
+    }
+
+    setLoading(true)
+    try {
+      const success = await deleteCategory(id)
+      if (success) {
+        setCategories(categories.filter(c => c.id !== id))
+        alert('分类删除成功！')
+      } else {
+        alert('分类删除失败，请检查控制台错误')
+      }
+    } catch (error) {
+      console.error('Error deleting category:', error)
+      alert('分类删除失败')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleEditCategory = (category: AdaptedCategory) => {
+    setCategoryForm({
+      name: {
+        en: category.name || '',
+        es: category.name_es || '',
+        de: category.name_de || '',
+        fr: category.name_fr || ''
+      },
+      description: {
+        en: category.description || '',
+        es: category.description_es || '',
+        de: category.description_de || '',
+        fr: category.description_fr || ''
+      },
+      thumbnail: null
+    })
+    setEditingCategory(category.id)
+  }
+
+  const handleUpdateCategory = async () => {
+    if (!editingCategory || !categoryForm.name.en) {
+      alert('请填写必填字段（英文名称）')
+      return
+    }
+
+    setLoading(true)
+    try {
+      let thumbnailUrl = undefined
+      
+      // Upload new thumbnail if provided
+      if (categoryForm.thumbnail) {
+        const uploadedUrl = await uploadImage(categoryForm.thumbnail, 'categories', `${Date.now()}-thumbnail-${categoryForm.thumbnail.name}`)
+        if (uploadedUrl) {
+          thumbnailUrl = uploadedUrl
+        }
+      }
+
+      const categoryData: any = {
+        name: categoryForm.name.en,
+        name_es: categoryForm.name.es,
+        name_de: categoryForm.name.de,
+        name_fr: categoryForm.name.fr,
+        description: categoryForm.description.en,
+        description_es: categoryForm.description.es,
+        description_de: categoryForm.description.de,
+        description_fr: categoryForm.description.fr
+      }
+
+      // Only include thumbnail_url if a new one was uploaded
+      if (thumbnailUrl) {
+        categoryData.thumbnail_url = thumbnailUrl
+      }
+
+      console.log('Updating category with data:', categoryData)
+      
+      const updatedCategory = await updateCategory(editingCategory, categoryData)
+      if (updatedCategory) {
+        setCategories(categories.map(c => c.id === editingCategory ? updatedCategory : c))
+        resetCategoryForm()
+        setEditingCategory(null)
+        alert('分类更新成功！')
+      } else {
+        alert('分类更新失败，请检查控制台错误')
+      }
+    } catch (error) {
+      console.error('Error updating category:', error)
+      alert('分类更新失败')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCancelEditCategory = () => {
+    setEditingCategory(null)
+    resetCategoryForm()
   }
 
   // Carousel functions
@@ -408,6 +687,121 @@ export default function EnhancedAdminPanel() {
     } finally {
       setLoading(false)
     }
+  }
+
+  const handleDeleteCarousel = async (id: string, title: string) => {
+    if (!confirm(`确定要删除轮播图 "${title}" 吗？此操作不可撤销。`)) {
+      return
+    }
+
+    setLoading(true)
+    try {
+      const success = await deleteCarousel(id)
+      if (success) {
+        setCarouselItems(carouselItems.filter(c => c.id !== id))
+        alert('轮播图删除成功！')
+      } else {
+        alert('轮播图删除失败，请检查控制台错误')
+      }
+    } catch (error) {
+      console.error('Error deleting carousel:', error)
+      alert('轮播图删除失败')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleEditCarousel = (carousel: AdaptedCarousel) => {
+    setEditingCarousel(carousel.id)
+    setCarouselForm({
+      title: {
+        en: carousel.title || '',
+        es: carousel.title_es || '',
+        de: carousel.title_de || '',
+        fr: carousel.title_fr || ''
+      },
+      description: {
+        en: carousel.description || '',
+        es: carousel.description_es || '',
+        de: carousel.description_de || '',
+        fr: carousel.description_fr || ''
+      },
+      alt_text: {
+        en: carousel.alt_text || '',
+        es: carousel.alt_text_es || '',
+        de: carousel.alt_text_de || '',
+        fr: carousel.alt_text_fr || ''
+      },
+      link_url: carousel.link_url || '',
+      order_index: carousel.order_index,
+      is_active: carousel.is_active,
+      image: null
+    })
+  }
+
+  const handleUpdateCarousel = async () => {
+    if (!editingCarousel) return
+
+    const currentCarousel = carouselItems.find(c => c.id === editingCarousel)
+    if (!currentCarousel) return
+
+    if (!carouselForm.title.en) {
+      alert('请填写必填字段（英文标题）')
+      return
+    }
+
+    setLoading(true)
+    try {
+      let imageUrl = currentCarousel.image_url
+      if (carouselForm.image) {
+        const uploadedUrl = await uploadImage(carouselForm.image, 'carousel', `${Date.now()}-${carouselForm.image.name}`)
+        if (uploadedUrl) {
+          imageUrl = uploadedUrl
+        }
+      }
+
+      const carouselData = {
+        image_url: imageUrl,
+        link_url: carouselForm.link_url,
+        order_index: carouselForm.order_index,
+        is_active: carouselForm.is_active,
+        title: carouselForm.title.en,
+        title_es: carouselForm.title.es,
+        title_de: carouselForm.title.de,
+        title_fr: carouselForm.title.fr,
+        description: carouselForm.description.en,
+        description_es: carouselForm.description.es,
+        description_de: carouselForm.description.de,
+        description_fr: carouselForm.description.fr,
+        alt_text: carouselForm.alt_text.en,
+        alt_text_es: carouselForm.alt_text.es,
+        alt_text_de: carouselForm.alt_text.de,
+        alt_text_fr: carouselForm.alt_text.fr
+      }
+
+      console.log('Updating carousel with data:', carouselData)
+      
+      const updatedCarousel = await updateCarousel(editingCarousel, carouselData)
+      if (updatedCarousel) {
+        setCarouselItems(carouselItems.map(c => c.id === editingCarousel ? updatedCarousel : c))
+        setEditingCarousel(null)
+        resetCarouselForm()
+        loadAllData()
+        alert('轮播图更新成功！')
+      } else {
+        alert('轮播图更新失败，请检查控制台错误')
+      }
+    } catch (error) {
+      console.error('Error updating carousel:', error)
+      alert('轮播图更新失败')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleCancelEditCarousel = () => {
+    setEditingCarousel(null)
+    resetCarouselForm()
   }
 
   // Post functions
@@ -478,6 +872,122 @@ export default function EnhancedAdminPanel() {
     }
   }
 
+  const handleDeletePost = async (id: string, title: string) => {
+    if (!confirm(`确定要删除新闻 "${title}" 吗？此操作不可撤销。`)) {
+      return
+    }
+
+    setLoading(true)
+    try {
+      const success = await deletePost(id)
+      if (success) {
+        setPosts(posts.filter(p => p.id !== id))
+        alert('新闻删除成功！')
+      } else {
+        alert('新闻删除失败，请检查控制台错误')
+      }
+    } catch (error) {
+      console.error('Error deleting post:', error)
+      alert('新闻删除失败')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleEditPost = (post: AdaptedPost) => {
+    setEditingPost(post.id)
+    setPostForm({
+      date: post.date || new Date().toISOString().split('T')[0],
+      tags: post.tags || [],
+      cover_url: post.cover_url || '',
+      status: post.status || 'published',
+      title: {
+        en: post.title || '',
+        es: post.title_es || '',
+        de: post.title_de || '',
+        fr: post.title_fr || ''
+      },
+      excerpt: {
+        en: post.excerpt || '',
+        es: post.excerpt_es || '',
+        de: post.excerpt_de || '',
+        fr: post.excerpt_fr || ''
+      },
+      body_md: {
+        en: post.body_md || '',
+        es: post.body_md_es || '',
+        de: post.body_md_de || '',
+        fr: post.body_md_fr || ''
+      },
+      alt_text: { en: '', es: '', de: '', fr: '' },
+      image: null
+    })
+  }
+
+  const handleUpdatePost = async () => {
+    if (!editingPost) return;
+
+    const currentPost = posts.find(p => p.id === editingPost);
+    if (!currentPost) return;
+
+    try {
+      let coverUrl = currentPost.cover_url;
+
+      // Upload new image if provided
+      if (postForm.image) {
+        const uploadedUrl = await uploadImage(postForm.image, 'posts', `${Date.now()}-${postForm.image.name}`)
+        if (uploadedUrl) {
+          coverUrl = uploadedUrl;
+        }
+      }
+
+      await updatePost(editingPost, {
+        date: postForm.date,
+        tags: postForm.tags,
+        cover_url: coverUrl,
+        status: postForm.status,
+        title: postForm.title.en,
+        title_es: postForm.title.es,
+        title_de: postForm.title.de,
+        title_fr: postForm.title.fr,
+        excerpt: postForm.excerpt.en,
+        excerpt_es: postForm.excerpt.es,
+        excerpt_de: postForm.excerpt.de,
+        excerpt_fr: postForm.excerpt.fr,
+        body_md: postForm.body_md.en,
+        body_md_es: postForm.body_md.es,
+        body_md_de: postForm.body_md.de,
+        body_md_fr: postForm.body_md.fr
+      });
+
+      await loadAllData();
+      resetPostForm();
+      setEditingPost(null);
+    } catch (error) {
+      console.error('Error updating post:', error);
+    }
+  };
+
+  // Helper function to reset post form
+  const resetPostForm = () => {
+    setPostForm({
+      date: new Date().toISOString().split('T')[0],
+      tags: [],
+      cover_url: '',
+      status: 'published',
+      title: { en: '', es: '', de: '', fr: '' },
+      excerpt: { en: '', es: '', de: '', fr: '' },
+      body_md: { en: '', es: '', de: '', fr: '' },
+      alt_text: { en: '', es: '', de: '', fr: '' },
+      image: null
+    })
+  }
+
+  const handleCancelEditPost = () => {
+    setEditingPost(null)
+    resetPostForm()
+  }
+
   if (loading && products.length === 0 && posts.length === 0 && categories.length === 0) {
     return (
       <div className="container mx-auto p-6">
@@ -487,260 +997,416 @@ export default function EnhancedAdminPanel() {
   }
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold mb-6">增强版管理面板</h1>
+    <div className="container mx-auto p-6 space-y-6">
+      <h1 className="text-3xl font-bold mb-6">Enhanced Admin Panel</h1>
       
       <Tabs defaultValue="products" className="w-full">
         <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="products">产品管理</TabsTrigger>
-          <TabsTrigger value="categories">分类管理</TabsTrigger>
-          <TabsTrigger value="posts">新闻管理</TabsTrigger>
-          <TabsTrigger value="carousel">轮播图管理</TabsTrigger>
+          <TabsTrigger value="products">Products ({products.length})</TabsTrigger>
+          <TabsTrigger value="posts">Posts ({posts.length})</TabsTrigger>
+          <TabsTrigger value="categories">Categories ({categories.length})</TabsTrigger>
+          <TabsTrigger value="carousel">Carousel ({carouselItems.length})</TabsTrigger>
         </TabsList>
 
         {/* Products Tab */}
-        <TabsContent value="products">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Product Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle>{editingProduct ? '编辑产品' : '添加新产品'}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+        <TabsContent value="products" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Plus className="h-5 w-5" />
+                {editingProduct ? 'Edit Product' : 'Add New Product'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="product-status">状态</Label>
+                  <Label htmlFor="product-status">Status</Label>
                   <select
                     id="product-status"
                     value={productForm.status}
                     onChange={(e) => setProductForm({...productForm, status: e.target.value})}
                     className="w-full p-2 border rounded"
                   >
-                    <option value="active">启用</option>
-                    <option value="inactive">禁用</option>
-                    <option value="draft">草稿</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="draft">Draft</option>
                   </select>
                 </div>
-
                 <div>
-                  <Label htmlFor="product-category">分类</Label>
+                  <Label htmlFor="product-category">Category</Label>
                   <select
                     id="product-category"
                     value={productForm.category_id}
                     onChange={(e) => setProductForm({...productForm, category_id: e.target.value})}
                     className="w-full p-2 border rounded"
                   >
-                    <option value="">选择分类</option>
-                    {categories.map(cat => (
-                      <option key={cat.id} value={cat.id}>{cat.name || cat.slug}</option>
+                    <option value="">Select Category</option>
+                    {categories.map((category) => (
+                      <option key={category.id} value={category.id}>
+                        {category.name}
+                      </option>
                     ))}
                   </select>
                 </div>
+              </div>
 
-                <MultiLangInput
-                  label="产品名称"
-                  value={productForm.name}
-                  onChange={(value) => setProductForm({...productForm, name: value})}
-                  placeholder="Product Name"
-                  required
-                />
+              <MultiLangInput
+                label="Product Name"
+                value={productForm.name}
+                onChange={(value) => setProductForm({...productForm, name: value})}
+                placeholder="Product Name"
+                required
+              />
 
-                <MultiLangRichText
-                  label="产品简介"
-                  value={productForm.intro}
-                  onChange={(value) => setProductForm({...productForm, intro: value})}
-                  placeholder="Product Introduction"
-                />
+              <MultiLangInput
+                label="Product Intro"
+                value={productForm.intro}
+                onChange={(value) => setProductForm({...productForm, intro: value})}
+                type="textarea"
+                placeholder="Product Intro"
+              />
 
-                <MultiLangRichText
-                  label="产品描述"
-                  value={productForm.description}
-                  onChange={(value) => setProductForm({...productForm, description: value})}
-                  placeholder="Product Description"
-                />
+              <MultiLangInput
+                label="Product Description"
+                value={productForm.description}
+                onChange={(value) => setProductForm({...productForm, description: value})}
+                type="textarea"
+                placeholder="Product Description"
+              />
 
-                <MultiLangInput
-                  label="图片Alt文本"
-                  value={productForm.alt_text}
-                  onChange={(value) => setProductForm({...productForm, alt_text: value})}
-                  placeholder="Image Alt Text"
-                />
+              <MultiLangInput
+                label="Technical Specifications"
+                value={productForm.technical_specs}
+                onChange={(value) => setProductForm({...productForm, technical_specs: value})}
+                type="textarea"
+                placeholder="Technical Specifications"
+              />
 
+              <MultiLangInput
+                label="Alt Text"
+                value={productForm.alt_text}
+                onChange={(value) => setProductForm({...productForm, alt_text: value})}
+                placeholder="Alt Text for Images"
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="product-image">产品图片</Label>
+                  <Label htmlFor="product-thumbnail">Thumbnail Image</Label>
                   <Input
-                    id="product-image"
+                    id="product-thumbnail"
                     type="file"
                     accept="image/*"
-                    onChange={(e) => setProductForm({...productForm, image: e.target.files?.[0] || null})}
+                    onChange={(e) => setProductForm({...productForm, thumbnail: e.target.files?.[0] || null})}
                   />
                 </div>
+                <div>
+                  <Label htmlFor="product-images">Additional Images</Label>
+                  <Input
+                    id="product-images"
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={(e) => setProductForm({...productForm, images: e.target.files ? Array.from(e.target.files) : null})}
+                  />
+                </div>
+              </div>
 
-                <div className="flex gap-2">
-                  {editingProduct ? (
-                    <>
-                      <Button onClick={() => console.log('Update product')} disabled={loading}>
-                        更新产品
-                      </Button>
-                      <Button variant="outline" onClick={() => {
-                        setEditingProduct(null)
-                        resetProductForm()
-                      }}>
-                        取消
-                      </Button>
-                    </>
-                  ) : (
-                    <Button onClick={handleAddProduct} disabled={loading}>
-                      <Plus className="w-4 h-4 mr-2" />
-                      添加产品
+              <div className="flex gap-2">
+                {editingProduct ? (
+                  <>
+                    <Button onClick={handleUpdateProduct} disabled={loading}>
+                      {loading ? 'Updating...' : 'Update Product'}
                     </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                    <Button variant="outline" onClick={handleCancelEditProduct}>
+                      Cancel
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={handleAddProduct} disabled={loading}>
+                    {loading ? 'Creating...' : 'Add Product'}
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Products List */}
-            <Card>
-              <CardHeader>
-                <CardTitle>产品列表 ({products.length})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {products.map((product) => (
-                    <div key={product.id} className="border p-4 rounded-lg">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h3 className="font-semibold">{product.name || product.slug}</h3>
-                          <p className="text-sm text-gray-600">Slug: {product.slug}</p>
-                          {product.sku && <p className="text-sm text-gray-600">SKU: {product.sku}</p>}
-                          <Badge variant={product.status === 'active' ? 'default' : 'secondary'}>
-                            {product.status}
-                          </Badge>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => console.log('Edit product', product.id)}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => console.log('Delete product', product.id)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
+          {/* Products List */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Products List</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4">
+                {products.map((product) => (
+                  <div key={product.id} className="border rounded-lg p-4 flex justify-between items-start">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg">{product.name}</h3>
+                      <p className="text-sm text-gray-600">SKU: {product.sku}</p>
+                      <p className="text-sm text-gray-600">Status: <Badge variant={product.status === 'active' ? 'default' : 'secondary'}>{product.status}</Badge></p>
+                      {product.intro && (
+                        <p className="text-sm text-gray-700 mt-2 line-clamp-2">{product.intro}</p>
+                      )}
+                      {product.category_id && (
+                        <p className="text-sm text-gray-600 mt-1">
+                          Category: {categories.find(c => c.id === product.category_id)?.name || 'Unknown'}
+                        </p>
+                      )}
                     </div>
-                  ))}
-                  {products.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      暂无产品数据
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditProduct(product)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteProduct(product.id, product.name || 'Unnamed Product')}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Categories Tab */}
-        <TabsContent value="categories">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Category Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle>{editingCategory ? '编辑分类' : '添加新分类'}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <MultiLangInput
-                  label="分类名称"
-                  value={categoryForm.name}
-                  onChange={(value) => setCategoryForm({...categoryForm, name: value})}
-                  placeholder="Category Name"
-                  required
+        <TabsContent value="categories" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Plus className="h-5 w-5" />
+                {editingCategory ? 'Edit Category' : 'Add New Category'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <MultiLangInput
+                label="Category Name"
+                value={categoryForm.name}
+                onChange={(value) => setCategoryForm({...categoryForm, name: value})}
+                placeholder="Category Name"
+                required
+              />
+
+              <div>
+                <Label htmlFor="category-thumbnail">Thumbnail Image</Label>
+                <Input
+                  id="category-thumbnail"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setCategoryForm({...categoryForm, thumbnail: e.target.files?.[0] || null})}
                 />
+              </div>
 
-                <div className="flex gap-2">
-                  {editingCategory ? (
-                    <>
-                      <Button onClick={() => console.log('Update category')} disabled={loading}>
-                        更新分类
-                      </Button>
-                      <Button variant="outline" onClick={() => {
-                        setEditingCategory(null)
-                        resetCategoryForm()
-                      }}>
-                        取消
-                      </Button>
-                    </>
-                  ) : (
-                    <Button onClick={handleAddCategory} disabled={loading}>
-                      <Plus className="w-4 h-4 mr-2" />
-                      添加分类
+              <div className="flex gap-2">
+                {editingCategory ? (
+                  <>
+                    <Button onClick={handleUpdateCategory} disabled={loading}>
+                      {loading ? 'Updating...' : 'Update Category'}
                     </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                    <Button variant="outline" onClick={handleCancelEditCategory}>
+                      Cancel
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={handleAddCategory} disabled={loading}>
+                    {loading ? 'Creating...' : 'Add Category'}
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Categories List */}
-            <Card>
-              <CardHeader>
-                <CardTitle>分类列表 ({categories.length})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {categories.map((category) => (
-                    <div key={category.id} className="border p-4 rounded-lg">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h3 className="font-semibold">{category.name || category.slug}</h3>
-                          <p className="text-sm text-gray-600">Slug: {category.slug}</p>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => console.log('Edit category', category.id)}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => console.log('Delete category', category.id)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
+          {/* Categories List */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Categories List</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4">
+                {categories.map((category) => (
+                  <div key={category.id} className="border rounded-lg p-4 flex justify-between items-start">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg">{category.name}</h3>
+                      <p className="text-sm text-gray-600">Slug: {category.slug}</p>
                     </div>
-                  ))}
-                  {categories.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      暂无分类数据
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditCategory(category)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteCategory(category.id, category.name || 'Unnamed Category')}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
-                  )}
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* Carousel Tab */}
+        <TabsContent value="carousel" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Plus className="h-5 w-5" />
+                {editingCarousel ? 'Edit Carousel Item' : 'Add New Carousel Item'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <MultiLangInput
+                label="Carousel Title"
+                value={carouselForm.title}
+                onChange={(value) => setCarouselForm({...carouselForm, title: value})}
+                placeholder="Carousel Title"
+                required
+              />
+
+              <MultiLangInput
+                label="Description"
+                value={carouselForm.description}
+                onChange={(value) => setCarouselForm({...carouselForm, description: value})}
+                placeholder="Carousel Description"
+              />
+
+              <MultiLangInput
+                label="Alt Text"
+                value={carouselForm.alt_text}
+                onChange={(value) => setCarouselForm({...carouselForm, alt_text: value})}
+                placeholder="Alt Text for Image"
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <Label htmlFor="carousel-link">Link URL</Label>
+                  <Input
+                    id="carousel-link"
+                    type="url"
+                    value={carouselForm.link_url}
+                    onChange={(e) => setCarouselForm({...carouselForm, link_url: e.target.value})}
+                    placeholder="https://example.com"
+                  />
                 </div>
-              </CardContent>
-            </Card>
-          </div>
+                <div>
+                  <Label htmlFor="carousel-order">Order Index</Label>
+                  <Input
+                    id="carousel-order"
+                    type="number"
+                    value={carouselForm.order_index}
+                    onChange={(e) => setCarouselForm({...carouselForm, order_index: parseInt(e.target.value) || 0})}
+                  />
+                </div>
+                <div className="flex items-center space-x-2 pt-6">
+                  <input
+                    type="checkbox"
+                    id="carousel-active"
+                    checked={carouselForm.is_active}
+                    onChange={(e) => setCarouselForm({...carouselForm, is_active: e.target.checked})}
+                  />
+                  <Label htmlFor="carousel-active">Active</Label>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="carousel-image">Carousel Image</Label>
+                <Input
+                  id="carousel-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setCarouselForm({...carouselForm, image: e.target.files?.[0] || null})}
+                />
+              </div>
+
+              <div className="flex gap-2">
+                {editingCarousel ? (
+                  <>
+                    <Button onClick={handleUpdateCarousel} disabled={loading}>
+                      {loading ? 'Updating...' : 'Update Carousel'}
+                    </Button>
+                    <Button variant="outline" onClick={handleCancelEditCarousel}>
+                      Cancel
+                    </Button>
+                  </>
+                ) : (
+                  <Button onClick={handleAddCarousel} disabled={loading}>
+                    {loading ? 'Creating...' : 'Add Carousel'}
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Carousel List */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Carousel Items</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4">
+                {carouselItems.map((carousel) => (
+                  <div key={carousel.id} className="border rounded-lg p-4 flex justify-between items-start">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg">{carousel.title}</h3>
+                      <p className="text-sm text-gray-600">Order: {carousel.order_index}</p>
+                      <p className="text-sm text-gray-600">
+                        Status: <Badge variant={carousel.is_active ? 'default' : 'secondary'}>
+                          {carousel.is_active ? 'Active' : 'Inactive'}
+                        </Badge>
+                      </p>
+                      {carousel.link_url && (
+                        <p className="text-sm text-gray-600 mt-1">Link: {carousel.link_url}</p>
+                      )}
+                    </div>
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditCarousel(carousel)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeleteCarousel(carousel.id, carousel.title || 'Unnamed Carousel')}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
         {/* Posts Tab */}
-        <TabsContent value="posts">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Post Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle>{editingPost ? '编辑新闻' : '添加新新闻'}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
+        <TabsContent value="posts" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Plus className="h-5 w-5" />
+                {editingPost ? 'Edit Post' : 'Add New Post'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="post-date">发布日期</Label>
+                  <Label htmlFor="post-date">Date</Label>
                   <Input
                     id="post-date"
                     type="date"
@@ -748,298 +1414,138 @@ export default function EnhancedAdminPanel() {
                     onChange={(e) => setPostForm({...postForm, date: e.target.value})}
                   />
                 </div>
-
                 <div>
-                  <Label htmlFor="post-status">状态</Label>
+                  <Label htmlFor="post-status">Status</Label>
                   <select
                     id="post-status"
                     value={postForm.status}
                     onChange={(e) => setPostForm({...postForm, status: e.target.value})}
-                    className="w-full p-2 border rounded"
+                    className="w-full p-2 border rounded-md"
                   >
-                    <option value="published">已发布</option>
-                    <option value="draft">草稿</option>
-                    <option value="archived">已归档</option>
+                    <option value="published">Published</option>
+                    <option value="draft">Draft</option>
                   </select>
                 </div>
+              </div>
 
-                <MultiLangInput
-                  label="新闻标题"
-                  value={postForm.title}
-                  onChange={(value) => setPostForm({...postForm, title: value})}
-                  placeholder="News Title"
-                  required
+              <div>
+                <Label htmlFor="post-tags">Tags (comma separated)</Label>
+                <Input
+                  id="post-tags"
+                  value={postForm.tags.join(', ')}
+                  onChange={(e) => setPostForm({...postForm, tags: e.target.value.split(',').map(tag => tag.trim()).filter(tag => tag)})}
+                  placeholder="tag1, tag2, tag3"
                 />
+              </div>
 
-                <MultiLangInput
-                  label="新闻摘要"
-                  value={postForm.excerpt}
-                  onChange={(value) => setPostForm({...postForm, excerpt: value})}
-                  type="textarea"
-                  placeholder="News Summary"
+              <div>
+                <Label htmlFor="post-cover-url">Cover URL</Label>
+                <Input
+                  id="post-cover-url"
+                  value={postForm.cover_url}
+                  onChange={(e) => setPostForm({...postForm, cover_url: e.target.value})}
+                  placeholder="https://example.com/image.jpg"
                 />
+              </div>
 
-                <MultiLangRichText
-                  label="新闻内容"
-                  value={postForm.body_md}
-                  onChange={(value) => setPostForm({...postForm, body_md: value})}
-                  placeholder="News Content"
+              <MultiLangInput
+                label="Post Title"
+                value={postForm.title}
+                onChange={(value) => setPostForm({...postForm, title: value})}
+                placeholder="Post Title"
+                required
+              />
+
+              <MultiLangInput
+                label="Post Excerpt"
+                value={postForm.excerpt}
+                onChange={(value) => setPostForm({...postForm, excerpt: value})}
+                type="textarea"
+                placeholder="Post Excerpt"
+              />
+
+              <MultiLangInput
+                label="Post Content (Markdown)"
+                value={postForm.body_md}
+                onChange={(value) => setPostForm({...postForm, body_md: value})}
+                type="textarea"
+                placeholder="Post Content in Markdown"
+              />
+
+              <div>
+                <Label htmlFor="post-image">Cover Image</Label>
+                <Input
+                  id="post-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => setPostForm({...postForm, image: e.target.files?.[0] || null})}
                 />
+              </div>
 
-                <MultiLangInput
-                  label="封面图片Alt文本"
-                  value={postForm.alt_text}
-                  onChange={(value) => setPostForm({...postForm, alt_text: value})}
-                  placeholder="Cover Image Alt Text"
-                />
-
-                <div>
-                  <Label htmlFor="post-image">封面图片</Label>
-                  <Input
-                    id="post-image"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setPostForm({...postForm, image: e.target.files?.[0] || null})}
-                  />
-                </div>
-
-                <div className="flex gap-2">
-                  {editingPost ? (
-                    <>
-                      <Button onClick={() => console.log('Update post')} disabled={loading}>
-                        更新新闻
-                      </Button>
-                      <Button variant="outline" onClick={() => {
-                        setEditingPost(null)
-                        setPostForm({
-                          date: new Date().toISOString().split('T')[0],
-                          tags: [],
-                          cover_url: '',
-                          status: 'published',
-                          title: { en: '', es: '', de: '', fr: '' },
-                          excerpt: { en: '', es: '', de: '', fr: '' },
-                          body_md: { en: '', es: '', de: '', fr: '' },
-                          alt_text: { en: '', es: '', de: '', fr: '' },
-                          image: null
-                        })
-                      }}>
-                        取消
-                      </Button>
-                    </>
-                  ) : (
-                    <Button onClick={handleAddPost} disabled={loading}>
-                      <Plus className="w-4 h-4 mr-2" />
-                      添加新闻
+              <div className="flex gap-2">
+                {editingPost ? (
+                  <>
+                    <Button onClick={handleUpdatePost} disabled={loading}>
+                      {loading ? 'Updating...' : 'Update Post'}
                     </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Posts List */}
-            <Card>
-              <CardHeader>
-                <CardTitle>新闻列表 ({posts.length})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {posts.map((post) => (
-                    <div key={post.id} className="border p-4 rounded-lg">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h3 className="font-semibold">{post.title || post.slug}</h3>
-                          <p className="text-sm text-gray-600">Slug: {post.slug}</p>
-                          <p className="text-sm text-gray-600">日期: {post.date}</p>
-                          <Badge variant={post.status === 'published' ? 'default' : 'secondary'}>
-                            {post.status === 'published' ? '已发布' : post.status === 'draft' ? '草稿' : '已归档'}
-                          </Badge>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => console.log('Edit post', post.id)}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => console.log('Delete post', post.id)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                  {posts.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      暂无新闻数据
-                    </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </TabsContent>
-
-        {/* Carousel Tab */}
-        <TabsContent value="carousel">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* Carousel Form */}
-            <Card>
-              <CardHeader>
-                <CardTitle>{editingCarousel ? '编辑轮播图' : '添加新轮播图'}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <MultiLangInput
-                  label="轮播图标题"
-                  value={carouselForm.title}
-                  onChange={(value) => setCarouselForm({...carouselForm, title: value})}
-                  placeholder="Carousel Title"
-                  required
-                />
-
-                <MultiLangInput
-                  label="轮播图描述"
-                  value={carouselForm.description}
-                  onChange={(value) => setCarouselForm({...carouselForm, description: value})}
-                  type="textarea"
-                  placeholder="Carousel Description"
-                />
-
-                <MultiLangInput
-                  label="图片Alt文本"
-                  value={carouselForm.alt_text}
-                  onChange={(value) => setCarouselForm({...carouselForm, alt_text: value})}
-                  placeholder="Image Alt Text"
-                />
-
-                <div>
-                  <Label htmlFor="carousel-link">链接地址</Label>
-                  <Input
-                    id="carousel-link"
-                    value={carouselForm.link_url}
-                    onChange={(e) => setCarouselForm({...carouselForm, link_url: e.target.value})}
-                    placeholder="https://example.com"
-                  />
-                </div>
-
-                <div>
-                  <Label htmlFor="carousel-order">排序顺序</Label>
-                  <Input
-                    id="carousel-order"
-                    type="number"
-                    value={carouselForm.order_index}
-                    onChange={(e) => setCarouselForm({...carouselForm, order_index: parseInt(e.target.value) || 0})}
-                    placeholder="0"
-                  />
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <input
-                    id="carousel-active"
-                    type="checkbox"
-                    checked={carouselForm.is_active}
-                    onChange={(e) => setCarouselForm({...carouselForm, is_active: e.target.checked})}
-                    className="w-4 h-4"
-                  />
-                  <Label htmlFor="carousel-active">启用轮播图</Label>
-                </div>
-
-                <div>
-                  <Label htmlFor="carousel-image">轮播图片 *</Label>
-                  <Input
-                    id="carousel-image"
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setCarouselForm({...carouselForm, image: e.target.files?.[0] || null})}
-                  />
-                </div>
-
-                <div className="flex gap-2">
-                  {editingCarousel ? (
-                    <>
-                      <Button onClick={() => console.log('Update carousel')} disabled={loading}>
-                        更新轮播图
-                      </Button>
-                      <Button variant="outline" onClick={() => {
-                        setEditingCarousel(null)
-                        resetCarouselForm()
-                      }}>
-                        取消
-                      </Button>
-                    </>
-                  ) : (
-                    <Button onClick={handleAddCarousel} disabled={loading}>
-                      <Plus className="w-4 h-4 mr-2" />
-                      添加轮播图
+                    <Button variant="outline" onClick={handleCancelEditPost}>
+                      Cancel
                     </Button>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
+                  </>
+                ) : (
+                  <Button onClick={handleAddPost} disabled={loading}>
+                    {loading ? 'Creating...' : 'Add Post'}
+                  </Button>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-            {/* Carousel List */}
-            <Card>
-              <CardHeader>
-                <CardTitle>轮播图列表 ({carouselItems.length})</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4 max-h-96 overflow-y-auto">
-                  {carouselItems.map((item) => (
-                    <div key={item.id} className="border p-4 rounded-lg">
-                      <div className="flex justify-between items-start">
-                        <div className="flex-1">
-                          <h3 className="font-semibold">{item.title || '无标题'}</h3>
-                          <p className="text-sm text-gray-600">排序: {item.order_index}</p>
-                          {item.link_url && (
-                            <p className="text-sm text-gray-600 truncate">链接: {item.link_url}</p>
-                          )}
-                          <div className="mt-2">
-                            <Badge variant={item.is_active ? 'default' : 'secondary'}>
-                              {item.is_active ? '启用' : '禁用'}
-                            </Badge>
-                          </div>
-                          {item.image_url && (
-                            <div className="mt-2">
-                              <img 
-                                src={item.image_url} 
-                                alt={item.alt_text || item.title || '轮播图'}
-                                className="w-16 h-16 object-cover rounded"
-                              />
-                            </div>
-                          )}
+          {/* Posts List */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Posts List</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4">
+                {posts.map((post) => (
+                  <div key={post.id} className="border rounded-lg p-4 flex justify-between items-start">
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg">{post.title}</h3>
+                      <p className="text-sm text-gray-600">Date: {post.date}</p>
+                      <p className="text-sm text-gray-600">Status: <Badge variant={post.status === 'published' ? 'default' : 'secondary'}>{post.status}</Badge></p>
+                      {post.excerpt && (
+                        <p className="text-sm text-gray-700 mt-2 line-clamp-2">{post.excerpt}</p>
+                      )}
+                      {post.tags && post.tags.length > 0 && (
+                        <div className="flex gap-1 mt-2">
+                          {post.tags.map((tag, index) => (
+                            <Badge key={index} variant="outline" className="text-xs">{tag}</Badge>
+                          ))}
                         </div>
-                        <div className="flex gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            onClick={() => console.log('Edit carousel', item.id)}
-                          >
-                            <Edit className="w-4 h-4" />
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="destructive"
-                            onClick={() => console.log('Delete carousel', item.id)}
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </Button>
-                        </div>
-                      </div>
+                      )}
                     </div>
-                  ))}
-                  {carouselItems.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      暂无轮播图数据
+                    <div className="flex gap-2 ml-4">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => handleEditPost(post)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="destructive"
+                        size="sm"
+                        onClick={() => handleDeletePost(post.id, post.title || 'Unnamed Post')}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
                     </div>
-                  )}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
       </Tabs>
     </div>

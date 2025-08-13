@@ -1,0 +1,71 @@
+'use client'
+
+import { PageHeader } from '@/components/ui/page-header';
+import Footer from '../../components/Footer';
+import Link from 'next/link';
+import { useLanguage } from '@/lib/language-context';
+
+interface CategoryWithCount {
+  id: string;
+  slug: string;
+  name?: string;
+  productCount: number;
+}
+
+interface ProductsClientProps {
+  categories: CategoryWithCount[];
+}
+
+export default function ProductsClient({ categories }: ProductsClientProps) {
+  const { t } = useLanguage();
+
+
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <PageHeader 
+        title={t('products.title')} 
+        description={t('products.subtitle')}
+      />
+      
+      <main className="container mx-auto px-4 py-12">
+        {/* Categories Overview */}
+         <section className="mb-16">
+           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {categories.map((category) => (
+               <Link
+                 key={category.id} 
+                 href={`/products/${category.slug}`}
+                 className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow block"
+               >
+                 <div className="h-48 relative overflow-hidden">
+                   <img 
+                     src={`/product_cat/${category.slug}.webp`}
+                     alt={category.name || category.slug}
+                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                   />
+                 </div>
+                 <div className="p-6">
+                   <div className="mb-2">
+                     <h3 className="text-xl font-semibold text-gray-900">{category.name || category.slug}</h3>
+                   </div>
+
+                   <div className="flex items-center justify-between">
+                     <span className="text-sm text-gray-500">
+                       {category.productCount} products
+                     </span>
+                     <span className="text-blue-600 hover:text-blue-800 font-medium">
+                       View Products →
+                     </span>
+                   </div>
+                 </div>
+               </Link>
+             ))}
+          </div>
+        </section>
+      </main>
+      
+      <Footer />
+    </div>
+  );
+}

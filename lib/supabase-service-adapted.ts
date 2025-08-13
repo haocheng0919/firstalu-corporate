@@ -9,6 +9,7 @@ export interface AdaptedProduct {
   status?: string
   images?: any
   specs?: any
+  technical_specs?: any
   created_at?: string
   // i18n fields
   name?: string
@@ -51,12 +52,17 @@ export interface AdaptedPost {
 export interface AdaptedCategory {
   id: string
   slug: string
+  thumbnail_url?: string
   created_at?: string
   // i18n fields (if they exist)
   name?: string
   name_es?: string
   name_de?: string
   name_fr?: string
+  description?: string
+  description_es?: string
+  description_de?: string
+  description_fr?: string
 }
 
 export interface AdaptedCarousel {
@@ -118,6 +124,7 @@ export async function createProduct(product: Omit<AdaptedProduct, 'id' | 'create
         status: product.status || 'active',
         images: product.images,
         specs: product.specs,
+        technical_specs: product.technical_specs,
         category_id: product.category_id
       }])
       .select()
@@ -131,6 +138,7 @@ export async function createProduct(product: Omit<AdaptedProduct, 'id' | 'create
         status: product.status || 'active',
         images: product.images,
         specs: product.specs,
+        technical_specs: product.technical_specs,
         category_id: product.category_id
       })
       return null
@@ -143,7 +151,6 @@ export async function createProduct(product: Omit<AdaptedProduct, 'id' | 'create
       const name = lang === 'en' ? product.name : (product as any)[`name_${lang}`]
       const intro = lang === 'en' ? product.intro : (product as any)[`intro_${lang}`]
       const description = lang === 'en' ? product.description : (product as any)[`description_${lang}`]
-
       if (name || intro || description) {
         await supabase
           .from('product_i18n')
@@ -224,6 +231,7 @@ export async function updateProduct(id: string, updates: Partial<AdaptedProduct>
     if (updates.status) productUpdates.status = updates.status
     if (updates.images) productUpdates.images = updates.images
     if (updates.specs) productUpdates.specs = updates.specs
+    if (updates.technical_specs) productUpdates.technical_specs = updates.technical_specs
     if (updates.category_id) productUpdates.category_id = updates.category_id
 
     const { data: productData, error: productError } = await supabase
@@ -505,7 +513,8 @@ export async function createCategory(category: Omit<AdaptedCategory, 'id' | 'cre
     const { data: categoryData, error: categoryError } = await supabase
       .from('categories')
       .insert([{
-        slug: category.slug
+        slug: category.slug,
+        thumbnail_url: category.thumbnail_url
       }])
       .select()
       .single()
@@ -515,19 +524,20 @@ export async function createCategory(category: Omit<AdaptedCategory, 'id' | 'cre
       return null
     }
 
-    // Create i18n records for each language if names are provided
+    // Create i18n records for each language if names or descriptions are provided
     const languages = ['en', 'es', 'de', 'fr']
     for (const lang of languages) {
       const locale = lang === 'en' ? 'en' : lang
       const name = lang === 'en' ? category.name : (category as any)[`name_${lang}`]
-
-      if (name) {
+      const description = lang === 'en' ? category.description : (category as any)[`description_${lang}`]
+      if (name || description) {
         await supabase
           .from('category_i18n')
           .insert([{
             category_id: categoryData.id,
             locale,
-            name: name || ''
+            name: name || '',
+            description: description || ''
           }])
       }
     }
@@ -544,7 +554,8 @@ export async function getCategories(): Promise<AdaptedCategory[]> {
     const { data: categories, error: categoriesError } = await supabase
       .from('categories')
       .select('*')
-      .order('created_at', { ascending: false })
+      .is('parent_id', null)  // Only get top-level categories (parent categories)
+      .order('created_at', { ascending: true })
 
     if (categoriesError) {
       console.error('Get categories error:', categoriesError)
@@ -571,8 +582,10 @@ export async function getCategories(): Promise<AdaptedCategory[]> {
       categoryI18n.forEach(i18n => {
         if (i18n.locale === 'en') {
           merged.name = i18n.name
+          merged.description = i18n.description
         } else {
           merged[`name_${i18n.locale}`] = i18n.name
+          merged[`description_${i18n.locale}`] = i18n.description
         }
       })
 
@@ -586,11 +599,62 @@ export async function getCategories(): Promise<AdaptedCategory[]> {
   }
 }
 
+export async function getSubcategories(parentId: string): Promise<AdaptedCategory[]> {
+  try {
+    const { data: categories, error: categoriesError } = await supabase
+      .from('categories')
+      .select('*')
+      .eq('parent_id', parentId)  // Get subcategories of the specified parent
+      .order('created_at', { ascending: true })
+
+    if (categoriesError) {
+      console.error('Get subcategories error:', categoriesError)
+      return []
+    }
+
+    // Get i18n data for all categories
+    const categoryIds = categories.map(c => c.id)
+    const { data: i18nData, error: i18nError } = await supabase
+      .from('category_i18n')
+      .select('*')
+      .in('category_id', categoryIds)
+
+    if (i18nError) {
+      console.error('Get subcategory i18n error:', i18nError)
+      return categories || []
+    }
+
+    // Merge i18n data with categories
+    const categoriesWithI18n = categories.map(category => {
+      const categoryI18n = i18nData.filter(i18n => i18n.category_id === category.id)
+      const merged = { ...category }
+
+      categoryI18n.forEach(i18n => {
+        if (i18n.locale === 'en') {
+          merged.name = i18n.name
+          merged.description = i18n.description
+        } else {
+          merged[`name_${i18n.locale}`] = i18n.name
+          merged[`description_${i18n.locale}`] = i18n.description
+        }
+      })
+
+      return merged
+    })
+
+    return categoriesWithI18n || []
+  } catch (error) {
+    console.error('Get subcategories error:', error)
+    return []
+  }
+}
+
 export async function updateCategory(id: string, updates: Partial<AdaptedCategory>): Promise<AdaptedCategory | null> {
   try {
     // Update main category record
     const categoryUpdates: any = {}
     if (updates.slug) categoryUpdates.slug = updates.slug
+    if (updates.thumbnail_url !== undefined) categoryUpdates.thumbnail_url = updates.thumbnail_url
 
     const { data: categoryData, error: categoryError } = await supabase
       .from('categories')
@@ -609,10 +673,12 @@ export async function updateCategory(id: string, updates: Partial<AdaptedCategor
     for (const lang of languages) {
       const locale = lang === 'en' ? 'en' : lang
       const name = lang === 'en' ? updates.name : updates[`name_${lang}` as keyof AdaptedCategory]
+      const description = lang === 'en' ? updates.description : updates[`description_${lang}` as keyof AdaptedCategory]
 
-      if (name !== undefined) {
+      if (name !== undefined || description !== undefined) {
         const i18nUpdates: any = {}
         if (name !== undefined) i18nUpdates.name = name
+        if (description !== undefined) i18nUpdates.description = description
 
         // Try to update existing record, if not found, create new one
         const { error: updateError } = await supabase
@@ -628,7 +694,8 @@ export async function updateCategory(id: string, updates: Partial<AdaptedCategor
             .insert([{
               category_id: id,
               locale,
-              name: name || ''
+              name: name || '',
+              description: description || ''
             }])
         }
       }
@@ -894,3 +961,95 @@ export const createProductCategory = createCategory
 export const getProductCategories = getCategories
 export const updateProductCategory = updateCategory
 export const deleteProductCategory = deleteCategory
+
+// Product Images functions
+export interface ProductImage {
+  id: string
+  product_id: string
+  image_url: string
+  image_type: 'main' | 'gallery' | 'detail'
+  sort_order: number
+  alt_text?: string
+  created_at?: string
+}
+
+export async function createProductImage(image: Omit<ProductImage, 'id' | 'created_at'>): Promise<ProductImage | null> {
+  try {
+    const { data, error } = await supabase
+      .from('product_images')
+      .insert([image])
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Create product image error:', error)
+      return null
+    }
+
+    return data
+  } catch (error) {
+    console.error('Create product image error:', error)
+    return null
+  }
+}
+
+export async function getProductImages(productId: string): Promise<ProductImage[]> {
+  try {
+    const { data, error } = await supabase
+      .from('product_images')
+      .select('*')
+      .eq('product_id', productId)
+      .order('image_type')
+      .order('sort_order')
+
+    if (error) {
+      console.error('Get product images error:', error)
+      return []
+    }
+
+    return data || []
+  } catch (error) {
+    console.error('Get product images error:', error)
+    return []
+  }
+}
+
+export async function updateProductImage(id: string, updates: Partial<ProductImage>): Promise<ProductImage | null> {
+  try {
+    const { data, error } = await supabase
+      .from('product_images')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .single()
+
+    if (error) {
+      console.error('Update product image error:', error)
+      return null
+    }
+
+    return data
+  } catch (error) {
+    console.error('Update product image error:', error)
+    return null
+  }
+}
+
+export async function deleteProductImage(id: string): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('product_images')
+      .delete()
+      .eq('id', id)
+
+    if (error) {
+      console.error('Delete product image error:', error)
+      return false
+    }
+
+    return true
+  } catch (error) {
+    console.error('Delete product image error:', error)
+    return false
+  }
+}

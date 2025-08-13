@@ -92,6 +92,8 @@
     "availableSizes": "Available Sizes",
     "requestQuote": "Request Quote",
     "viewDetails": "View Details",
+    "subcategories": "Subcategories",
+    "noSubcategories": "No subcategories found.",
     "categories": {
       "aluminumContainers": {
         "description": "Durable aluminum containers for food storage and delivery"

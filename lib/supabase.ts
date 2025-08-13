@@ -69,10 +69,6 @@ export interface ProductCategory {
   name_de?: string
   name_fr?: string
   slug: string
-  description?: string
-  description_es?: string
-  description_de?: string
-  description_fr?: string
   image_url?: string
   image_alt?: string
   image_alt_es?: string
@@ -91,10 +87,6 @@ export interface ProductSubcategory {
   name_de?: string
   name_fr?: string
   slug: string
-  description?: string
-  description_es?: string
-  description_de?: string
-  description_fr?: string
   image_url?: string
   image_alt?: string
   image_alt_es?: string
