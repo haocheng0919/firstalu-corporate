@@ -337,7 +337,133 @@ export default function CategoryClient({
     );
   }
 
-  // For other categories, use the original logic
+  // Get sample products data for categories without database products
+  const getSampleProducts = (categorySlug: string) => {
+    const sampleProducts: { [key: string]: any[] } = {
+      'kitchen-baking-papers': [
+        {
+          id: 'sbp-28cm',
+          name: 'Silicone Baking Paper 28cm',
+          slug: 'silicone-baking-paper-28cm',
+          description: 'Non-stick silicone baking paper, perfect for baking and cooking.',
+          image: '/disposablephoto/Baking Products.webp'
+        },
+        {
+          id: 'ppr-40cm', 
+          name: 'Parchment Paper Roll 40cm',
+          slug: 'parchment-paper-roll-40cm',
+          description: 'High-quality parchment paper roll for professional baking.',
+          image: '/disposablephoto/Baking Products.webp'
+        },
+        {
+          id: 'wps-25x35',
+          name: 'Wax Paper Sheets 25x35cm',
+          slug: 'wax-paper-sheets-25x35cm', 
+          description: 'Food-grade wax paper sheets for food packaging and storage.',
+          image: '/disposablephoto/Baking Products.webp'
+        }
+      ],
+      'paper-cups-drink-cups': [
+        {
+          id: 'pc-8oz',
+          name: '8oz Paper Coffee Cups',
+          slug: '8oz-paper-coffee-cups',
+          description: 'Disposable paper coffee cups with heat-resistant coating.',
+          image: '/disposablephoto/Disposable Cups.webp'
+        },
+        {
+          id: 'pc-12oz',
+          name: '12oz Paper Drink Cups', 
+          slug: '12oz-paper-drink-cups',
+          description: 'Large paper cups perfect for cold and hot beverages.',
+          image: '/disposablephoto/Disposable Cups.webp'
+        },
+        {
+          id: 'pc-16oz',
+          name: '16oz Paper Cups with Lids',
+          slug: '16oz-paper-cups-with-lids',
+          description: 'Extra large paper cups with matching lids for takeaway drinks.',
+          image: '/disposablephoto/Disposable Cups.webp'
+        }
+      ],
+      'kraft-packaging': [
+        {
+          id: 'kpb-s',
+          name: 'Kraft Paper Bags Small',
+          slug: 'kraft-paper-bags-small',
+          description: 'Eco-friendly kraft paper bags for food packaging.',
+          image: '/disposablephoto/Disposable Food Boxes.webp'
+        },
+        {
+          id: 'kpb-m',
+          name: 'Kraft Paper Bags Medium',
+          slug: 'kraft-paper-bags-medium', 
+          description: 'Medium-sized kraft paper bags with handles.',
+          image: '/disposablephoto/Disposable Food Boxes.webp'
+        },
+        {
+          id: 'kfb-rect',
+          name: 'Kraft Food Boxes Rectangle',
+          slug: 'kraft-food-boxes-rectangle',
+          description: 'Rectangular kraft food boxes for takeaway meals.',
+          image: '/disposablephoto/Disposable Food Boxes.webp'
+        }
+      ],
+      'wooden-disposable-tableware': [
+        {
+          id: 'wc-standard',
+          name: 'Wooden Disposable Chopsticks',
+          slug: 'wooden-disposable-chopsticks',
+          description: 'Natural wooden chopsticks for restaurants and takeaway.',
+          image: '/disposablephoto/Disposable Chopsticks.webp'
+        },
+        {
+          id: 'wf-set',
+          name: 'Wooden Fork and Spoon Set',
+          slug: 'wooden-fork-spoon-set',
+          description: 'Eco-friendly wooden cutlery set for sustainable dining.',
+          image: '/disposablephoto/Disposable Chopsticks.webp'
+        },
+        {
+          id: 'wk-eco',
+          name: 'Wooden Knife Eco-Pack',
+          slug: 'wooden-knife-eco-pack',
+          description: 'Biodegradable wooden knives for environmental dining.',
+          image: '/disposablephoto/Disposable Chopsticks.webp'
+        }
+      ],
+      'bamboo-disposable-tableware': [
+        {
+          id: 'bc-premium',
+          name: 'Bamboo Disposable Chopsticks',
+          slug: 'bamboo-disposable-chopsticks',
+          description: 'Premium bamboo chopsticks with smooth finish.',
+          image: '/disposablephoto/Disposable Chopsticks.webp'
+        },
+        {
+          id: 'bf-set',
+          name: 'Bamboo Fork and Spoon Set',
+          slug: 'bamboo-fork-spoon-set',
+          description: 'Sustainable bamboo cutlery set for eco-conscious dining.',
+          image: '/disposablephoto/Disposable Chopsticks.webp'
+        },
+        {
+          id: 'bp-round',
+          name: 'Bamboo Round Plates',
+          slug: 'bamboo-round-plates',
+          description: 'Disposable bamboo plates for parties and events.',
+          image: '/disposablephoto/Disposable Chopsticks.webp'
+        }
+      ]
+    };
+
+    return sampleProducts[categorySlug] || [];
+  };
+
+  // For other categories, use enhanced display with sample products
+  const sampleProducts = products.length === 0 ? getSampleProducts(categorySlug) : [];
+  const displayProducts = products.length > 0 ? products : sampleProducts;
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <PageHeader 
@@ -356,40 +482,113 @@ export default function CategoryClient({
           </Link>
         </div>
 
+        {/* Category Description */}
+        <div className="mb-12 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">{parentCategory.name || parentCategory.slug}</h2>
+          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
+            {getCategoryDescription(categorySlug)}
+          </p>
+        </div>
+
         {/* Products Grid */}
         <section>
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">
-            {parentCategory.name} Products
-          </h2>
+          <div className="flex items-center justify-between mb-8">
+            <h3 className="text-2xl font-bold text-gray-900">
+              Our {parentCategory.name} Products ({displayProducts.length} items)
+            </h3>
+            {sampleProducts.length > 0 && (
+              <div className="text-sm text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
+                Preview Products - Contact us for full catalog
+              </div>
+            )}
+          </div>
           
-          {products.length === 0 ? (
+          {displayProducts.length === 0 ? (
             <div className="text-center py-12">
+              <div className="w-24 h-24 mx-auto mb-4 bg-gray-200 rounded-full flex items-center justify-center">
+                <svg className="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10" />
+                </svg>
+              </div>
+              <h4 className="text-xl font-semibold text-gray-700 mb-2">Products Coming Soon</h4>
               <p className="text-gray-500 text-lg">{t('products.noProducts')}</p>
+              <p className="text-gray-400 mt-2">Contact us for current product availability</p>
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {products.map((product) => (
+              {displayProducts.map((product) => {
+                const isDbProduct = 'id' in product;
+                const productImage = isDbProduct 
+                  ? getProductImagePath(product as Product)
+                  : product.image;
+                const productName = isDbProduct 
+                  ? (product as Product).name || (product as Product).slug
+                  : product.name;
+                const productDescription = isDbProduct
+                  ? (product as Product).description || (product as Product).intro || 'High-quality product for your business needs.'
+                  : product.description;
+                const productHref = isDbProduct
+                  ? `/products/${categorySlug}/${(product as Product).slug}`
+                  : `/products/${categorySlug}/${product.slug}`;
+
+                return (
+                  <div
+                    key={product.id || product.slug}
+                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer"
+                  >
+                    <div className="h-48 relative overflow-hidden">
+                      <img 
+                        src={productImage}
+                        alt={productName}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = `/product_cat/${categorySlug}.webp`;
+                        }}
+                      />
+                      {!isDbProduct && (
+                        <div className="absolute top-2 right-2 bg-blue-500 text-white text-xs px-2 py-1 rounded">
+                          Preview
+                        </div>
+                      )}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1">{productName}</h3>
+                      <p className="text-sm text-gray-600 line-clamp-2">{productDescription}</p>
+                      <div className="mt-3 flex justify-between items-center">
+                        <span className="text-blue-600 font-medium text-sm">View Details</span>
+                        {!isDbProduct && (
+                          <span className="text-xs text-gray-400">Contact for specs</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+          
+          {/* Contact Section for Sample Products */}
+          {sampleProducts.length > 0 && (
+            <div className="mt-16 bg-blue-50 rounded-2xl p-8 text-center">
+              <h4 className="text-2xl font-bold text-blue-900 mb-4">Need More Information?</h4>
+              <p className="text-blue-700 mb-6">
+                These are preview products. Contact our sales team for complete product catalogs, 
+                specifications, and bulk pricing.
+              </p>
+              <div className="flex flex-wrap justify-center gap-4">
                 <Link
-                  key={product.id}
-                  href={`/products/${categorySlug}/${product.slug}`}
-                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                  href="/contact"
+                  className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
                 >
-                  <div className="h-48 relative overflow-hidden">
-                    <img 
-                      src={getProductImagePath(product)}
-                      alt={product.name || product.slug}
-                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/product_img/placeholder.webp';
-                      }}
-                    />
-                  </div>
-                  <div className="p-4">
-                    <h3 className="text-lg font-semibold text-gray-900 mb-1">{product.name || product.slug}</h3>
-                    <p className="text-sm text-gray-600 line-clamp-2">{product.description || product.intro || 'High-quality product for your business needs.'}</p>
-                  </div>
+                  Contact Sales Team
                 </Link>
-              ))}
+                <a
+                  href="mailto:info@firstaluminum.com"
+                  className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium border border-blue-200 hover:bg-blue-50 transition-colors"
+                >
+                  Email Us
+                </a>
+              </div>
             </div>
           )}
           
