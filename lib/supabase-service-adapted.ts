@@ -52,6 +52,7 @@ export interface AdaptedPost {
 export interface AdaptedCategory {
   id: string
   slug: string
+  parent_id?: string
   thumbnail_url?: string
   created_at?: string
   // i18n fields (if they exist)
@@ -219,6 +220,51 @@ export async function getProducts(): Promise<AdaptedProduct[]> {
   } catch (error) {
     console.error('Get products error:', error)
     return []
+  }
+}
+
+export async function getProductBySku(sku: string): Promise<AdaptedProduct | null> {
+  try {
+    const { data: product, error: productError } = await supabase
+      .from('products')
+      .select('*')
+      .eq('sku', sku)
+      .single()
+
+    if (productError) {
+      console.error('Get product by SKU error:', productError)
+      return null
+    }
+
+    // Get i18n data for the product
+    const { data: i18nData, error: i18nError } = await supabase
+      .from('product_i18n')
+      .select('*')
+      .eq('product_id', product.id)
+
+    if (i18nError) {
+      console.error('Get product i18n error:', i18nError)
+      return product
+    }
+
+    // Merge i18n data with product
+    const merged = { ...product }
+    i18nData.forEach(i18n => {
+      if (i18n.locale === 'en') {
+        merged.name = i18n.name
+        merged.intro = i18n.intro
+        merged.description = i18n.description
+      } else {
+        merged[`name_${i18n.locale}`] = i18n.name
+        merged[`intro_${i18n.locale}`] = i18n.intro
+        merged[`description_${i18n.locale}`] = i18n.description
+      }
+    })
+
+    return merged
+  } catch (error) {
+    console.error('Get product by SKU error:', error)
+    return null
   }
 }
 
@@ -514,6 +560,7 @@ export async function createCategory(category: Omit<AdaptedCategory, 'id' | 'cre
       .from('categories')
       .insert([{
         slug: category.slug,
+        parent_id: category.parent_id || null,
         thumbnail_url: category.thumbnail_url
       }])
       .select()
@@ -595,6 +642,55 @@ export async function getCategories(): Promise<AdaptedCategory[]> {
     return categoriesWithI18n || []
   } catch (error) {
     console.error('Get categories error:', error)
+    return []
+  }
+}
+
+export async function getAllCategoriesForAdmin(): Promise<AdaptedCategory[]> {
+  try {
+    const { data: categories, error: categoriesError } = await supabase
+      .from('categories')
+      .select('*')
+      .order('created_at', { ascending: true })
+
+    if (categoriesError) {
+      console.error('Get all categories error:', categoriesError)
+      return []
+    }
+
+    // Get i18n data for all categories
+    const categoryIds = categories.map(c => c.id)
+    const { data: i18nData, error: i18nError } = await supabase
+      .from('category_i18n')
+      .select('*')
+      .in('category_id', categoryIds)
+
+    if (i18nError) {
+      console.error('Get category i18n error:', i18nError)
+      return categories || []
+    }
+
+    // Merge i18n data with categories
+    const categoriesWithI18n = categories.map(category => {
+      const categoryI18n = i18nData.filter(i18n => i18n.category_id === category.id)
+      const merged = { ...category }
+
+      categoryI18n.forEach(i18n => {
+        if (i18n.locale === 'en') {
+          merged.name = i18n.name
+          merged.description = i18n.description
+        } else {
+          merged[`name_${i18n.locale}`] = i18n.name
+          merged[`description_${i18n.locale}`] = i18n.description
+        }
+      })
+
+      return merged
+    })
+
+    return categoriesWithI18n || []
+  } catch (error) {
+    console.error('Get all categories error:', error)
     return []
   }
 }

@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { getProductByCode, getAllAluminumContainerProductImages, type ProductImage } from '@/utils/product-images';
 import { getAvailableWebPImages } from '@/utils/server-image-detection';
 import { getProductSpecification } from '@/utils/aluminum-product-specs';
+import { getProductBySku } from '@/lib/supabase-service-adapted';
 import { notFound } from 'next/navigation';
 import ProductDetailClient from './product-detail-client';
 
@@ -25,6 +26,55 @@ interface ProductWithImages extends ProductImage {
 
 async function getProductData(category: string, productCode: string): Promise<ProductWithImages | null> {
   try {
+    // First try to get product from database
+    const dbProduct = await getProductBySku(productCode);
+    
+    if (dbProduct && dbProduct.images) {
+      // Parse images from database
+      const images = typeof dbProduct.images === 'string' ? JSON.parse(dbProduct.images) : dbProduct.images;
+      const serverDetectedImages = [];
+      
+      // Add thumbnail if exists
+      if (images.thumbnail) {
+        serverDetectedImages.push(images.thumbnail);
+      }
+      
+      // Add additional images if exist
+      if (images.additional && Array.isArray(images.additional)) {
+        serverDetectedImages.push(...images.additional);
+      }
+      
+      // Get product specifications (fallback to local specs)
+      const specifications = getProductSpecification(productCode);
+      
+      // Get related products from local data for now
+      const allProducts = getAllAluminumContainerProductImages();
+      const relatedProducts = allProducts
+        .filter(p => 
+          p.category === category && 
+          p.code !== productCode
+        )
+        .slice(0, 4);
+      
+      // Create a compatible product object
+       const productImage: ProductImage = {
+         code: dbProduct.sku || productCode,
+         name: dbProduct.name || productCode,
+         category: category as 'smoothwall' | 'wrinklewall',
+         shape: 'rectangle', // Default, could be enhanced later
+         path: serverDetectedImages[0] || '/placeholder.webp',
+         images: serverDetectedImages
+       };
+      
+      return {
+        ...productImage,
+        serverDetectedImages,
+        specifications,
+        relatedProducts
+      };
+    }
+    
+    // Fallback to local product data
     const product = getProductByCode(productCode);
     
     // Verify that the product exists and matches the category
@@ -32,7 +82,7 @@ async function getProductData(category: string, productCode: string): Promise<Pr
       return null;
     }
     
-    // Get server-side detected images
+    // Get server-side detected images (fallback)
     const imageInfo = getAvailableWebPImages(
       product.category, 
       product.shape, 

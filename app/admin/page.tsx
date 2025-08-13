@@ -29,6 +29,7 @@ import {
   deletePost,
   createCategory,
   getCategories,
+  getAllCategoriesForAdmin,
   updateCategory,
   deleteCategory,
   createCarousel,
@@ -133,6 +134,7 @@ interface PostForm {
 interface CategoryForm {
   name: Record<string, string>
   description: Record<string, string>
+  parent_id?: string
   thumbnail?: File | null
 }
 
@@ -151,6 +153,7 @@ export default function EnhancedAdminPanel() {
   const [products, setProducts] = useState<AdaptedProduct[]>([])
   const [posts, setPosts] = useState<AdaptedPost[]>([])
   const [categories, setCategories] = useState<AdaptedCategory[]>([])
+  const [allCategories, setAllCategories] = useState<AdaptedCategory[]>([]) // For admin dropdowns
   const [carouselItems, setCarouselItems] = useState<AdaptedCarousel[]>([])
   
   // State for forms
@@ -181,6 +184,7 @@ export default function EnhancedAdminPanel() {
   const [categoryForm, setCategoryForm] = useState<CategoryForm>({
     name: { en: '', es: '', de: '', fr: '' },
     description: { en: '', es: '', de: '', fr: '' },
+    parent_id: '',
     thumbnail: null
   })
 
@@ -211,20 +215,23 @@ export default function EnhancedAdminPanel() {
   const loadAllData = async () => {
     setLoading(true)
     try {
-      const [productsData, postsData, categoriesData, carouselData] = await Promise.all([
+      const [productsData, postsData, categoriesData, allCategoriesData, carouselData] = await Promise.all([
         getProducts(),
         getPosts(),
         getCategories(),
+        getAllCategoriesForAdmin(),
         getCarousels()
       ])
       setProducts(productsData)
       setPosts(postsData)
       setCategories(categoriesData)
+      setAllCategories(allCategoriesData)
       setCarouselItems(carouselData)
       console.log('Loaded data:', { 
         products: productsData.length, 
         posts: postsData.length, 
         categories: categoriesData.length,
+        allCategories: allCategoriesData.length,
         carousel: carouselData.length
       })
     } catch (error) {
@@ -253,6 +260,7 @@ export default function EnhancedAdminPanel() {
     setCategoryForm({
       name: { en: '', es: '', de: '', fr: '' },
       description: { en: '', es: '', de: '', fr: '' },
+      parent_id: '',
       thumbnail: null
     })
   }
@@ -507,6 +515,7 @@ export default function EnhancedAdminPanel() {
 
       const categoryData = {
         slug: slug,
+        parent_id: categoryForm.parent_id || undefined,
         thumbnail_url: thumbnailUrl,
         name: categoryForm.name.en,
         name_es: categoryForm.name.es,
@@ -522,7 +531,8 @@ export default function EnhancedAdminPanel() {
       
       const newCategory = await createCategory(categoryData)
       if (newCategory) {
-        setCategories([newCategory, ...categories])
+        // Reload all data to reflect changes in category hierarchy
+        await loadAllData()
         resetCategoryForm()
         alert('分类创建成功！')
       } else {
@@ -572,6 +582,7 @@ export default function EnhancedAdminPanel() {
         de: category.description_de || '',
         fr: category.description_fr || ''
       },
+      parent_id: category.parent_id || '',
       thumbnail: null
     })
     setEditingCategory(category.id)
@@ -615,7 +626,8 @@ export default function EnhancedAdminPanel() {
       
       const updatedCategory = await updateCategory(editingCategory, categoryData)
       if (updatedCategory) {
-        setCategories(categories.map(c => c.id === editingCategory ? updatedCategory : c))
+        // Reload all data to reflect changes in category hierarchy
+        await loadAllData()
         resetCategoryForm()
         setEditingCategory(null)
         alert('分类更新成功！')
@@ -1098,6 +1110,27 @@ export default function EnhancedAdminPanel() {
                     accept="image/*"
                     onChange={(e) => setProductForm({...productForm, thumbnail: e.target.files?.[0] || null})}
                   />
+                  
+                  {/* Thumbnail Preview */}
+                  {productForm.thumbnail && (
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-600 mb-2">Thumbnail Preview:</p>
+                      <div className="relative inline-block">
+                        <img
+                          src={URL.createObjectURL(productForm.thumbnail)}
+                          alt="Product thumbnail preview"
+                          className="max-w-32 max-h-32 object-cover rounded border"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setProductForm({...productForm, thumbnail: null})}
+                          className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
                 <div>
                   <Label htmlFor="product-images">Additional Images</Label>
@@ -1108,6 +1141,35 @@ export default function EnhancedAdminPanel() {
                     multiple
                     onChange={(e) => setProductForm({...productForm, images: e.target.files ? Array.from(e.target.files) : null})}
                   />
+                  
+                  {/* Additional Images Preview */}
+                  {productForm.images && productForm.images.length > 0 && (
+                    <div className="mt-2">
+                      <p className="text-sm text-gray-600 mb-2">Additional Images ({productForm.images.length}):</p>
+                      <div className="grid grid-cols-3 gap-2">
+                        {Array.from(productForm.images).map((file, index) => (
+                          <div key={index} className="relative">
+                            <img
+                              src={URL.createObjectURL(file)}
+                              alt={`Additional image ${index + 1}`}
+                              className="w-20 h-20 object-cover rounded border"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const newImages = Array.from(productForm.images || [])
+                                newImages.splice(index, 1)
+                                setProductForm({...productForm, images: newImages.length > 0 ? newImages : null})
+                              }}
+                              className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600"
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -1194,6 +1256,29 @@ export default function EnhancedAdminPanel() {
               />
 
               <div>
+                <Label htmlFor="category-parent">Parent Category (Optional)</Label>
+                <select
+                  id="category-parent"
+                  value={categoryForm.parent_id}
+                  onChange={(e) => setCategoryForm({...categoryForm, parent_id: e.target.value})}
+                  className="w-full p-2 border rounded"
+                >
+                  <option value="">-- No Parent (Top Level Category) --</option>
+                  {allCategories
+                    .filter(cat => editingCategory ? cat.id !== editingCategory : true) // Prevent self-reference
+                    .map((category) => (
+                    <option key={category.id} value={category.id}>
+                      {category.parent_id ? '  └─ ' : ''}{category.name}
+                      {category.parent_id && allCategories.find(p => p.id === category.parent_id) 
+                        ? ` (under ${allCategories.find(p => p.id === category.parent_id)?.name})`
+                        : ''
+                      }
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
                 <Label htmlFor="category-thumbnail">Thumbnail Image</Label>
                 <Input
                   id="category-thumbnail"
@@ -1201,6 +1286,27 @@ export default function EnhancedAdminPanel() {
                   accept="image/*"
                   onChange={(e) => setCategoryForm({...categoryForm, thumbnail: e.target.files?.[0] || null})}
                 />
+                
+                {/* Image Preview */}
+                {categoryForm.thumbnail && (
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-600 mb-2">Preview:</p>
+                    <div className="relative inline-block">
+                      <img
+                        src={URL.createObjectURL(categoryForm.thumbnail)}
+                        alt="Category thumbnail preview"
+                        className="max-w-32 max-h-32 object-cover rounded border"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setCategoryForm({...categoryForm, thumbnail: null})}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-2">
@@ -1225,34 +1331,124 @@ export default function EnhancedAdminPanel() {
           {/* Categories List */}
           <Card>
             <CardHeader>
-              <CardTitle>Categories List</CardTitle>
+              <CardTitle>Categories Hierarchy ({allCategories.length} total)</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-4">
-                {categories.map((category) => (
-                  <div key={category.id} className="border rounded-lg p-4 flex justify-between items-start">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-lg">{category.name}</h3>
-                      <p className="text-sm text-gray-600">Slug: {category.slug}</p>
+              <div className="space-y-2">
+                {/* Parent Categories */}
+                {allCategories.filter(cat => !cat.parent_id).map((parentCategory) => (
+                  <div key={parentCategory.id} className="space-y-2">
+                    {/* Parent Category */}
+                    <div className="border rounded-lg p-4 bg-blue-50">
+                      <div className="flex justify-between items-start">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <h3 className="font-semibold text-lg text-blue-900">📁 {parentCategory.name}</h3>
+                            <Badge variant="secondary">Parent</Badge>
+                          </div>
+                          <p className="text-sm text-gray-600">Slug: {parentCategory.slug}</p>
+                          {parentCategory.thumbnail_url && (
+                            <img 
+                              src={parentCategory.thumbnail_url} 
+                              alt={parentCategory.name}
+                              className="mt-2 w-16 h-16 object-cover rounded border"
+                            />
+                          )}
+                        </div>
+                        <div className="flex gap-2 ml-4">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleEditCategory(parentCategory)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="destructive"
+                            size="sm"
+                            onClick={() => handleDeleteCategory(parentCategory.id, parentCategory.name || 'Unnamed Category')}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex gap-2 ml-4">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleEditCategory(category)}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="destructive"
-                        size="sm"
-                        onClick={() => handleDeleteCategory(category.id, category.name || 'Unnamed Category')}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
+
+                    {/* Child Categories */}
+                    {allCategories.filter(cat => cat.parent_id === parentCategory.id).map((childCategory) => (
+                      <div key={childCategory.id} className="ml-6">
+                        <div className="border rounded-lg p-3 bg-gray-50">
+                          <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-medium text-gray-800">└─ 📄 {childCategory.name}</h4>
+                                <Badge variant="outline" className="text-xs">Child</Badge>
+                              </div>
+                              <p className="text-sm text-gray-500">Slug: {childCategory.slug}</p>
+                              {childCategory.thumbnail_url && (
+                                <img 
+                                  src={childCategory.thumbnail_url} 
+                                  alt={childCategory.name}
+                                  className="mt-2 w-12 h-12 object-cover rounded border"
+                                />
+                              )}
+                            </div>
+                            <div className="flex gap-2 ml-4">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={() => handleEditCategory(childCategory)}
+                              >
+                                <Edit className="h-4 w-4" />
+                              </Button>
+                              <Button
+                                variant="destructive"
+                                size="sm"
+                                onClick={() => handleDeleteCategory(childCategory.id, childCategory.name || 'Unnamed Category')}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ))}
+
+                {/* Orphaned Categories (no parent, but not showing in parent list due to data issues) */}
+                {allCategories.filter(cat => cat.parent_id && !allCategories.find(p => p.id === cat.parent_id)).length > 0 && (
+                  <div className="mt-6">
+                    <h4 className="font-medium text-amber-700 mb-2">⚠️ Orphaned Categories (Parent Missing)</h4>
+                    {allCategories.filter(cat => cat.parent_id && !allCategories.find(p => p.id === cat.parent_id)).map((orphan) => (
+                      <div key={orphan.id} className="border rounded-lg p-3 bg-amber-50 mb-2">
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <h4 className="font-medium text-amber-800">🔗 {orphan.name}</h4>
+                            <p className="text-sm text-amber-600">Slug: {orphan.slug}</p>
+                            <p className="text-xs text-amber-600">Parent ID: {orphan.parent_id} (not found)</p>
+                          </div>
+                          <div className="flex gap-2 ml-4">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEditCategory(orphan)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDeleteCategory(orphan.id, orphan.name || 'Unnamed Category')}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
             </CardContent>
           </Card>
@@ -1329,6 +1525,27 @@ export default function EnhancedAdminPanel() {
                   accept="image/*"
                   onChange={(e) => setCarouselForm({...carouselForm, image: e.target.files?.[0] || null})}
                 />
+                
+                {/* Carousel Image Preview */}
+                {carouselForm.image && (
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-600 mb-2">Image Preview:</p>
+                    <div className="relative inline-block">
+                      <img
+                        src={URL.createObjectURL(carouselForm.image)}
+                        alt="Carousel image preview"
+                        className="max-w-48 max-h-32 object-cover rounded border"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setCarouselForm({...carouselForm, image: null})}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-2">
@@ -1480,6 +1697,27 @@ export default function EnhancedAdminPanel() {
                   accept="image/*"
                   onChange={(e) => setPostForm({...postForm, image: e.target.files?.[0] || null})}
                 />
+                
+                {/* Post Image Preview */}
+                {postForm.image && (
+                  <div className="mt-2">
+                    <p className="text-sm text-gray-600 mb-2">Cover Image Preview:</p>
+                    <div className="relative inline-block">
+                      <img
+                        src={URL.createObjectURL(postForm.image)}
+                        alt="Post cover image preview"
+                        className="max-w-48 max-h-32 object-cover rounded border"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setPostForm({...postForm, image: null})}
+                        className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm hover:bg-red-600"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-2">
