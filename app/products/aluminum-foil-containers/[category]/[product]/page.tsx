@@ -7,7 +7,7 @@ import Link from 'next/link';
 import { getProductByCode, getAllAluminumContainerProductImages, type ProductImage } from '@/utils/product-images';
 import { getAvailableWebPImages } from '@/utils/server-image-detection';
 import { getProductSpecification } from '@/utils/aluminum-product-specs';
-import { getProductBySku } from '@/lib/supabase-service-adapted';
+import { getProductBySku, getProducts, type AdaptedProduct } from '@/lib/supabase-service-adapted';
 import { notFound } from 'next/navigation';
 import ProductDetailClient from './product-detail-client';
 
@@ -22,6 +22,49 @@ interface ProductWithImages extends ProductImage {
   serverDetectedImages: string[];
   specifications?: any;
   relatedProducts?: ProductImage[];
+}
+
+// Helper function to get product category from SKU
+function getProductCategoryFromSku(sku: string): 'smoothwall' | 'wrinklewall' {
+  if (sku.startsWith('C')) return 'smoothwall';
+  if (sku.startsWith('Y')) return 'wrinklewall';
+  return 'smoothwall'; // default
+}
+
+// Helper function to get product shape from SKU
+function getProductShapeFromSku(sku: string): 'rectangle' | 'round' | 'square' {
+  if (sku.includes('-R')) return 'round';
+  if (sku.includes('-S')) return 'square';
+  return 'rectangle'; // default
+}
+
+// Helper function to get image URL from database product
+function getDbProductImageUrl(product: AdaptedProduct): string {
+  if (product.images) {
+    const images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
+    if (images.thumbnail) return images.thumbnail;
+    if (images.additional && Array.isArray(images.additional) && images.additional.length > 0) {
+      return images.additional[0];
+    }
+  }
+  return '/product_img/placeholder.webp';
+}
+
+// Helper function to convert AdaptedProduct to ProductImage
+function adaptedProductToProductImage(dbProduct: AdaptedProduct): ProductImage {
+  const category = dbProduct.sku ? getProductCategoryFromSku(dbProduct.sku) : 'smoothwall';
+  const shape = dbProduct.sku ? getProductShapeFromSku(dbProduct.sku) : 'rectangle';
+  const imageUrl = getDbProductImageUrl(dbProduct);
+  
+  return {
+    code: dbProduct.sku || '',
+    name: dbProduct.name || dbProduct.sku || '',
+    category,
+    shape,
+    path: imageUrl,
+    images: [imageUrl],
+    type: 'aluminum-foil-container'
+  };
 }
 
 async function getProductData(category: string, productCode: string): Promise<ProductWithImages | null> {
@@ -47,14 +90,18 @@ async function getProductData(category: string, productCode: string): Promise<Pr
       // Get product specifications (fallback to local specs)
       const specifications = getProductSpecification(productCode);
       
-      // Get related products from local data for now
-      const allProducts = getAllAluminumContainerProductImages();
-      const relatedProducts = allProducts
-        .filter(p => 
-          p.category === category && 
-          p.code !== productCode
-        )
-        .slice(0, 4);
+      // Get related products from database
+       const allDbProducts = await getProducts();
+       const relatedDbProducts = allDbProducts
+         .filter(p => 
+           p.sku && 
+           (p.sku.startsWith('C') || p.sku.startsWith('Y')) && // aluminum foil containers
+           getProductCategoryFromSku(p.sku) === category && 
+           p.sku !== productCode
+         )
+         .slice(0, 4);
+      
+      const relatedProducts = relatedDbProducts.map(adaptedProductToProductImage);
       
       // Create a compatible product object
         const productImage: ProductImage = {
