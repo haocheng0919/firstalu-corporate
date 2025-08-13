@@ -57,14 +57,15 @@ async function getProductData(category: string, productCode: string): Promise<Pr
         .slice(0, 4);
       
       // Create a compatible product object
-       const productImage: ProductImage = {
-         code: dbProduct.sku || productCode,
-         name: dbProduct.name || productCode,
-         category: category as 'smoothwall' | 'wrinklewall',
-         shape: 'rectangle', // Default, could be enhanced later
-         path: serverDetectedImages[0] || '/placeholder.webp',
-         images: serverDetectedImages
-       };
+        const productImage: ProductImage = {
+          code: dbProduct.sku || productCode,
+          name: dbProduct.name || productCode,
+          category: category as 'smoothwall' | 'wrinklewall',
+          shape: 'rectangle', // Default, could be enhanced later
+          path: serverDetectedImages[0] || '/placeholder.webp',
+          images: serverDetectedImages,
+          type: 'aluminum-foil-container'
+        };
       
       return {
         ...productImage,
