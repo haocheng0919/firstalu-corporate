@@ -12,28 +12,32 @@ const PAPER_CONTAINERS_CATEGORY_ID = '80eda00d-de19-4c6e-8af5-be818b6dcb74';
 
 // Function to get all paper container image files
 function getAllPaperContainerImages() {
-  const baseDir = '/Users/haochengwang/Desktop/claude/firstalu/public/paper-containers';
-  const images = [];
+  // Since the original paper container images were removed during build fix,
+  // we'll create sample products with placeholder images
+  const sampleProducts = [
+    { folder: '1.', filename: '纸盒_001_小号白色.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '1.', filename: '纸盒_002_小号棕色.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '2.', filename: '纸盒_003_中号白色.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '2.', filename: '纸盒_004_中号棕色.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '3.', filename: '纸盒_005_大号白色.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '3.', filename: '纸盒_006_大号棕色.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '4.', filename: '汤盒_001_500ml白色.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '4.', filename: '汤盒_002_750ml白色.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '5.', filename: '沙拉盒_001_圆形透明盖.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '5.', filename: '沙拉盒_002_方形透明盖.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '6.', filename: '快餐盒_001_三格白色.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '6.', filename: '快餐盒_002_单格白色.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '7.', filename: '打包盒_001_小号牛皮纸.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '7.', filename: '打包盒_002_大号牛皮纸.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '8.', filename: '寿司盒_001_透明盖.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '8.', filename: '寿司盒_002_黑色底.webp', fullPath: 'disposablephoto/Disposable Food Boxes.webp' },
+    { folder: '9.', filename: '冷饮杯_001_12oz白色.webp', fullPath: 'disposablephoto/Disposable Cups.webp' },
+    { folder: '9.', filename: '冷饮杯_002_16oz白色.webp', fullPath: 'disposablephoto/Disposable Cups.webp' },
+    { folder: '10.', filename: '热饮杯_001_8oz棕色.webp', fullPath: 'disposablephoto/Disposable Cups.webp' },
+    { folder: '10.', filename: '热饮杯_002_12oz棕色.webp', fullPath: 'disposablephoto/Disposable Cups.webp' }
+  ];
   
-  // Read all subdirectories (1.-11.)
-  for (let i = 1; i <= 11; i++) {
-    const folderName = `${i}.`;
-    const subDir = path.join(baseDir, folderName);
-    if (fs.existsSync(subDir)) {
-      const files = fs.readdirSync(subDir);
-      files.forEach(file => {
-        if (file.endsWith('.webp')) {
-          images.push({
-            folder: folderName,
-            filename: file,
-            fullPath: `paper-containers/${folderName}/${file}`
-          });
-        }
-      });
-    }
-  }
-  
-  return images;
+  return sampleProducts;
 }
 
 // Function to generate product name from filename
