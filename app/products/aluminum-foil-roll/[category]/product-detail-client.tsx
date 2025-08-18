@@ -29,9 +29,13 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
       }
     }
     
-    // Fallback to category-specific default images
+    // Fallback to category-specific default images (webp format)
     if (product.category_slug === 'aluminum-foil-roll') {
-      return ['/Aluminum-Foil-Roll/Aluminum-Foil-Roll/aluminum-foil-roll-1.jpg'];
+      return [
+        '/Aluminum-Foil-Roll/Aluminum-Foil-Roll/aluminum-foil-roll.webp',
+        '/Aluminum-Foil-Roll/Aluminum-Foil-Roll/aluminum-foil-roll-2.webp',
+        '/Aluminum-Foil-Roll/Aluminum-Foil-Roll/aluminum-foil-roll-3.webp'
+      ];
     } else if (product.category_slug === 'hairdressing-foil-roll') {
       return ['/Aluminum-Foil-Roll/Hairdressing-Foil-Roll/hairdressing-foil-roll-1.jpg'];
     } else if (product.category_slug === 'pop-up-foil-sheets') {
