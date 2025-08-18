@@ -7,9 +7,10 @@ const nextConfig = {
     return [];
   },
   
-  // Exclude large/static public directories from output file tracing to avoid micromatch recursion on some environments
+  // Use the correct key for tracing excludes on Next.js 14.2+
+  outputFileTracing: true,
   outputFileTracingExcludes: {
-    '/**/*': ['./public/cutlery-images/**/*']
+    '/**/*': ['public/cutlery-images/**/*']
   }
 }
 
