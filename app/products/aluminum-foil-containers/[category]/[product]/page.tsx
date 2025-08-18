@@ -90,8 +90,8 @@ async function getProductData(category: string, productCode: string): Promise<Pr
       // Get product specifications (fallback to local specs)
       const specifications = getProductSpecification(productCode);
       
-      // Get related products from database
-       const allDbProducts = await getProducts();
+      // Get related products from database (limit to prevent memory issues)
+       const allDbProducts = await getProducts(100);
        const relatedDbProducts = allDbProducts
          .filter(p => 
            p.sku && 

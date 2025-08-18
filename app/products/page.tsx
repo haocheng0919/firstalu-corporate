@@ -19,8 +19,8 @@ async function getStaticData() {
       console.error('Error fetching all categories:', allCategoriesError);
     }
 
-    // Get all products
-    const products = await getProducts();
+    // Get products with a reasonable limit to prevent memory issues
+    const products = await getProducts(1000);
     
     // Calculate product counts for each parent category
     const categoriesWithCounts = categories.map(category => {

@@ -215,7 +215,7 @@ export default function EnhancedAdminPanel() {
     setLoading(true)
     try {
       const [productsData, postsData, categoriesData, allCategoriesData, carouselData] = await Promise.all([
-        getProducts(),
+        getProducts(500), // Limit products to prevent memory issues
         getPosts(),
         getCategories(),
         getCategories(),

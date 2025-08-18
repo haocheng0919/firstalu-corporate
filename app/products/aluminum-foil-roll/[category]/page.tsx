@@ -34,8 +34,8 @@ function getDbProductImageUrl(product: AdaptedProduct): string {
 
 async function getProductData(categorySlug: string): Promise<ProductWithImages | null> {
   try {
-    // Get all products for aluminum-foil-roll category
-    const allProducts = await getProducts();
+    // Get products with reasonable limit to prevent memory issues
+    const allProducts = await getProducts(200);
     
     // Find the specific product by category slug
     const product = allProducts.find(p => p.slug === categorySlug);
@@ -78,7 +78,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 // Generate static params for all aluminum foil roll products
 export async function generateStaticParams() {
   try {
-    const products = await getProducts();
+    const products = await getProducts(200);
     const aluminumFoilRollProducts = products.filter(p => 
       p.category_slug === 'aluminum-foil-roll' || 
       (p.category_id && ['13194b42-ebdd-4696-8851-afc26748badb', 'ceec4c30-31f2-4067-a527-876a6fe92062', 'fd74437a-3d37-4c3b-89f2-5a461c2fb805'].includes(p.category_id))

@@ -53,8 +53,8 @@ async function getSubcategoryData(categorySlug: string, subcategorySlug: string)
       name: subcategoryData.category_i18n?.find((i18n: any) => i18n.locale === 'en')?.name || subcategoryData.slug,
     };
 
-    // Get products for this subcategory
-    const allProducts = await getProducts();
+    // Get products for this subcategory with reasonable limit
+    const allProducts = await getProducts(300);
     const products = allProducts.filter(product => product.category_id === subcategoryData.id);
 
     return {

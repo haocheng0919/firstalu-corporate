@@ -173,9 +173,9 @@ export async function createProduct(product: Omit<AdaptedProduct, 'id' | 'create
   }
 }
 
-export async function getProducts(): Promise<AdaptedProduct[]> {
+export async function getProducts(limit?: number): Promise<AdaptedProduct[]> {
   try {
-    const { data: products, error: productsError } = await supabase
+    let query = supabase
       .from('products')
       .select(`
         *,
@@ -183,12 +183,22 @@ export async function getProducts(): Promise<AdaptedProduct[]> {
       `)
       .order('created_at', { ascending: false })
 
+    if (limit) {
+      query = query.limit(limit)
+    }
+
+    const { data: products, error: productsError } = await query
+
     if (productsError) {
       console.error('Get products error:', productsError)
       return []
     }
 
-    // Get i18n data for all products
+    if (!products || products.length === 0) {
+      return []
+    }
+
+    // Get i18n data for products (limit to current batch)
     const productIds = products.map(p => p.id)
     const { data: i18nData, error: i18nError } = await supabase
       .from('product_i18n')

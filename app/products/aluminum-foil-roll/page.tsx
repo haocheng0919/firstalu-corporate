@@ -35,8 +35,8 @@ function getDbProductImageUrl(product: AdaptedProduct): string {
 
 async function getAluminumFoilRollData() {
   try {
-    // Get all products for aluminum-foil-roll categories
-    const allProducts = await getProducts();
+    // Get products with reasonable limit to prevent memory issues
+    const allProducts = await getProducts(200);
     
     // Filter products by category IDs used for aluminum foil roll products
     const aluminumFoilRollProducts = allProducts.filter(p => 

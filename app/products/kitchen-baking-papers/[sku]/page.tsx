@@ -53,7 +53,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 // Generate static paths for kitchen baking papers products
 export async function generateStaticParams() {
   try {
-    const products = await getProducts();
+    const products = await getProducts(200);
     const kitchenBakingProducts = products.filter(p => p.category_slug === 'kitchen-baking-papers');
     
     return kitchenBakingProducts.map((product) => ({

@@ -60,7 +60,7 @@ export default function CategoryClient({
   useEffect(() => {
     if (categorySlug === 'aluminum-foil-containers' || categorySlug === 'kitchen-baking-papers') {
       setLoading(true);
-      getProducts()
+      getProducts(300)
         .then(products => {
           let filteredProducts: AdaptedProduct[] = [];
           

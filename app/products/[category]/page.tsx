@@ -36,8 +36,8 @@ async function getCategoryData(categorySlug: string) {
     // Get subcategories
     const subcategories = await getSubcategories(parentCategoryData.id);
 
-    // Get all products for this category and its subcategories
-    const allProducts = await getProducts();
+    // Get products with reasonable limit to prevent memory issues
+    const allProducts = await getProducts(1000);
     const subcategoryIds = subcategories.map(sub => sub.id);
     const categoryProducts = allProducts.filter(product => 
       subcategoryIds.includes(product.category_id || '')
