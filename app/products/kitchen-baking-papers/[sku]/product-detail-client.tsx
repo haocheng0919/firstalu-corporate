@@ -128,44 +128,74 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                       // If technical_specs has locale-specific data
                       if (typeof specs === 'object' && specs[currentLocale]) {
                         const localeSpecs = specs[currentLocale];
-                        // Parse the size chart format
-                        const lines = localeSpecs.split('\n');
-                        const title = lines[0]; // e.g., "Size Chart:"
-                        const headers = lines[1]?.split('\t') || [];
-                        const rows = lines.slice(2).filter((line: string) => line.trim());
                         
-                        return (
-                          <div>
-                            <h4 className="font-semibold text-gray-800 mb-3">{title}</h4>
-                            <div className="overflow-x-auto">
-                              <table className="min-w-full border border-gray-200">
-                                <thead className="bg-gray-50">
-                                  <tr>
-                                    {headers.map((header: string, index: number) => (
-                                      <th key={index} className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
-                                        {header}
-                                      </th>
-                                    ))}
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {rows.map((row: string, index: number) => {
-                                    const cells = row.split('\t');
-                                    return (
-                                      <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
-                                        {cells.map((cell: string, cellIndex: number) => (
-                                          <td key={cellIndex} className="px-4 py-2 text-sm text-gray-600 border-b">
-                                            {cell}
-                                          </td>
-                                        ))}
-                                      </tr>
-                                    );
-                                  })}
-                                </tbody>
-                              </table>
+                        // Handle string format (size chart)
+                        if (typeof localeSpecs === 'string') {
+                          // Parse the size chart format
+                          const lines = localeSpecs.split('\n');
+                          const title = lines[0]; // e.g., "Size Chart:"
+                          const headers = lines[1]?.split('\t') || [];
+                          const rows = lines.slice(2).filter((line: string) => line.trim());
+                          
+                          return (
+                            <div>
+                              <h4 className="font-semibold text-gray-800 mb-3">{title}</h4>
+                              <div className="overflow-x-auto">
+                                <table className="min-w-full border border-gray-200">
+                                  <thead className="bg-gray-50">
+                                    <tr>
+                                      {headers.map((header: string, index: number) => (
+                                        <th key={index} className="px-4 py-2 text-left text-sm font-medium text-gray-700 border-b">
+                                          {header}
+                                        </th>
+                                      ))}
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    {rows.map((row: string, index: number) => {
+                                      const cells = row.split('\t');
+                                      return (
+                                        <tr key={index} className={index % 2 === 0 ? 'bg-white' : 'bg-gray-50'}>
+                                          {cells.map((cell: string, cellIndex: number) => (
+                                            <td key={cellIndex} className="px-4 py-2 text-sm text-gray-600 border-b">
+                                              {cell}
+                                            </td>
+                                          ))}
+                                        </tr>
+                                      );
+                                    })}
+                                  </tbody>
+                                </table>
+                              </div>
                             </div>
-                          </div>
-                        );
+                          );
+                        }
+                        
+                        // Handle object format (specifications)
+                        if (typeof localeSpecs === 'object' && localeSpecs.specifications) {
+                          return (
+                            <div>
+                              {localeSpecs.name && (
+                                <h4 className="font-semibold text-gray-800 mb-3">{localeSpecs.name}</h4>
+                              )}
+                              {localeSpecs.description && (
+                                <p className="text-gray-600 mb-4">{localeSpecs.description}</p>
+                              )}
+                              <div className="space-y-2">
+                                {Object.entries(localeSpecs.specifications).map(([key, value]) => (
+                                  <div key={key} className="flex justify-between py-2 border-b border-gray-100">
+                                    <span className="font-medium text-gray-700">
+                                      {key}
+                                    </span>
+                                    <span className="text-gray-600">
+                                      {String(value)}
+                                    </span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          );
+                        }
                       }
                       
                       // Fallback for other formats
