@@ -45,3 +45,8 @@ next-env.d.ts
 # OS
 .DS_Store
 Thumbs.db
+
+# Original image folders with Chinese names (causing build issues)
+/public/纸盒编辑文件/
+/public/刀叉图上传/
+/public/Sugarcane Bagasse 上传/
