@@ -71,7 +71,8 @@ export default function ProductDetailClient({ product, category, serverDetectedI
                       alt={`${product.name} - View ${selectedImageIndex + 1}`}
                       className="w-full h-full object-cover"
                       onError={(e) => {
-                        (e.target as HTMLImageElement).src = '/product_img/placeholder.webp';
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = 'none';
                       }}
                     />
                   )}
@@ -100,7 +101,8 @@ export default function ProductDetailClient({ product, category, serverDetectedI
                           alt={`${product.name} - View ${index + 1}`}
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/product_img/placeholder.webp';
+                            const target = e.target as HTMLImageElement;
+                            target.style.display = 'none';
                           }}
                         />
                       </button>
@@ -113,8 +115,6 @@ export default function ProductDetailClient({ product, category, serverDetectedI
 
             {/* Product Information */}
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-4">{product.name}</h1>
-
               {/* Product Description */}
               <div className="mb-8">
                 <h2 className="text-xl font-semibold text-gray-900 mb-3">Product Description</h2>

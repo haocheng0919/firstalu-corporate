@@ -56,18 +56,30 @@ export default function CategoryClient({
   const [dbProducts, setDbProducts] = useState<AdaptedProduct[]>([]);
   const [loading, setLoading] = useState(false);
   
-  // Fetch products from database for aluminum foil containers
+  // Fetch products from database
   useEffect(() => {
-    if (categorySlug === 'aluminum-foil-containers') {
+    if (categorySlug === 'aluminum-foil-containers' || categorySlug === 'kitchen-baking-papers') {
       setLoading(true);
       getProducts()
         .then(products => {
-          // For now, get all products since we need to identify aluminum products by SKU pattern
-          // Aluminum foil container SKUs typically start with C, Y, etc.
-          const aluminumProducts = products.filter(p => 
-            p.sku && (p.sku.startsWith('C') || p.sku.startsWith('Y'))
-          );
-          setDbProducts(aluminumProducts);
+          let filteredProducts: AdaptedProduct[] = [];
+          
+          if (categorySlug === 'aluminum-foil-containers') {
+            // Aluminum foil container products - filter by SKU pattern
+            filteredProducts = products.filter(p => 
+              p.sku && (p.sku.startsWith('C') || p.sku.startsWith('Y'))
+            );
+          } else if (categorySlug === 'kitchen-baking-papers') {
+            // Kitchen & Baking Papers products - filter by category
+            filteredProducts = products.filter(p => {
+              // Check if product belongs to Kitchen & Baking Papers category
+              return p.category_slug === 'kitchen-baking-papers' || 
+                     (p.name && p.name.toLowerCase().includes('baking paper')) ||
+                     (p.sku && p.sku.startsWith('SBP'));
+            });
+          }
+          
+          setDbProducts(filteredProducts);
         })
         .catch(error => {
           console.error('Failed to fetch products:', error);
@@ -115,14 +127,19 @@ export default function CategoryClient({
     return '/product_img/placeholder.webp';
   };
   
-  // Function to determine product category from SKU
-  const getProductCategoryFromSku = (sku: string): 'smoothwall' | 'wrinklewall' => {
-    // Smoothwall products typically start with C or Y
-    // Wrinklewall products typically start with W
-    if (sku.startsWith('W')) {
+  // Function to determine product category from category_slug
+  const getProductCategoryFromProduct = (product: AdaptedProduct): 'smoothwall' | 'wrinklewall' => {
+    if (product.category_slug?.includes('wrinklewall')) {
       return 'wrinklewall';
     }
-    return 'smoothwall'; // Default to smoothwall for C and Y series
+    if (product.category_slug?.includes('smoothwall')) {
+      return 'smoothwall';
+    }
+    // Fallback: use SKU pattern for products without proper category_slug
+    if (product.sku?.startsWith('W')) {
+      return 'wrinklewall';
+    }
+    return 'smoothwall';
   };
   
   // Function to determine product shape from SKU
@@ -141,7 +158,7 @@ export default function CategoryClient({
     
     if (selectedCategory) {
       filtered = filtered.filter(p => 
-        p.sku && getProductCategoryFromSku(p.sku) === selectedCategory
+        getProductCategoryFromProduct(p) === selectedCategory
       );
     }
     
@@ -181,7 +198,7 @@ export default function CategoryClient({
     // Get available shapes for the selected category
      const availableShapes = selectedCategory 
        ? Array.from(new Set(dbProducts
-           .filter(p => p.sku && getProductCategoryFromSku(p.sku) === selectedCategory)
+           .filter(p => getProductCategoryFromProduct(p) === selectedCategory)
            .map(p => p.sku ? getProductShapeFromSku(p.sku) : 'rectangle')
          ))
        : [];
@@ -206,7 +223,6 @@ export default function CategoryClient({
 
           {/* Category Filter (Smoothwall/Wrinklewall) */}
           <div className="mb-8">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Select Container Type</h2>
             <div className="flex gap-4 flex-wrap">
               <button
                 onClick={() => {
@@ -284,14 +300,6 @@ export default function CategoryClient({
 
           {/* Products Grid */}
           <section>
-            <h2 className="text-2xl font-bold text-gray-900 mb-8">
-              {selectedCategory && selectedShape 
-                ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} ${selectedShape.charAt(0).toUpperCase() + selectedShape.slice(1)} Products`
-                : selectedCategory 
-                ? `${selectedCategory.charAt(0).toUpperCase() + selectedCategory.slice(1)} Products`
-                : `${parentCategory.name} Products`
-              } ({displayProducts.length} items)
-            </h2>
             
             {loading ? (
               <div className="col-span-full text-center py-12">
@@ -300,7 +308,7 @@ export default function CategoryClient({
             ) : (
               <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {displayProducts.map((product, index) => {
-                  const productCategory = product.sku ? getProductCategoryFromSku(product.sku) : 'smoothwall';
+                  const productCategory = getProductCategoryFromProduct(product);
                   const productShape = product.sku ? getProductShapeFromSku(product.sku) : 'rectangle';
                   
                   return (
@@ -340,29 +348,6 @@ export default function CategoryClient({
   // Get sample products data for categories without database products
   const getSampleProducts = (categorySlug: string) => {
     const sampleProducts: { [key: string]: any[] } = {
-      'kitchen-baking-papers': [
-        {
-          id: 'sbp-28cm',
-          name: 'Silicone Baking Paper 28cm',
-          slug: 'silicone-baking-paper-28cm',
-          description: 'Non-stick silicone baking paper, perfect for baking and cooking.',
-          image: '/disposablephoto/Baking Products.webp'
-        },
-        {
-          id: 'ppr-40cm', 
-          name: 'Parchment Paper Roll 40cm',
-          slug: 'parchment-paper-roll-40cm',
-          description: 'High-quality parchment paper roll for professional baking.',
-          image: '/disposablephoto/Baking Products.webp'
-        },
-        {
-          id: 'wps-25x35',
-          name: 'Wax Paper Sheets 25x35cm',
-          slug: 'wax-paper-sheets-25x35cm', 
-          description: 'Food-grade wax paper sheets for food packaging and storage.',
-          image: '/disposablephoto/Baking Products.webp'
-        }
-      ],
       'paper-cups-drink-cups': [
         {
           id: 'pc-8oz',
@@ -460,9 +445,18 @@ export default function CategoryClient({
     return sampleProducts[categorySlug] || [];
   };
 
-  // For other categories, use enhanced display with sample products
-  const sampleProducts = products.length === 0 ? getSampleProducts(categorySlug) : [];
-  const displayProducts = products.length > 0 ? products : sampleProducts;
+  // For other categories, use enhanced display with sample products or database products
+  let displayProducts;
+  let sampleProducts = [];
+  
+  if (categorySlug === 'kitchen-baking-papers') {
+    // Use database products for Kitchen & Baking Papers
+    displayProducts = dbProducts;
+  } else {
+    // Use sample products for other categories
+    sampleProducts = products.length === 0 ? getSampleProducts(categorySlug) : [];
+    displayProducts = products.length > 0 ? products : sampleProducts;
+  }
   
   return (
     <div className="min-h-screen bg-gray-50">
@@ -482,26 +476,10 @@ export default function CategoryClient({
           </Link>
         </div>
 
-        {/* Category Description */}
-        <div className="mb-12 text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-4">{parentCategory.name || parentCategory.slug}</h2>
-          <p className="text-lg text-gray-600 max-w-3xl mx-auto">
-            {getCategoryDescription(categorySlug)}
-          </p>
-        </div>
+
 
         {/* Products Grid */}
         <section>
-          <div className="flex items-center justify-between mb-8">
-            <h3 className="text-2xl font-bold text-gray-900">
-              Our {parentCategory.name} Products ({displayProducts.length} items)
-            </h3>
-            {sampleProducts.length > 0 && (
-              <div className="text-sm text-amber-600 bg-amber-50 px-3 py-1 rounded-full">
-                Preview Products - Contact us for full catalog
-              </div>
-            )}
-          </div>
           
           {displayProducts.length === 0 ? (
             <div className="text-center py-12">
@@ -517,23 +495,37 @@ export default function CategoryClient({
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {displayProducts.map((product) => {
-                const isDbProduct = 'id' in product;
-                const productImage = isDbProduct 
-                  ? getProductImagePath(product as Product)
-                  : product.image;
-                const productName = isDbProduct 
-                  ? (product as Product).name || (product as Product).slug
-                  : product.name;
-                const productDescription = isDbProduct
-                  ? (product as Product).description || (product as Product).intro || 'High-quality product for your business needs.'
-                  : product.description;
-                const productHref = isDbProduct
-                  ? `/products/${categorySlug}/${(product as Product).slug}`
-                  : `/products/${categorySlug}/${product.slug}`;
+                // Check if this is a database product (AdaptedProduct) or sample product
+                const isDbProduct = categorySlug === 'kitchen-baking-papers' || 'sku' in product;
+                
+                let productImage, productName, productDescription, productHref;
+                
+                if (categorySlug === 'kitchen-baking-papers' && 'sku' in product) {
+                  // Database product for Kitchen & Baking Papers
+                  const dbProduct = product as AdaptedProduct;
+                  productImage = getDbProductImageUrl(dbProduct);
+                  productName = dbProduct.name || dbProduct.sku;
+                  productDescription = dbProduct.description || dbProduct.intro || 'High-quality baking paper for your kitchen needs.';
+                  productHref = `/products/${categorySlug}/${dbProduct.sku}`;
+                } else if ('id' in product) {
+                  // Regular Product interface
+                  const regularProduct = product as Product;
+                  productImage = getProductImagePath(regularProduct);
+                  productName = regularProduct.name || regularProduct.slug;
+                  productDescription = regularProduct.description || regularProduct.intro || 'High-quality product for your business needs.';
+                  productHref = `/products/${categorySlug}/${regularProduct.slug}`;
+                } else {
+                  // Sample product
+                  productImage = product.image;
+                  productName = product.name;
+                  productDescription = product.description;
+                  productHref = `/products/${categorySlug}/${product.slug}`;
+                }
 
                 return (
-                  <div
-                    key={product.id || product.slug}
+                  <Link
+                    key={product.id || product.sku || product.slug}
+                    href={productHref}
                     className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow group cursor-pointer"
                   >
                     <div className="h-48 relative overflow-hidden">
@@ -561,55 +553,15 @@ export default function CategoryClient({
                         )}
                       </div>
                     </div>
-                  </div>
+                  </Link>
                 );
               })}
             </div>
           )}
           
-          {/* Contact Section for Sample Products */}
-          {sampleProducts.length > 0 && (
-            <div className="mt-16 bg-blue-50 rounded-2xl p-8 text-center">
-              <h4 className="text-2xl font-bold text-blue-900 mb-4">Need More Information?</h4>
-              <p className="text-blue-700 mb-6">
-                These are preview products. Contact our sales team for complete product catalogs, 
-                specifications, and bulk pricing.
-              </p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Link
-                  href="/contact"
-                  className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
-                >
-                  Contact Sales Team
-                </Link>
-                <a
-                  href="mailto:info@firstaluminum.com"
-                  className="bg-white text-blue-600 px-6 py-3 rounded-lg font-medium border border-blue-200 hover:bg-blue-50 transition-colors"
-                >
-                  Email Us
-                </a>
-              </div>
-            </div>
-          )}
+
           
-          {/* Subcategories Section (Optional) */}
-          {subcategories.length > 0 && (
-            <div className="mt-16">
-              <h3 className="text-xl font-bold text-gray-900 mb-6">Browse by Subcategory</h3>
-              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {subcategories.map((subcategory) => (
-                  <Link
-                    key={subcategory.id}
-                    href={`/products/${categorySlug}/${subcategory.slug}`}
-                    className="bg-gray-50 rounded-lg p-4 hover:bg-gray-100 transition-colors block"
-                  >
-                    <h4 className="font-semibold text-gray-900 mb-2">{subcategory.name || subcategory.slug}</h4>
-                    <span className="text-sm text-gray-500">{subcategory.productCount} products</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          )}
+
         </section>
       </main>
       

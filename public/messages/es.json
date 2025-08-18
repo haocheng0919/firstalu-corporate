@@ -189,6 +189,11 @@
     "availableSizes": "Tamaños Disponibles",
     "requestQuote": "Solicitar Cotización",
     "viewDetails": "Ver Detalles",
+    "getQuote": "Obtener Cotización",
+    "interestedInProduct": "¿Interesado en este producto?",
+    "contactUsForPricing": "Contáctenos para precios y disponibilidad.",
+    "relatedProducts": "Productos Relacionados",
+    "technicalSpecifications": "Especificaciones Técnicas",
     "categories": {
       "aluminumContainers": {
         "description": "Contenedores de aluminio duraderos para almacenamiento y entrega de alimentos"

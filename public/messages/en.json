@@ -92,6 +92,11 @@
     "availableSizes": "Available Sizes",
     "requestQuote": "Request Quote",
     "viewDetails": "View Details",
+    "getQuote": "Get Quote",
+    "interestedInProduct": "Interested in this product?",
+    "contactUsForPricing": "Contact us for pricing and availability.",
+    "relatedProducts": "Related Products",
+    "technicalSpecifications": "Technical Specifications",
     "subcategories": "Subcategories",
     "noSubcategories": "No subcategories found.",
     "categories": {

@@ -40,7 +40,7 @@ export default function ProductsClient({ categories }: ProductsClientProps) {
                >
                  <div className="h-48 relative overflow-hidden">
                    <img 
-                     src={`/product_cat/${category.slug}.webp`}
+                     src={category.slug === 'aluminum-foil-roll' ? '/Aluminum-Foil-Roll/Aluminum-Foil-Roll/aluminum-foil-roll.webp' : `/product_cat/${category.slug}.webp`}
                      alt={category.name || category.slug}
                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                    />

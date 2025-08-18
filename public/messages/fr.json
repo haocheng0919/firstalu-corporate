@@ -186,9 +186,14 @@
     "backToCategories": "Retour aux catégories",
     "noProducts": "Aucun produit trouvé dans cette catégorie.",
     "productFeatures": "Caractéristiques du produit",
-    "availableSizes": "Tailles disponibles",
+    "availableSizes": "Tailles Disponibles",
     "requestQuote": "Demander un devis",
     "viewDetails": "Voir les détails",
+    "getQuote": "Obtenir un devis",
+    "interestedInProduct": "Intéressé par ce produit ?",
+    "contactUsForPricing": "Contactez-nous pour les prix et la disponibilité.",
+    "relatedProducts": "Produits connexes",
+    "technicalSpecifications": "Spécifications Techniques",
     "categories": {
       "aluminumContainers": {
         "description": "Contenants en aluminium durables pour le stockage et la livraison d'aliments"

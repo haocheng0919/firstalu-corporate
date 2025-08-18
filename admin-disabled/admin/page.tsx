@@ -29,7 +29,6 @@ import {
   deletePost,
   createCategory,
   getCategories,
-  getAllCategoriesForAdmin,
   updateCategory,
   deleteCategory,
   createCarousel,
@@ -219,7 +218,7 @@ export default function EnhancedAdminPanel() {
         getProducts(),
         getPosts(),
         getCategories(),
-        getAllCategoriesForAdmin(),
+        getCategories(),
         getCarousels()
       ])
       setProducts(productsData)
