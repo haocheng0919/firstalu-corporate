@@ -1,0 +1,29 @@
+<svg width="400" height="400" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cupGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#e9ecef;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="400" fill="#ffffff"/>
+  
+  <!-- Cup body -->
+  <path d="M120 120 L280 120 L270 320 L130 320 Z" fill="url(#cupGradient)" stroke="#6c757d" stroke-width="2"/>
+  
+  <!-- Cup rim -->
+  <ellipse cx="200" cy="120" rx="80" ry="8" fill="#495057" stroke="#343a40" stroke-width="1"/>
+  
+  <!-- Cup bottom -->
+  <ellipse cx="200" cy="320" rx="70" ry="6" fill="#adb5bd" stroke="#6c757d" stroke-width="1"/>
+  
+  <!-- Size label -->
+  <text x="200" y="200" text-anchor="middle" font-family="Arial, sans-serif" font-size="24" font-weight="bold" fill="#495057">12oz</text>
+  
+  <!-- Capacity label -->
+  <text x="200" y="230" text-anchor="middle" font-family="Arial, sans-serif" font-size="16" fill="#6c757d">360ml</text>
+  
+  <!-- Product name -->
+  <text x="200" y="360" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#343a40">Paper Cup 12oz</text>
+</svg>

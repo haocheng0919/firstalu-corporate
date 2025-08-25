@@ -53,8 +53,9 @@
       "subtitle": "Premium-Einweg-Lebensmittelverpackungslösungen für Ihr Unternehmen"
     },
     "products": {
-      "learnMore": "Mehr erfahren",
-      "items": {
+        "learnMore": "Mehr erfahren",
+        "viewAll": "Alle Produkte anzeigen",
+        "items": {
         "aluminumFoil": {
           "title": "Aluminiumfolie",
           "description": "Hochwertige Aluminiumfolienprodukte für Lebensmittelverpackung und Lagerung."
@@ -117,25 +118,35 @@
       "question2": "Wie hoch ist Ihre Mindestbestellmenge?",
       "question3": "Bieten Sie individuelles Branding und Verpackungen an?",
       "stillHaveQuestions": "Haben Sie noch Fragen?",
-      "expertTeamReady": "Unser Expertenteam ist bereit, Ihnen bei weiteren Fragen zu helfen."
+      "expertTeamReady": "Unser Expertenteam ist bereit, Ihnen bei weiteren Fragen zu helfen.",
+      "answer1": "Wir spezialisieren uns auf hochwertige Einweg-Lebensmittelverpackungslösungen einschließlich Aluminiumfolienbehälter, Einweg-Lebensmittelboxen und umweltfreundliche Essstäbchen für Unternehmen weltweit.",
+      "answer2": "Unsere Mindestbestellmenge beträgt 100 Kartons pro Produkt. Wir bieten wettbewerbsfähige Großhandelspreise für Großbestellungen und unterstützen gemischte Ladungen zur Optimierung der Versandkosten.",
+      "answer3": "Ja, wir bieten umfassende Anpassungsdienstleistungen einschließlich individueller Markengestaltung, Logo-Prägung, maßgeschneiderte Größen und verkaufsfertige Verpackungslösungen für Ihre spezifischen Geschäftsanforderungen."
     },
     "contact": {
-      "title": "Kontakt aufnehmen",
-      "subtitle": "Bereit, Ihr nächstes Projekt zu starten? Kontaktieren Sie uns für Großhandelsanfragen und maßgeschneiderte Lösungen.",
-      "contactUsNow": "Kontaktieren Sie uns jetzt",
-      "email": {
-        "title": "E-Mail senden",
-        "description": "Senden Sie uns Ihre Anforderungen und wir antworten innerhalb von 24 Stunden mit einem detaillierten Angebot."
-      },
-      "phone": {
-        "title": "Anrufen",
-        "description": "Sprechen Sie direkt mit unserem Vertriebsteam für sofortige Hilfe und Expertenberatung."
-      },
-      "office": {
-        "title": "Unser Büro besuchen",
-        "description": "Vereinbaren Sie einen Termin in unseren Einrichtungen, um unsere Produkte und Fähigkeiten aus erster Hand zu sehen."
+        "title": "Kontakt aufnehmen",
+        "subtitle": "Bereit, Ihr nächstes Projekt zu starten? Kontaktieren Sie uns für Großhandelsanfragen und maßgeschneiderte Lösungen.",
+        "contactUsNow": "Kontaktieren Sie uns jetzt",
+        "getInTouch": "Kontakt aufnehmen",
+        "address": {
+          "title": "Unsere Adresse",
+          "details": "First Aluminum Technology Co., Ltd.\nGebäude A, Industriepark\nGuangzhou, Guangdong, China"
+        },
+        "phone": {
+          "title": "Anrufen",
+          "description": "Sprechen Sie direkt mit unserem Vertriebsteam für sofortige Hilfe und Expertenberatung.",
+          "details": "+86 186 3886 1012"
+        },
+        "email": {
+          "title": "E-Mail senden",
+          "description": "Senden Sie uns Ihre Anforderungen und wir antworten innerhalb von 24 Stunden mit einem detaillierten Angebot.",
+          "details": "info@firstalu.com"
+        },
+        "office": {
+          "title": "Unser Büro besuchen",
+          "description": "Vereinbaren Sie einen Termin in unseren Einrichtungen, um unsere Produkte und Fähigkeiten aus erster Hand zu sehen."
+        }
       }
-    }
   },
   "about": {
     "title": "Über First Aluminum Technology",
@@ -204,37 +215,55 @@
     "relatedProducts": "Verwandte Produkte",
     "technicalSpecifications": "Technische Spezifikationen",
     "categories": {
-      "containers": {
-        "title": "Aluminiumfolienbehälter",
-        "description": "Langlebige und hitzebeständige Behälter, perfekt für Takeaway und Lieferdienste."
+        "containers": {
+          "title": "Aluminiumfolienbehälter",
+          "description": "Langlebige und hitzebeständige Behälter, perfekt für Takeaway und Lieferdienste."
+        },
+        "boxes": {
+          "title": "Einweg-Lebensmittelboxen",
+          "description": "Umweltfreundliche Lebensmittelboxen in verschiedenen Größen für verschiedene Lebensmittelarten."
+        },
+        "chopsticks": {
+          "title": "Einweg-Essstäbchen",
+          "description": "Hochwertige Holz- und Bambus-Essstäbchen für asiatische Küche-Restaurants."
+        },
+        "aluminum-foil": {
+          "description": "Premium Aluminiumfolienbehälter und -rollen perfekt für Lebensmittellagerung, Lieferservice und gewerbliche Catering-Anwendungen."
+        },
+        "baking-paper": {
+          "description": "Professionelles Pergament- und Backpapier entwickelt für Großküchen und Gastronomiebetriebe."
+        },
+        "paper-cups": {
+          "description": "Umweltfreundliche Einweg-Papierbecher in verschiedenen Größen für heiße und kalte Getränke in der Gastronomie."
+        },
+        "disposable-cutlery": {
+          "description": "Nachhaltiges Holz- und Bambusbesteck-Sets ideal für umweltbewusste Restaurants und Catering-Services."
+        },
+        "kraft-packaging": {
+          "description": "Langlebige Kraftpapier-Verpackungslösungen entwickelt für nachhaltige Gastronomie und Einzelhandelsanwendungen."
+        },
+        "sugarcane-tableware": {
+          "description": "Biologisch abbaubares Zuckerrohr-Bagasse-Geschirr bietet umweltverantwortliche Speisenlösungen für moderne Gastronomie."
+        },
+        "aluminumFoil": {
+          "description": "Langlebige Aluminiumfolie und -behälter für Lebensmittellagerung und -lieferung"
+        },
+        "bakingPaper": {
+          "description": "Professionelle Backpapiere und Küchenzubehör"
+        },
+        "paperCups": {
+          "description": "Einweg-Papierbecher und Getränkezubehör"
+        },
+        "kraftPackaging": {
+          "description": "Umweltfreundliche Kraftpapier-Verpackungslösungen"
+        },
+        "disposableCutlery": {
+          "description": "Nachhaltiges Einwegbesteck aus Holz und Bambus"
+        },
+        "sugarcaneTableware": {
+          "description": "Umweltfreundliches Geschirr aus Zuckerrohr-Bagasse"
+        }
       },
-      "boxes": {
-        "title": "Einweg-Lebensmittelboxen",
-        "description": "Umweltfreundliche Lebensmittelboxen in verschiedenen Größen für verschiedene Lebensmittelarten."
-      },
-      "chopsticks": {
-        "title": "Einweg-Essstäbchen",
-        "description": "Hochwertige Holz- und Bambus-Essstäbchen für asiatische Küche-Restaurants."
-      },
-      "aluminumFoil": {
-        "description": "Langlebige Aluminiumfolie und -behälter für Lebensmittellagerung und -lieferung"
-      },
-      "bakingPaper": {
-        "description": "Professionelle Backpapiere und Küchenzubehör"
-      },
-      "paperCups": {
-        "description": "Einweg-Papierbecher und Getränkezubehör"
-      },
-      "kraftPackaging": {
-        "description": "Umweltfreundliche Kraftpapier-Verpackungslösungen"
-      },
-      "disposableCutlery": {
-        "description": "Nachhaltiges Einwegbesteck aus Holz und Bambus"
-      },
-      "sugarcaneTableware": {
-        "description": "Umweltfreundliches Geschirr aus Zuckerrohr-Bagasse"
-      }
-    },
     "moq": "Mindestbestellmenge: 100 Kartons pro Produkt"
   },
   "news": {

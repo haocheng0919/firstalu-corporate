@@ -54,6 +54,7 @@
     },
     "products": {
       "learnMore": "Más Información",
+      "viewAll": "Ver Todos los Productos",
       "items": {
         "aluminumFoil": {
           "title": "Papel de Aluminio",
@@ -117,25 +118,35 @@
       "question2": "¿Cuál es su cantidad mínima de pedido?",
       "question3": "¿Ofrecen marca personalizada y embalaje?",
       "stillHaveQuestions": "¿Aún tiene preguntas?",
-      "expertTeamReady": "Nuestro equipo de expertos está listo para ayudar con cualquier pregunta adicional que pueda tener."
+      "expertTeamReady": "Nuestro equipo de expertos está listo para ayudar con cualquier pregunta adicional que pueda tener.",
+      "answer1": "Nos especializamos en soluciones de embalaje de alimentos desechables de alta calidad, incluyendo contenedores de papel de aluminio, cajas de comida desechables y palillos ecológicos para empresas de todo el mundo.",
+      "answer2": "Nuestra cantidad mínima de pedido es de 100 cartones por producto. Ofrecemos precios mayoristas competitivos para pedidos al por mayor y apoyamos la carga mixta para optimizar los costos de envío.",
+      "answer3": "Sí, proporcionamos servicios de personalización integral incluyendo marca personalizada, grabado de logotipos, tamaños personalizados y soluciones de embalaje listas para la venta al por menor para satisfacer sus necesidades comerciales específicas."
     },
     "contact": {
-      "title": "Póngase en Contacto",
-      "subtitle": "¿Listo para comenzar su próximo proyecto? Contáctenos para consultas de mayoreo y soluciones personalizadas.",
-      "contactUsNow": "Contáctenos Ahora",
-      "email": {
-        "title": "Envíenos un Correo",
-        "description": "Envíenos sus requisitos y responderemos dentro de 24 horas con una cotización detallada."
-      },
-      "phone": {
-        "title": "Llámenos",
-        "description": "Hable directamente con nuestro equipo de ventas para asistencia inmediata y consulta experta."
-      },
-      "office": {
-        "title": "Visite Nuestra Oficina",
-        "description": "Programe una reunión en nuestras instalaciones para ver nuestros productos y capacidades de primera mano."
+        "title": "Póngase en Contacto",
+        "subtitle": "¿Listo para comenzar su próximo proyecto? Contáctenos para consultas de mayoreo y soluciones personalizadas.",
+        "contactUsNow": "Contáctenos Ahora",
+        "getInTouch": "Póngase en Contacto",
+        "address": {
+          "title": "Nuestra Dirección",
+          "details": "First Aluminum Technology Co., Ltd.\nEdificio A, Parque Industrial\nGuangzhou, Guangdong, China"
+        },
+        "phone": {
+          "title": "Llámenos",
+          "description": "Hable directamente con nuestro equipo de ventas para asistencia inmediata y consulta experta.",
+          "details": "+86 186 3886 1012"
+        },
+        "email": {
+          "title": "Envíenos un Correo",
+          "description": "Envíenos sus requisitos y responderemos dentro de 24 horas con una cotización detallada.",
+          "details": "info@firstalu.com"
+        },
+        "office": {
+          "title": "Visite Nuestra Oficina",
+          "description": "Programe una reunión en nuestras instalaciones para ver nuestros productos y capacidades de primera mano."
+        }
       }
-    }
   },
   "about": {
     "title": "Acerca de First Aluminum Technology",
@@ -204,6 +215,24 @@
     "relatedProducts": "Productos Relacionados",
     "technicalSpecifications": "Especificaciones Técnicas",
     "categories": {
+      "aluminum-foil": {
+        "description": "Contenedores y rollos de papel de aluminio premium perfectos para almacenamiento de alimentos, servicios de entrega y aplicaciones de catering comercial."
+      },
+      "baking-paper": {
+        "description": "Papeles pergamino y de hornear de grado profesional diseñados para cocinas comerciales y operaciones de servicios alimentarios."
+      },
+      "paper-cups": {
+        "description": "Vasos de papel desechables ecológicos disponibles en varios tamaños para bebidas calientes y frías en la industria de servicios alimentarios."
+      },
+      "disposable-cutlery": {
+        "description": "Conjuntos de cubiertos sostenibles de madera y bambú ideales para restaurantes eco-conscientes y servicios de catering."
+      },
+      "kraft-packaging": {
+        "description": "Soluciones de embalaje de papel kraft duraderas diseñadas para aplicaciones sostenibles de servicios alimentarios y venta al por menor."
+      },
+      "sugarcane-tableware": {
+        "description": "Vajilla biodegradable de bagazo de caña de azúcar que ofrece soluciones de comedor ambientalmente responsables para servicios alimentarios modernos."
+      },
       "aluminumFoil": {
         "description": "Láminas y contenedores de aluminio de alta calidad"
       },

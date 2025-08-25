@@ -339,8 +339,27 @@
       "subtitle": "Premium disposable food packaging solutions for your business"
     },
     "products": {
-      "learnMore": "Learn More",
-      "items": {
+        "learnMore": "Learn More",
+        "viewAll": "View All Products",
+        "items": {
+        "aluminum-foil": {
+          "description": "Premium aluminum foil containers and rolls perfect for food storage, takeaway services, and commercial catering applications."
+        },
+        "baking-paper": {
+          "description": "Professional-grade parchment and baking papers designed for commercial kitchens and food service operations."
+        },
+        "paper-cups": {
+          "description": "Eco-friendly disposable paper cups available in various sizes for hot and cold beverages in food service industry."
+        },
+        "disposable-cutlery": {
+          "description": "Sustainable wooden and bamboo cutlery sets ideal for eco-conscious restaurants and catering services."
+        },
+        "kraft-packaging": {
+          "description": "Durable kraft paper packaging solutions designed for sustainable food service and retail applications."
+        },
+        "sugarcane-tableware": {
+          "description": "Biodegradable sugarcane bagasse tableware offering environmentally responsible dining solutions for modern food service."
+        },
         "aluminumFoil": {
           "title": "Aluminum Foil",
           "description": "Premium quality aluminum foil products for food packaging and storage solutions."
@@ -394,25 +413,35 @@
       "title": "Frequently Asked Questions",
       "subtitle": "Find answers to common questions about our products and services",
       "stillHaveQuestions": "Still have questions?",
-      "expertTeamReady": "Our expert team is ready to help with any additional questions you may have."
+      "expertTeamReady": "Our expert team is ready to help with any additional questions you may have.",
+      "answer1": "We specialize in high-quality disposable food packaging solutions including aluminum foil containers, disposable food boxes, and eco-friendly chopsticks for businesses worldwide.",
+      "answer2": "Our minimum order quantity is 100 cartons per product. We offer competitive wholesale pricing for bulk orders and support mixed loading to optimize shipping costs.",
+      "answer3": "Yes, we provide comprehensive customization services including custom branding, logo embossing, custom sizes, and retail-ready packaging solutions to meet your specific business needs."
     },
     "contact": {
-      "title": "Get In Touch",
-      "subtitle": "Ready to start your next project? Contact us for wholesale inquiries and custom solutions.",
-      "contactUsNow": "Contact Us Now",
-      "email": {
-        "title": "Email Us",
-        "description": "Send us your requirements and we'll respond within 24 hours with a detailed quote."
-      },
-      "phone": {
-        "title": "Call Us",
-        "description": "Speak directly with our sales team for immediate assistance and expert consultation."
-      },
-      "office": {
-        "title": "Visit Our Office",
-        "description": "Schedule a meeting at our facilities to see our products and capabilities firsthand."
+        "title": "Get In Touch",
+        "subtitle": "Ready to start your next project? Contact us for wholesale inquiries and custom solutions.",
+        "contactUsNow": "Contact Us Now",
+        "getInTouch": "Get In Touch",
+        "address": {
+          "title": "Our Address",
+          "details": "First Aluminum Technology Co., Ltd.\nBuilding A, Industrial Park\nGuangzhou, Guangdong, China"
+        },
+        "phone": {
+          "title": "Call Us",
+          "description": "Speak directly with our sales team for immediate assistance and expert consultation.",
+          "details": "+86 186 3886 1012"
+        },
+        "email": {
+          "title": "Email Us",
+          "description": "Send us your requirements and we'll respond within 24 hours with a detailed quote.",
+          "details": "info@firstalu.com"
+        },
+        "office": {
+          "title": "Visit Our Office",
+          "description": "Schedule a meeting at our facilities to see our products and capabilities firsthand."
+        }
       }
-    }
   },
   "footer": {
     "description": "First Aluminum Technology - Your trusted partner in disposable food packaging solutions.",

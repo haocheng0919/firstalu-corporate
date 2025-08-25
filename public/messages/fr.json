@@ -53,8 +53,9 @@
       "subtitle": "Solutions premium d'emballage alimentaire jetable pour votre entreprise"
     },
     "products": {
-      "learnMore": "En savoir plus",
-      "items": {
+        "learnMore": "En savoir plus",
+        "viewAll": "Voir Tous les Produits",
+        "items": {
         "aluminumFoil": {
           "title": "Feuille d'aluminium",
           "description": "Feuilles et contenants en aluminium de haute qualité pour la restauration et l'usage domestique."
@@ -117,25 +118,35 @@
       "question2": "Quelle est votre quantité minimum de commande ?",
       "question3": "Proposez-vous un marquage et un emballage personnalisés ?",
       "stillHaveQuestions": "Avez-vous encore des questions ?",
-      "expertTeamReady": "Notre équipe d'experts est prête à vous aider avec toute question supplémentaire que vous pourriez avoir."
+      "expertTeamReady": "Notre équipe d'experts est prête à vous aider avec toute question supplémentaire que vous pourriez avoir.",
+      "answer1": "Nous nous spécialisons dans les solutions d'emballage alimentaire jetable de haute qualité, notamment les contenants en papier d'aluminium, les boîtes alimentaires jetables et les baguettes écologiques pour les entreprises du monde entier.",
+      "answer2": "Notre quantité minimale de commande est de 100 cartons par produit. Nous offrons des prix de gros compétitifs pour les commandes en vrac et supportons le chargement mixte pour optimiser les coûts d'expédition.",
+      "answer3": "Oui, nous fournissons des services de personnalisation complets incluant l'image de marque personnalisée, le gaufrage de logo, les tailles sur mesure et les solutions d'emballage prêtes pour la vente au détail pour répondre à vos besoins commerciaux spécifiques."
     },
     "contact": {
-      "title": "Contactez-nous",
-      "subtitle": "Prêt à commencer votre prochain projet ? Contactez-nous pour des demandes de vente en gros et des solutions personnalisées.",
-      "contactUsNow": "Contactez-nous maintenant",
-      "email": {
-        "title": "Envoyez-nous un e-mail",
-        "description": "Envoyez-nous vos exigences et nous répondrons dans les 24 heures avec un devis détaillé."
-      },
-      "phone": {
-        "title": "Appelez-nous",
-        "description": "Parlez directement avec notre équipe de vente pour une assistance immédiate et une consultation d'expert."
-      },
-      "office": {
-        "title": "Visitez notre bureau",
-        "description": "Programmez une réunion dans nos installations pour voir nos produits et capacités de première main."
+        "title": "Contactez-nous",
+        "subtitle": "Prêt à commencer votre prochain projet ? Contactez-nous pour des demandes de vente en gros et des solutions personnalisées.",
+        "contactUsNow": "Contactez-nous maintenant",
+        "getInTouch": "Nous Contacter",
+        "address": {
+          "title": "Notre Adresse",
+          "details": "First Aluminum Technology Co., Ltd.\nBâtiment A, Parc Industriel\nGuangzhou, Guangdong, Chine"
+        },
+        "phone": {
+          "title": "Appelez-nous",
+          "description": "Parlez directement avec notre équipe de vente pour une assistance immédiate et une consultation d'expert.",
+          "details": "+86 186 3886 1012"
+        },
+        "email": {
+          "title": "Envoyez-nous un e-mail",
+          "description": "Envoyez-nous vos exigences et nous répondrons dans les 24 heures avec un devis détaillé.",
+          "details": "info@firstalu.com"
+        },
+        "office": {
+          "title": "Visitez notre bureau",
+          "description": "Programmez une réunion dans nos installations pour voir nos produits et capacités de première main."
+        }
       }
-    }
   },
   "about": {
     "title": "À propos de First Aluminum Technology",
@@ -204,25 +215,43 @@
     "relatedProducts": "Produits connexes",
     "technicalSpecifications": "Spécifications Techniques",
     "categories": {
-      "aluminumFoil": {
-        "description": "Feuilles et contenants en aluminium de haute qualité"
-      },
-      "bakingPaper": {
-        "description": "Papiers de cuisson professionnels et fournitures de cuisine"
-      },
-      "paperCups": {
-        "description": "Gobelets en papier jetables et accessoires pour boissons"
-      },
-      "kraftPackaging": {
-        "description": "Solutions d'emballage en papier kraft écologiques"
-      },
-      "disposableCutlery": {
-        "description": "Ustensiles jetables en bois et bambou durables"
-      },
-      "sugarcaneTableware": {
-        "description": "Vaisselle écologique en bagasse de canne à sucre"
+        "aluminum-foil": {
+          "description": "Contenants et rouleaux en papier d'aluminium premium parfaits pour le stockage alimentaire, les services de livraison et les applications de restauration commerciale."
+        },
+        "baking-paper": {
+          "description": "Papiers parchemin et de cuisson de qualité professionnelle conçus pour les cuisines commerciales et les opérations de restauration."
+        },
+        "paper-cups": {
+          "description": "Gobelets en papier jetables écologiques disponibles en diverses tailles pour les boissons chaudes et froides dans l'industrie de la restauration."
+        },
+        "disposable-cutlery": {
+          "description": "Ensembles de couverts durables en bois et bambou idéaux pour les restaurants et services de restauration éco-responsables."
+        },
+        "kraft-packaging": {
+          "description": "Solutions d'emballage en papier kraft durables conçues pour les applications de restauration et de vente au détail durables."
+        },
+        "sugarcane-tableware": {
+          "description": "Vaisselle biodégradable en bagasse de canne à sucre offrant des solutions de restauration écologiquement responsables pour la restauration moderne."
+        },
+        "aluminumFoil": {
+          "description": "Feuilles et contenants en aluminium de haute qualité"
+        },
+        "bakingPaper": {
+          "description": "Papiers de cuisson professionnels et fournitures de cuisine"
+        },
+        "paperCups": {
+          "description": "Gobelets en papier jetables et accessoires pour boissons"
+        },
+        "kraftPackaging": {
+          "description": "Solutions d'emballage en papier kraft écologiques"
+        },
+        "disposableCutlery": {
+          "description": "Ustensiles jetables en bois et bambou durables"
+        },
+        "sugarcaneTableware": {
+          "description": "Vaisselle écologique en bagasse de canne à sucre"
+        }
       }
-    }
   },
   "news": {
     "title": "Dernières nouvelles et mises à jour",
