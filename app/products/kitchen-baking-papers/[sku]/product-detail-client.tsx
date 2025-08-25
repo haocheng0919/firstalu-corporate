@@ -45,7 +45,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             Products
           </Link>
           <span className="mx-2 text-gray-500">›</span>
-          <Link href="/products/baking-paper" className="text-blue-600 hover:text-blue-800">
+          <Link href="/products/kitchen-baking-papers" className="text-blue-600 hover:text-blue-800">
             Kitchen & Baking Papers
           </Link>
           <span className="mx-2 text-gray-500">›</span>

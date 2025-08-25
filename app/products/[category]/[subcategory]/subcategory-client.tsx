@@ -96,7 +96,7 @@ export default function SubcategoryClient({
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {products.map((product) => (
-                <Link key={product.id} href={`/products/${categorySlug}/${product.slug}`} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow block">
+                <Link key={product.id} href={`/products/${categorySlug}/${subcategory.slug}/${product.slug}`} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow block">
                   <div className="h-48 relative overflow-hidden">
                     <img 
                       src={getProductCardImage(product)}
