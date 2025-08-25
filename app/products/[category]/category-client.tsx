@@ -83,12 +83,27 @@ export default function CategoryClient({
 
   // Function to get product image path
   const getProductImagePath = (product: Product) => {
+    // Check if images is an array (new format)
+    if (Array.isArray(product.images) && product.images.length > 0) {
+      // Find primary image first
+      const primaryImage = product.images.find(img => img.isPrimary);
+      if (primaryImage && primaryImage.url) {
+        return primaryImage.url;
+      }
+      // If no primary image, use the first image
+      if (product.images[0] && product.images[0].url) {
+        return product.images[0].url;
+      }
+    }
+    
+    // Legacy format support
     if (product.images?.main) {
       return product.images.main;
     }
     if (product.images?.thumbnail) {
       return product.images.thumbnail;
     }
+    
     // For sugarcane tableware, try to construct image path based on category and product name
     if (categorySlug === 'sugarcane-tableware') {
       const subcategory = subcategories.find(sub => sub.id === product.category_id);
@@ -112,6 +127,7 @@ export default function CategoryClient({
         }
       }
     }
+    
     return '/product_img/placeholder.svg';
   };
 

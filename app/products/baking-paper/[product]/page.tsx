@@ -30,6 +30,20 @@ function getDbProductImageUrl(product: Product): string {
     try {
       const images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
       
+      // Check if images is an array (new format)
+      if (Array.isArray(images) && images.length > 0) {
+        // Find primary image first
+        const primaryImage = images.find(img => img.isPrimary);
+        if (primaryImage && primaryImage.url) {
+          return primaryImage.url;
+        }
+        // If no primary image, use the first image
+        if (images[0] && images[0].url) {
+          return images[0].url;
+        }
+      }
+      
+      // Legacy format support
       // Try to get thumbnail first, then first gallery image
       if (images.thumbnail) {
         return images.thumbnail;

@@ -42,6 +42,21 @@ interface ProductDetailClientProps {
 function getImageUrl(product: Product): string {
   if (product.images) {
     const images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
+    
+    // Check if images is an array (new format)
+    if (Array.isArray(images) && images.length > 0) {
+      // Find primary image first
+      const primaryImage = images.find(img => img.isPrimary);
+      if (primaryImage && primaryImage.url) {
+        return primaryImage.url;
+      }
+      // If no primary image, use the first image
+      if (images[0] && images[0].url) {
+        return images[0].url;
+      }
+    }
+    
+    // Legacy format support
     if (images.thumbnail) return images.thumbnail;
     if (images.gallery && Array.isArray(images.gallery) && images.gallery.length > 0) {
       return images.gallery[0];
@@ -54,6 +69,13 @@ function getImageUrl(product: Product): string {
 function getGalleryImages(product: Product): string[] {
   if (product.images) {
     const images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
+    
+    // Check if images is an array (new format)
+    if (Array.isArray(images) && images.length > 0) {
+      return images.map(img => img.url).filter(Boolean);
+    }
+    
+    // Legacy format support
     if (images.gallery && Array.isArray(images.gallery)) {
       return images.gallery;
     }

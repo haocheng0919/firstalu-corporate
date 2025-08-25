@@ -31,6 +31,20 @@ function getImageUrl(images: any, fallback: string = '/product_img/placeholder.w
   try {
     const parsedImages = typeof images === 'string' ? JSON.parse(images) : images;
     
+    // Check if images is an array (new format)
+    if (Array.isArray(parsedImages) && parsedImages.length > 0) {
+      // Find primary image first
+      const primaryImage = parsedImages.find(img => img.isPrimary);
+      if (primaryImage && primaryImage.url) {
+        return primaryImage.url;
+      }
+      // If no primary image, use the first image
+      if (parsedImages[0] && parsedImages[0].url) {
+        return parsedImages[0].url;
+      }
+    }
+    
+    // Legacy format support
     if (parsedImages.thumbnail) {
       return parsedImages.thumbnail;
     }
@@ -51,6 +65,12 @@ function getGalleryImages(images: any): string[] {
   try {
     const parsedImages = typeof images === 'string' ? JSON.parse(images) : images;
     
+    // Check if images is an array (new format)
+    if (Array.isArray(parsedImages) && parsedImages.length > 0) {
+      return parsedImages.map(img => img.url).filter(Boolean);
+    }
+    
+    // Legacy format support
     if (parsedImages.gallery && Array.isArray(parsedImages.gallery)) {
       return parsedImages.gallery;
     }
