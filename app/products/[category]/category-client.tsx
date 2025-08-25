@@ -152,31 +152,66 @@ export default function CategoryClient({
         {/* Subcategories Navigation */}
         {!selectedSubcategory && level2.length > 0 && (
           <section className="mb-12">
-            <h2 className="text-2xl font-bold text-gray-900 mb-6">Product Categories</h2>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {level2.map((subcategory) => (
-                <div
-                  key={subcategory.id}
-                  onClick={() => setSelectedSubcategory(subcategory.slug)}
-                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
-                >
-                  <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                    <span className="text-gray-500">Image</span>
-                  </div>
-                  <div className="p-6">
-                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                      {subcategory.name || subcategory.slug}
-                    </h3>
-                    <p className="text-gray-600 mb-4">
-                      {subcategory.productCount} products
-                    </p>
-                    <button className="text-blue-600 hover:text-blue-800 font-medium">
-                      View Products →
+            {categorySlug === 'sugarcane-tableware' ? (
+              // Filter view for sugarcane-tableware
+              <>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Filter by Category</h2>
+                <div className="flex gap-4 flex-wrap mb-8">
+                  <button
+                    onClick={() => setSelectedSubcategory(null)}
+                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                      !selectedSubcategory 
+                        ? 'bg-blue-600 text-white' 
+                        : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                    }`}
+                  >
+                    All Products ({products.length})
+                  </button>
+                  {level2.map((subcategory) => (
+                    <button
+                      key={subcategory.id}
+                      onClick={() => setSelectedSubcategory(subcategory.slug)}
+                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                        selectedSubcategory === subcategory.slug 
+                          ? 'bg-blue-600 text-white' 
+                          : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
+                      }`}
+                    >
+                      {subcategory.name || subcategory.slug} ({subcategory.productCount})
                     </button>
-                  </div>
+                  ))}
                 </div>
-              ))}
-            </div>
+              </>
+            ) : (
+              // Card view for other categories
+              <>
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">Product Categories</h2>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {level2.map((subcategory) => (
+                    <div
+                      key={subcategory.id}
+                      onClick={() => setSelectedSubcategory(subcategory.slug)}
+                      className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
+                    >
+                      <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                        <span className="text-gray-500">Image</span>
+                      </div>
+                      <div className="p-6">
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                          {subcategory.name || subcategory.slug}
+                        </h3>
+                        <p className="text-gray-600 mb-4">
+                          {subcategory.productCount} products
+                        </p>
+                        <button className="text-blue-600 hover:text-blue-800 font-medium">
+                          View Products →
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </>
+            )}
           </section>
         )}
 
@@ -235,7 +270,7 @@ export default function CategoryClient({
               {filteredProducts.map((product) => (
                 <Link
                   key={product.id}
-                  href={`/products/${categorySlug}/${product.slug}`}
+                  href={categorySlug === 'sugarcane-tableware' ? `/products/sugarcane-tableware/${product.slug}` : `/products/${categorySlug}/${product.slug}`}
                   className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden"
                 >
                   <div className="aspect-square bg-gray-100 flex items-center justify-center">
