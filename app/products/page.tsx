@@ -1,19 +1,28 @@
 import { PageHeader } from '@/components/ui/page-header';
 import Footer from '../../components/Footer';
 import Link from 'next/link';
-import { getCategories as getProductCategories, getProducts, type AdaptedCategory as ProductCategory, type AdaptedProduct as Product } from '@/lib/supabase-service-adapted';
+import { getProducts, type AdaptedProduct as Product } from '@/lib/supabase-service-adapted';
 import { supabase } from '@/lib/supabase';
 import ProductsClient from './products-client';
 
 async function getStaticData() {
   try {
-    // Get top-level categories
-    const categories = await getProductCategories();
-    
-    // Get all categories (including subcategories) for product counting
+    // Get the 6 main categories from Supabase
+    const { data: mainCategories, error: categoriesError } = await supabase
+      .from('categories')
+      .select('id, slug, name, name_i18n, thumbnail_url')
+      .is('parent_id', null)
+      .order('name');
+
+    if (categoriesError) {
+      console.error('Error fetching main categories:', categoriesError);
+      return { categories: [] };
+    }
+
+    // Get all categories for product counting
     const { data: allCategories, error: allCategoriesError } = await supabase
       .from('categories')
-      .select('*');
+      .select('id, parent_id');
 
     if (allCategoriesError) {
       console.error('Error fetching all categories:', allCategoriesError);
@@ -22,8 +31,8 @@ async function getStaticData() {
     // Get products with a reasonable limit to prevent memory issues
     const products = await getProducts(1000);
     
-    // Calculate product counts for each parent category
-    const categoriesWithCounts = categories.map(category => {
+    // Calculate product counts for each main category
+    const categoriesWithCounts = (mainCategories || []).map(category => {
       // Get all subcategories of this parent category
       const subcategories = (allCategories || []).filter(cat => cat.parent_id === category.id);
       const subcategoryIds = subcategories.map(cat => cat.id);
@@ -35,25 +44,12 @@ async function getStaticData() {
       
       return {
         ...category,
-        name: category.name || category.slug,
         productCount
       };
     });
-
-    // Restrict to the six top-level product categories only
-    const ALLOWED_TOP_LEVEL_CATEGORY_SLUGS = new Set([
-      'aluminum-foil',
-      'baking-paper',
-      'paper-cups',
-      'kraft-packaging',
-      'disposable-cutlery',
-      'sugarcane-tableware',
-    ]);
-
-    const finalCategories = categoriesWithCounts.filter(cat => ALLOWED_TOP_LEVEL_CATEGORY_SLUGS.has(cat.slug));
     
     return {
-      categories: finalCategories
+      categories: categoriesWithCounts
     };
   } catch (error) {
     console.error('Error fetching static data:', error);

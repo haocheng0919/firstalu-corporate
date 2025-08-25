@@ -9,6 +9,12 @@ interface CategoryWithCount {
   id: string;
   slug: string;
   name: string;
+  name_i18n?: {
+    en: string;
+    de: string;
+    fr: string;
+    es: string;
+  };
   productCount: number;
   thumbnail_url?: string;
 }
@@ -18,7 +24,14 @@ interface ProductsClientProps {
 }
 
 export default function ProductsClient({ categories }: ProductsClientProps) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const getCategoryName = (category: CategoryWithCount) => {
+    if (category.name_i18n && category.name_i18n[language as keyof typeof category.name_i18n]) {
+      return category.name_i18n[language as keyof typeof category.name_i18n];
+    }
+    return category.name || category.slug;
+  };
 
 
 
@@ -42,14 +55,13 @@ export default function ProductsClient({ categories }: ProductsClientProps) {
                  <div className="h-48 relative overflow-hidden">
                    <img 
                      src={category.thumbnail_url || `/product_cat/${category.slug}.webp`}
-                     alt={category.name || category.slug}
+                     alt={getCategoryName(category)}
                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                     onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/product_img/placeholder.svg'; }}
                    />
                  </div>
                  <div className="p-6">
                    <div className="mb-2">
-                     <h3 className="text-xl font-semibold text-gray-900">{category.name || category.slug}</h3>
+                     <h3 className="text-xl font-semibold text-gray-900">{getCategoryName(category)}</h3>
                    </div>
 
                    <div className="flex items-center justify-between">
