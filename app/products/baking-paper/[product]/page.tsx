@@ -7,6 +7,8 @@ interface ProductPageProps {
   params: {
     product: string;
   };
+}
+
 interface Product {
   id: string;
   slug: string;
