@@ -54,10 +54,12 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 export async function generateStaticParams() {
   try {
     const products = await getProducts(200);
-    const kitchenBakingProducts = products.filter(p => p.category_slug === 'baking-paper');
+    const kitchenBakingProducts = products
+      .filter(p => p.category_slug === 'baking-paper')
+      .filter(p => p.sku && typeof p.sku === 'string'); // Ensure sku is a valid string
     
     return kitchenBakingProducts.map((product) => ({
-      sku: product.sku,
+      sku: product.sku as string, // Type assertion since we filtered for valid strings
     }));
   } catch (error) {
     console.error('Error generating static params:', error);

@@ -185,7 +185,13 @@ export async function generateStaticParams() {
   const { getAllAluminumContainerProductImages } = await import('@/utils/product-images');
   const allProducts = getAllAluminumContainerProductImages();
   
-  return allProducts.map((product) => ({
+  // Filter to ensure all parameters are valid strings
+  const validProducts = allProducts.filter(product => 
+    product.category && typeof product.category === 'string' &&
+    product.code && typeof product.code === 'string'
+  );
+  
+  return validProducts.map((product) => ({
     category: product.category,
     product: product.code,
   }));

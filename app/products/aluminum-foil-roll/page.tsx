@@ -114,10 +114,6 @@ export default async function AluminumFoilRollPage() {
                         src={productImage}
                         alt={productName}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        onError={(e: any) => {
-                          const target = e.target as HTMLImageElement;
-                          target.src = '/product_img/placeholder.svg';
-                        }}
                       />
                     </div>
                     <div className="p-4">

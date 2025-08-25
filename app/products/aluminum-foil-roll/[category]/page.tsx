@@ -79,13 +79,15 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 export async function generateStaticParams() {
   try {
     const products = await getProducts(200);
-    const aluminumFoilRollProducts = products.filter(p => 
-      p.category_slug === 'aluminum-foil-roll' || 
-      (p.category_id && ['13194b42-ebdd-4696-8851-afc26748badb', 'ceec4c30-31f2-4067-a527-876a6fe92062', 'fd74437a-3d37-4c3b-89f2-5a461c2fb805'].includes(p.category_id))
-    );
+    const aluminumFoilRollProducts = products
+      .filter(p => 
+        p.category_slug === 'aluminum-foil-roll' || 
+        (p.category_id && ['13194b42-ebdd-4696-8851-afc26748badb', 'ceec4c30-31f2-4067-a527-876a6fe92062', 'fd74437a-3d37-4c3b-89f2-5a461c2fb805'].includes(p.category_id))
+      )
+      .filter(p => p.slug && typeof p.slug === 'string'); // Ensure slug is a valid string
     
     return aluminumFoilRollProducts.map(product => ({
-      category: product.slug
+      category: product.slug as string // Type assertion since we filtered for valid strings
     }));
   } catch (error) {
     console.error('Error generating static params:', error);
