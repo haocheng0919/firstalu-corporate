@@ -48,9 +48,9 @@
         }
       }
     },
-    "ourProducts": {
+    "products": {
       "title": "Nuestros Productos",
-      "subtitle": "Soluciones premium de envases de alimentos desechables para su negocio"
+      "subtitle": "Soluciones premium de embalaje de alimentos desechables para su negocio"
     },
     "products": {
       "learnMore": "Más Información",
@@ -107,6 +107,15 @@
     "faq": {
       "title": "Preguntas Frecuentes",
       "subtitle": "Encuentre respuestas a preguntas comunes sobre nuestros productos y servicios",
+      "categories": {
+        "general": "General",
+        "products": "Productos",
+        "shipping": "Envío",
+        "support": "Soporte"
+      },
+      "question1": "¿Qué productos fabrican?",
+      "question2": "¿Cuál es su cantidad mínima de pedido?",
+      "question3": "¿Ofrecen marca personalizada y embalaje?",
       "stillHaveQuestions": "¿Aún tiene preguntas?",
       "expertTeamReady": "Nuestro equipo de expertos está listo para ayudar con cualquier pregunta adicional que pueda tener."
     },

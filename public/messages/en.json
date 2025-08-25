@@ -179,6 +179,15 @@
   "faq": {
     "title": "Frequently Asked Questions",
     "subtitle": "Find answers to common questions about our products, services, and ordering process.",
+    "categories": {
+      "general": "General",
+      "products": "Products",
+      "shipping": "Shipping",
+      "support": "Support"
+    },
+    "question1": "What products do you manufacture?",
+    "question2": "What is your minimum order quantity?",
+    "question3": "Do you offer custom branding and packaging?",
     "viewAll": "View All FAQs",
     "questions": {
       "products": {
@@ -325,7 +334,7 @@
         }
       }
     },
-    "ourProducts": {
+    "products": {
       "title": "Our Products",
       "subtitle": "Premium disposable food packaging solutions for your business"
     },

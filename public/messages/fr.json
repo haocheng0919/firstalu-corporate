@@ -107,6 +107,15 @@
     "faq": {
       "title": "Questions fréquemment posées",
       "subtitle": "Trouvez des réponses aux questions courantes sur nos produits et services",
+      "categories": {
+        "general": "Général",
+        "products": "Produits",
+        "shipping": "Expédition",
+        "support": "Support"
+      },
+      "question1": "Quels produits fabriquez-vous ?",
+      "question2": "Quelle est votre quantité minimum de commande ?",
+      "question3": "Proposez-vous un marquage et un emballage personnalisés ?",
       "stillHaveQuestions": "Avez-vous encore des questions ?",
       "expertTeamReady": "Notre équipe d'experts est prête à vous aider avec toute question supplémentaire que vous pourriez avoir."
     },

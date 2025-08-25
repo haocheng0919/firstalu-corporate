@@ -107,6 +107,15 @@
     "faq": {
       "title": "Häufig gestellte Fragen",
       "subtitle": "Finden Sie Antworten auf häufige Fragen zu unseren Produkten und Dienstleistungen",
+      "categories": {
+        "general": "Allgemein",
+        "products": "Produkte",
+        "shipping": "Versand",
+        "support": "Support"
+      },
+      "question1": "Welche Produkte stellen Sie her?",
+      "question2": "Wie hoch ist Ihre Mindestbestellmenge?",
+      "question3": "Bieten Sie individuelles Branding und Verpackungen an?",
       "stillHaveQuestions": "Haben Sie noch Fragen?",
       "expertTeamReady": "Unser Expertenteam ist bereit, Ihnen bei weiteren Fragen zu helfen."
     },
