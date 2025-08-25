@@ -21,7 +21,7 @@ interface Product {
   categories: {
     slug: string;
     name_i18n: Record<string, string>;
-  } | null;
+  }[];
 }
 
 // Helper function to get product image URL from database

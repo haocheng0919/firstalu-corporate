@@ -17,7 +17,7 @@ interface Product {
   categories: {
     slug: string;
     name_i18n: Record<string, string>;
-  } | null;
+  }[];
 }
 
 interface ProductDetailClientProps {
@@ -84,7 +84,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   
   const productName = product.name?.[language] || product.name?.['en'] || 'Product';
   const productDescription = product.description?.[language] || product.description?.['en'] || '';
-  const categoryName = product.categories?.name_i18n?.[language] || product.categories?.name_i18n?.['en'] || 'Paper Cups';
+  const categoryName = product.categories?.[0]?.name_i18n?.[language] || product.categories?.[0]?.name_i18n?.['en'] || 'Paper Cups';
 
   const nextImage = () => {
     if (galleryImages.length > 1) {

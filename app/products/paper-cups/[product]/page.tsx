@@ -22,7 +22,7 @@ interface Product {
   categories: {
     slug: string;
     name_i18n: Record<string, string>;
-  } | null;
+  }[];
 }
 
 // Helper function to get image URL from product data
@@ -80,7 +80,7 @@ async function getProduct(productSlug: string): Promise<Product | null> {
 
     return {
       ...product,
-      categories: category
+      categories: category ? [category] : []
     };
 
 
