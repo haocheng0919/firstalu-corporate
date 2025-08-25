@@ -255,10 +255,22 @@ export default function CategoryClient({
             </div>
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-              {filteredProducts.map((product) => (
+              {filteredProducts.map((product) => {
+                // For sugarcane-tableware, find the correct subcategory for the product
+                const getProductHref = () => {
+                  if (categorySlug === 'sugarcane-tableware') {
+                    const productSubcategory = subcategories.find(sub => sub.id === product.category_id);
+                    if (productSubcategory) {
+                      return `/products/${categorySlug}/${productSubcategory.slug}/${product.slug}`;
+                    }
+                  }
+                  return `/products/${categorySlug}/${product.slug}`;
+                };
+                
+                return (
                 <Link
                   key={product.id}
-                  href={`/products/${categorySlug}/${product.slug}`}
+                  href={getProductHref()}
                   className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden"
                 >
                   <div className="aspect-square bg-gray-100 flex items-center justify-center">
@@ -283,7 +295,8 @@ export default function CategoryClient({
                     )}
                   </div>
                 </Link>
-              ))}
+                );
+              })}
             </div>
           )}
         </section>
