@@ -49,6 +49,38 @@ function getDbProductImageUrl(product: Product): string {
 // Get product data from database
 async function getProduct(productSlug: string): Promise<Product | null> {
   try {
+    // First get all aluminum-foil related category IDs
+    const { data: aluminumFoilCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.eq.aluminum-foil,parent_id.in.(select id from categories where slug = \'aluminum-foil\')');
+
+    if (categoryError) {
+      console.error('Error fetching aluminum foil categories:', categoryError);
+      return null;
+    }
+
+    const categoryIds = aluminumFoilCategories?.map(cat => cat.id) || [];
+    
+    // Get all subcategories recursively
+    let allCategoryIds = [...categoryIds];
+    let currentLevelIds = [...categoryIds];
+    
+    while (currentLevelIds.length > 0) {
+      const { data: nextLevelCategories } = await supabase
+        .from('categories')
+        .select('id')
+        .in('parent_id', currentLevelIds);
+
+      if (!nextLevelCategories || nextLevelCategories.length === 0) {
+        break;
+      }
+
+      const nextLevelIds = nextLevelCategories.map(cat => cat.id);
+      allCategoryIds = [...allCategoryIds, ...nextLevelIds];
+      currentLevelIds = nextLevelIds;
+    }
+
     const { data, error } = await supabase
       .from('products')
       .select(`
@@ -66,7 +98,7 @@ async function getProduct(productSlug: string): Promise<Product | null> {
         )
       `)
       .or(`slug.eq.${productSlug},sku.eq.${productSlug}`)
-      .eq('categories.slug', 'aluminum-foil')
+      .in('category_id', allCategoryIds)
       .single();
 
     if (error || !data) {

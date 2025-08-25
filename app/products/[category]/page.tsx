@@ -47,22 +47,32 @@ async function getCategoryData(categorySlug: string) {
       return null;
     }
 
-    // Get level 3 categories (grandchildren)
-    const level2Ids = allSubcategories?.map(sub => sub.id) || [];
-    const { data: level3Categories, error: level3Error } = await supabase
-      .from('categories')
-      .select(`
-        *,
-        category_i18n(*)
-      `)
-      .in('parent_id', level2Ids);
+    // Get all nested subcategories recursively
+    let allCategoryLevels = [...(allSubcategories || [])];
+    let currentLevelIds = allSubcategories?.map(sub => sub.id) || [];
+    
+    // Keep fetching deeper levels until no more subcategories are found
+    while (currentLevelIds.length > 0) {
+      const { data: nextLevelCategories, error: nextLevelError } = await supabase
+        .from('categories')
+        .select(`
+          *,
+          category_i18n(*)
+        `)
+        .in('parent_id', currentLevelIds);
 
-    if (level3Error) {
-      console.error('Error fetching level 3 categories:', level3Error);
+      if (nextLevelError) {
+        console.error('Error fetching next level categories:', nextLevelError);
+        break;
+      }
+
+      if (!nextLevelCategories || nextLevelCategories.length === 0) {
+        break;
+      }
+
+      allCategoryLevels = [...allCategoryLevels, ...nextLevelCategories];
+      currentLevelIds = nextLevelCategories.map(cat => cat.id);
     }
-
-    // Combine all subcategories
-    const allCategoryLevels = [...(allSubcategories || []), ...(level3Categories || [])];
     
     // Process subcategories with i18n data
     const processedSubcategories = allCategoryLevels.map(subcategory => ({

@@ -7,14 +7,12 @@ interface ProductPageProps {
   params: {
     product: string;
   };
-}
-
 interface Product {
   id: string;
   slug: string;
   sku: string;
-  name: Record<string, string>;
-  description: Record<string, string>;
+  name_i18n: Record<string, string>;
+  description_i18n: Record<string, string>;
   images: any;
   specs: any;
   technical_specs: any;
@@ -62,14 +60,46 @@ function getDbProductImageUrl(product: Product): string {
 // Function to get product by slug or SKU
 async function getProduct(productSlug: string): Promise<Product | null> {
   try {
+    // First get all baking-paper related category IDs
+    const { data: bakingPaperCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.eq.baking-paper,parent_id.in.(select id from categories where slug = \'baking-paper\')');
+
+    if (categoryError) {
+      console.error('Error fetching baking paper categories:', categoryError);
+      return null;
+    }
+
+    const categoryIds = bakingPaperCategories?.map(cat => cat.id) || [];
+    
+    // Get all subcategories recursively
+    let allCategoryIds = [...categoryIds];
+    let currentLevelIds = [...categoryIds];
+    
+    while (currentLevelIds.length > 0) {
+      const { data: nextLevelCategories } = await supabase
+        .from('categories')
+        .select('id')
+        .in('parent_id', currentLevelIds);
+
+      if (!nextLevelCategories || nextLevelCategories.length === 0) {
+        break;
+      }
+
+      const nextLevelIds = nextLevelCategories.map(cat => cat.id);
+      allCategoryIds = [...allCategoryIds, ...nextLevelIds];
+      currentLevelIds = nextLevelIds;
+    }
+
     const { data: product, error } = await supabase
       .from('products')
       .select(`
         id,
         slug,
         sku,
-        name,
-        description,
+        name_i18n,
+        description_i18n,
         images,
         specs,
         technical_specs,
@@ -78,7 +108,7 @@ async function getProduct(productSlug: string): Promise<Product | null> {
           name_i18n
         )
       `)
-      .eq('categories.slug', 'baking-paper')
+      .in('category_id', allCategoryIds)
       .or(`slug.eq.${productSlug},sku.eq.${productSlug}`)
       .single();
 

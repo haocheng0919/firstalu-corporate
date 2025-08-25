@@ -9,8 +9,8 @@ interface Product {
   id: string;
   slug: string;
   sku: string;
-  name: Record<string, string>;
-  description: Record<string, string>;
+  name_i18n: Record<string, string>;
+  description_i18n: Record<string, string>;
   images: any;
   specs: any;
   technical_specs: any;
@@ -80,8 +80,8 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const galleryImages = getGalleryImages(product);
   const selectedImage = galleryImages[selectedImageIndex] || getImageUrl(product);
   
-  const productName = product.name[language] || product.name['en'] || product.slug;
-  const productDescription = product.description[language] || product.description['en'] || '';
+  const productName = product.name_i18n[language] || product.name_i18n['en'] || product.slug;
+  const productDescription = product.description_i18n[language] || product.description_i18n['en'] || '';
   const specs = parseSpecs(product.specs);
   const technicalSpecs = parseSpecs(product.technical_specs);
   const categoryName = product.categories?.[0]?.name_i18n[language] || product.categories?.[0]?.name_i18n['en'] || 'Baking Paper';

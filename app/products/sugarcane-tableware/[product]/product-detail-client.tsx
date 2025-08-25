@@ -8,30 +8,16 @@ import { PageHeader } from '@/components/ui/page-header';
 interface Product {
   id: string;
   slug: string;
-  sku?: string;
-  name?: string;
-  name_es?: string;
-  name_de?: string;
-  name_fr?: string;
-  description?: string;
-  description_es?: string;
-  description_de?: string;
-  description_fr?: string;
-  intro?: string;
-  intro_es?: string;
-  intro_de?: string;
-  intro_fr?: string;
-  images?: any;
-  specs?: any;
-  technical_specs?: any;
-  categories?: {
-    id: string;
+  sku: string;
+  name_i18n: Record<string, string>;
+  description_i18n: Record<string, string>;
+  images: any;
+  specs: any;
+  technical_specs: any;
+  categories: {
     slug: string;
-    name?: string;
-    name_es?: string;
-    name_de?: string;
-    name_fr?: string;
-  };
+    name_i18n: Record<string, string>;
+  }[];
 }
 
 interface ProductDetailClientProps {
@@ -102,7 +88,12 @@ function parseSpecs(specs: any): Record<string, string> {
 export default function ProductDetailClient({ product }: ProductDetailClientProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const galleryImages = getGalleryImages(product);
-  const specs = parseSpecs(product.specs || product.technical_specs);
+  const specs = parseSpecs(product.specs);
+  const technicalSpecs = parseSpecs(product.technical_specs);
+  
+  const language = 'en'; // You can get this from context or props
+  const productName = product.name_i18n?.[language] || product.name_i18n?.['en'] || product.slug;
+  const productDescription = product.description_i18n?.[language] || product.description_i18n?.['en'] || '';
 
   const nextImage = () => {
     setCurrentImageIndex((prev) => (prev + 1) % galleryImages.length);
@@ -115,7 +106,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   return (
     <div className="min-h-screen bg-gray-50">
       <PageHeader 
-        title={product.name || product.slug}
+        title={productName}
         description="Sugarcane Tableware"
       />
       
@@ -126,7 +117,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             <div className="relative aspect-square bg-white rounded-lg overflow-hidden shadow-lg">
               <Image
                 src={galleryImages[currentImageIndex]}
-                alt={product.name || product.slug}
+                alt={productName}
                 fill
                 className="object-contain p-4"
                 priority
@@ -163,7 +154,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                   >
                     <Image
                       src={image}
-                      alt={`${product.name || product.slug} ${index + 1}`}
+                      alt={`${productName} ${index + 1}`}
                       width={64}
                       height={64}
                       className="object-contain w-full h-full p-1"
@@ -178,7 +169,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
           <div className="space-y-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                {product.name || product.slug}
+                {productName}
               </h1>
               {product.sku && (
                 <p className="text-sm text-gray-500 mb-4">SKU: {product.sku}</p>
@@ -186,11 +177,11 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             </div>
 
             {/* Description */}
-            {(product.description || product.intro) && (
+            {productDescription && (
               <div className="prose prose-gray max-w-none">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2">Description</h3>
                 <p className="text-gray-700 leading-relaxed">
-                  {product.description || product.intro}
+                  {productDescription}
                 </p>
               </div>
             )}
@@ -221,7 +212,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               <div className="bg-blue-50 rounded-lg p-4">
                 <h3 className="text-sm font-medium text-blue-900 mb-1">Category</h3>
                 <p className="text-blue-700">
-                  {product.categories.name || product.categories.slug}
+                  {product.categories[0]?.name_i18n?.[language] || product.categories[0]?.name_i18n?.['en'] || product.categories[0]?.slug}
                 </p>
               </div>
             )}

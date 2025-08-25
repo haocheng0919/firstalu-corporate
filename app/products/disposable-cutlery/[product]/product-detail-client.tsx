@@ -9,8 +9,8 @@ interface Product {
   id: string;
   slug: string;
   sku: string;
-  name: Record<string, string>;
-  description: Record<string, string>;
+  name_i18n: Record<string, string>;
+  description_i18n: Record<string, string>;
   images: any;
   specs: any;
   technical_specs: any;

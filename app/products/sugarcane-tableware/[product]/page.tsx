@@ -13,30 +13,16 @@ interface ProductPageProps {
 interface Product {
   id: string;
   slug: string;
-  sku?: string;
-  name?: string;
-  name_es?: string;
-  name_de?: string;
-  name_fr?: string;
-  description?: string;
-  description_es?: string;
-  description_de?: string;
-  description_fr?: string;
-  intro?: string;
-  intro_es?: string;
-  intro_de?: string;
-  intro_fr?: string;
-  images?: any;
-  specs?: any;
-  technical_specs?: any;
-  categories?: {
-    id: string;
+  sku: string;
+  name_i18n: Record<string, string>;
+  description_i18n: Record<string, string>;
+  images: any;
+  specs: any;
+  technical_specs: any;
+  categories: {
     slug: string;
-    name?: string;
-    name_es?: string;
-    name_de?: string;
-    name_fr?: string;
-  };
+    name_i18n: Record<string, string>;
+  }[];
 }
 
 // Helper function to get image URL from database product
@@ -66,24 +52,59 @@ function getDbProductImageUrl(product: Product): string {
   return '/product_img/placeholder.svg';
 }
 
-// Fetch product data by slug or SKU
+// Function to get product by slug or SKU
 async function getProduct(productSlug: string): Promise<Product | null> {
   try {
-    const { data, error } = await supabase
+    // First get all sugarcane-tableware related category IDs
+    const { data: sugarcaneTablewareCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.eq.sugarcane-tableware,parent_id.in.(select id from categories where slug = \'sugarcane-tableware\')');
+
+    if (categoryError) {
+      console.error('Error fetching sugarcane tableware categories:', categoryError);
+      return null;
+    }
+
+    const categoryIds = sugarcaneTablewareCategories?.map(cat => cat.id) || [];
+    
+    // Get all subcategories recursively
+    let allCategoryIds = [...categoryIds];
+    let currentLevelIds = [...categoryIds];
+    
+    while (currentLevelIds.length > 0) {
+      const { data: nextLevelCategories } = await supabase
+        .from('categories')
+        .select('id')
+        .in('parent_id', currentLevelIds);
+
+      if (!nextLevelCategories || nextLevelCategories.length === 0) {
+        break;
+      }
+
+      const nextLevelIds = nextLevelCategories.map(cat => cat.id);
+      allCategoryIds = [...allCategoryIds, ...nextLevelIds];
+      currentLevelIds = nextLevelIds;
+    }
+
+    const { data: product, error } = await supabase
       .from('products')
       .select(`
-        *,
-        categories!inner(
-          id,
+        id,
+        slug,
+        sku,
+        name_i18n,
+        description_i18n,
+        images,
+        specs,
+        technical_specs,
+        categories!inner (
           slug,
-          name,
-          name_es,
-          name_de,
-          name_fr
+          name_i18n
         )
       `)
+      .in('category_id', allCategoryIds)
       .or(`slug.eq.${productSlug},sku.eq.${productSlug}`)
-      .eq('categories.slug', 'sugarcane-tableware')
       .single();
 
     if (error) {
@@ -91,7 +112,7 @@ async function getProduct(productSlug: string): Promise<Product | null> {
       return null;
     }
 
-    return data;
+    return product;
   } catch (error) {
     console.error('Error in getProduct:', error);
     return null;

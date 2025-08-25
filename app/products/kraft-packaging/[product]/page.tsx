@@ -13,12 +13,11 @@ interface Product {
   id: string;
   slug: string;
   sku: string;
-  name: Record<string, string>;
-  description: Record<string, string>;
+  name_i18n: Record<string, string>;
+  description_i18n: Record<string, string>;
   images: any;
   specs: any;
   technical_specs: any;
-  category_slug: string;
   categories: {
     slug: string;
     name_i18n: Record<string, string>;
@@ -63,20 +62,55 @@ function getDbProductImageUrl(product: Product): string {
 // Function to get product by slug or SKU
 async function getProduct(productSlug: string): Promise<Product | null> {
   try {
+    // First get all kraft-packaging related category IDs
+    const { data: kraftPackagingCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.eq.kraft-packaging,parent_id.in.(select id from categories where slug = \'kraft-packaging\')');
+
+    if (categoryError) {
+      console.error('Error fetching kraft packaging categories:', categoryError);
+      return null;
+    }
+
+    const categoryIds = kraftPackagingCategories?.map(cat => cat.id) || [];
+    
+    // Get all subcategories recursively
+    let allCategoryIds = [...categoryIds];
+    let currentLevelIds = [...categoryIds];
+    
+    while (currentLevelIds.length > 0) {
+      const { data: nextLevelCategories } = await supabase
+        .from('categories')
+        .select('id')
+        .in('parent_id', currentLevelIds);
+
+      if (!nextLevelCategories || nextLevelCategories.length === 0) {
+        break;
+      }
+
+      const nextLevelIds = nextLevelCategories.map(cat => cat.id);
+      allCategoryIds = [...allCategoryIds, ...nextLevelIds];
+      currentLevelIds = nextLevelIds;
+    }
+
     const { data: product, error } = await supabase
       .from('products')
       .select(`
         id,
         slug,
         sku,
-        name,
-        description,
+        name_i18n,
+        description_i18n,
         images,
         specs,
         technical_specs,
-        category_slug
+        categories!inner (
+          slug,
+          name_i18n
+        )
       `)
-      .eq('category_slug', 'kraft-packaging')
+      .in('category_id', allCategoryIds)
       .or(`slug.eq.${productSlug},sku.eq.${productSlug}`)
       .single();
 
