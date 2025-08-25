@@ -33,13 +33,18 @@ async function getStaticData() {
     
     // Calculate product counts for each main category
     const categoriesWithCounts = (mainCategories || []).map(category => {
-      // Get all subcategories of this parent category
-      const subcategories = (allCategories || []).filter(cat => cat.parent_id === category.id);
-      const subcategoryIds = subcategories.map(cat => cat.id);
+      // Get all subcategories of this parent category (level 2)
+      const level2Categories = (allCategories || []).filter(cat => cat.parent_id === category.id);
+      const level2Ids = level2Categories.map(cat => cat.id);
       
-      // Count products in all subcategories AND in the parent category itself
+      // Get level 3 categories (grandchildren)
+      const level3Categories = (allCategories || []).filter(cat => level2Ids.includes(cat.parent_id || ''));
+      const level3Ids = level3Categories.map(cat => cat.id);
+      
+      // Count products in parent category, all level 2 subcategories, and all level 3 subcategories
+      const allRelevantCategoryIds = [category.id, ...level2Ids, ...level3Ids];
       const productCount = products.filter(product => 
-        subcategoryIds.includes(product.category_id || '') || product.category_id === category.id
+        allRelevantCategoryIds.includes(product.category_id || '')
       ).length;
       
       return {

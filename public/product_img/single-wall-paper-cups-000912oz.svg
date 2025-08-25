@@ -1,0 +1,24 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="cupGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f0f0f0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Cup body -->
+  <path d="M80 80 L220 80 L210 220 L90 220 Z" fill="url(#cupGradient)" stroke="#ddd" stroke-width="2"/>
+  
+  <!-- Cup rim -->
+  <ellipse cx="150" cy="80" rx="70" ry="8" fill="#fff" stroke="#ddd" stroke-width="2"/>
+  
+  <!-- Cup bottom -->
+  <ellipse cx="150" cy="220" rx="60" ry="6" fill="#e0e0e0"/>
+  
+  <!-- Brand text -->
+  <text x="150" y="150" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#666">9-12oz</text>
+  <text x="150" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#999">Single Wall</text>
+  
+  <!-- Handle suggestion -->
+  <path d="M220 120 Q240 130 240 150 Q240 170 220 180" fill="none" stroke="#ddd" stroke-width="2" stroke-dasharray="3,3"/>
+</svg>

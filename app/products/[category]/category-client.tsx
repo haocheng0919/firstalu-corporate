@@ -83,6 +83,12 @@ export default function CategoryClient({
     return '/product_img/placeholder.svg';
   };
 
+  // Function to handle image load error
+  const handleImageError = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
+    const target = e.target as HTMLImageElement;
+    target.src = '/product_img/placeholder.svg';
+  };
+
   const getCategoryDescription = (categorySlug: string) => {
     switch (categorySlug) {
       case 'aluminum-foil': 
@@ -237,6 +243,7 @@ export default function CategoryClient({
                       src={getProductImagePath(product)}
                       alt={product.name || product.slug}
                       className="w-full h-full object-cover"
+                      onError={handleImageError}
                     />
                   </div>
                   <div className="p-4">

@@ -1,0 +1,32 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="doubleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f8f8f8;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Outer cup wall -->
+  <path d="M75 75 L225 75 L215 225 L85 225 Z" fill="none" stroke="#ccc" stroke-width="1" stroke-dasharray="2,2"/>
+  
+  <!-- Inner cup wall -->
+  <path d="M80 80 L220 80 L210 220 L90 220 Z" fill="url(#doubleGradient)" stroke="#ddd" stroke-width="2"/>
+  
+  <!-- Cup rim -->
+  <ellipse cx="150" cy="80" rx="70" ry="8" fill="#fff" stroke="#ddd" stroke-width="2"/>
+  
+  <!-- Cup bottom -->
+  <ellipse cx="150" cy="220" rx="60" ry="6" fill="#e0e0e0"/>
+  
+  <!-- Double wall indicator -->
+  <path d="M85 90 L85 210" stroke="#bbb" stroke-width="1" stroke-dasharray="3,3"/>
+  <path d="M215 90 L215 210" stroke="#bbb" stroke-width="1" stroke-dasharray="3,3"/>
+  
+  <!-- Brand text -->
+  <text x="150" y="150" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#666">8oz</text>
+  <text x="150" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#999">Double Wall</text>
+  
+  <!-- Insulation symbol -->
+  <circle cx="120" cy="130" r="3" fill="none" stroke="#999" stroke-width="1"/>
+  <circle cx="180" cy="130" r="3" fill="none" stroke="#999" stroke-width="1"/>
+</svg>

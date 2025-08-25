@@ -1,0 +1,29 @@
+<svg width="300" height="300" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="rippleGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#f5f5f5;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Cup body -->
+  <path d="M80 80 L220 80 L210 220 L90 220 Z" fill="url(#rippleGradient)" stroke="#ddd" stroke-width="2"/>
+  
+  <!-- Ripple texture lines -->
+  <line x1="85" y1="100" x2="215" y2="100" stroke="#e0e0e0" stroke-width="1"/>
+  <line x1="87" y1="120" x2="213" y2="120" stroke="#e0e0e0" stroke-width="1"/>
+  <line x1="89" y1="140" x2="211" y2="140" stroke="#e0e0e0" stroke-width="1"/>
+  <line x1="91" y1="160" x2="209" y2="160" stroke="#e0e0e0" stroke-width="1"/>
+  <line x1="93" y1="180" x2="207" y2="180" stroke="#e0e0e0" stroke-width="1"/>
+  <line x1="95" y1="200" x2="205" y2="200" stroke="#e0e0e0" stroke-width="1"/>
+  
+  <!-- Cup rim -->
+  <ellipse cx="150" cy="80" rx="70" ry="8" fill="#fff" stroke="#ddd" stroke-width="2"/>
+  
+  <!-- Cup bottom -->
+  <ellipse cx="150" cy="220" rx="60" ry="6" fill="#e0e0e0"/>
+  
+  <!-- Brand text -->
+  <text x="150" y="150" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" fill="#666">18oz</text>
+  <text x="150" y="170" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#999">Ripple Wall</text>
+</svg>
