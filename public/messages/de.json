@@ -48,11 +48,9 @@
         }
       }
     },
-    "ourProducts": {
-      "title": "Unsere Produkte",
-      "subtitle": "Premium-Einweg-Lebensmittelverpackungslösungen für Ihr Unternehmen"
-    },
     "products": {
+      "title": "Unser Produktsortiment",
+      "subtitle": "Umfassende Einweg-Lebensmittelverpackungslösungen für Ihre Geschäftsanforderungen",
         "learnMore": "Mehr erfahren",
         "viewAll": "Alle Produkte anzeigen",
         "items": {

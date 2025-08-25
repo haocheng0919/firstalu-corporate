@@ -48,11 +48,9 @@
         }
       }
     },
-    "ourProducts": {
-      "title": "Nos produits",
-      "subtitle": "Solutions premium d'emballage alimentaire jetable pour votre entreprise"
-    },
     "products": {
+      "title": "Notre Gamme de Produits",
+      "subtitle": "Solutions complètes d'emballage alimentaire jetable pour les besoins de votre entreprise",
         "learnMore": "En savoir plus",
         "viewAll": "Voir Tous les Produits",
         "items": {

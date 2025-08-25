@@ -29,6 +29,10 @@
         "title": "Global Reach",
         "description": "Serving customers worldwide with reliable shipping and logistics."
       }
+    },
+    "products": {
+      "title": "Our Product Range",
+      "subtitle": "Comprehensive disposable food packaging solutions for your business needs"
     }
   },
   "about": {
