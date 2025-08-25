@@ -79,8 +79,7 @@ async function getCategoryData(categorySlug: string) {
         *,
         product_i18n(*)
       `)
-      .in('category_id', allCategoryIds)
-      .limit(1000);
+      .in('category_id', allCategoryIds);
 
     if (productsError) {
       console.error('Error fetching products:', productsError);
@@ -94,11 +93,24 @@ async function getCategoryData(categorySlug: string) {
       intro: product.product_i18n?.find((i18n: any) => i18n.locale === 'en')?.intro || product.intro
     }));
     
-    // Add product counts to subcategories
-    const subcategoriesWithCounts = processedSubcategories.map(subcategory => ({
-      ...subcategory,
-      productCount: (categoryProducts || []).filter(product => product.category_id === subcategory.id).length
-    }));
+    // Add product counts to subcategories by querying each subcategory separately
+    const subcategoriesWithCounts = await Promise.all(
+      processedSubcategories.map(async (subcategory) => {
+        const { count, error: countError } = await supabase
+          .from('products')
+          .select('*', { count: 'exact', head: true })
+          .eq('category_id', subcategory.id);
+        
+        if (countError) {
+          console.error(`Error counting products for subcategory ${subcategory.slug}:`, countError);
+        }
+        
+        return {
+          ...subcategory,
+          productCount: count || 0
+        };
+      })
+    );
 
     return {
       parentCategory,
