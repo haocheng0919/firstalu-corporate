@@ -49,13 +49,8 @@ export default function CategoryClient({
   const [selectedThirdLevel, setSelectedThirdLevel] = useState<string | null>(null);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
 
-  // Update filtered products when subcategory selection changes (only for non-sugarcane categories)
+  // Update filtered products when subcategory selection changes
   useEffect(() => {
-    if (categorySlug === 'sugarcane-tableware') {
-      setFilteredProducts(products);
-      return;
-    }
-    
     let filtered = products;
     
     if (selectedSubcategory) {
@@ -75,7 +70,7 @@ export default function CategoryClient({
     }
     
     setFilteredProducts(filtered);
-  }, [selectedSubcategory, selectedThirdLevel, products, subcategories, categorySlug]);
+  }, [selectedSubcategory, selectedThirdLevel, products, subcategories]);
 
   // Function to get product image path
   const getProductImagePath = (product: Product) => {
@@ -92,14 +87,18 @@ export default function CategoryClient({
         // Map category slugs to folder names
         const categoryFolderMap: { [key: string]: string } = {
           'sugarcane-plates': 'plate',
-          'sugarcane-bowls': 'Bowls',
+          'sugarcane-bowls': 'bowls',
           'sugarcane-clamshells': 'chamshell',
           'sugarcane-trays': 'tray'
         };
         const categoryFolder = categoryFolderMap[subcategory.slug];
         if (categoryFolder) {
           // Extract the product folder name from the product name (before ' - ')
-          const productFolder = product.name.split(' - ')[0];
+          let productFolder = product.name.split(' - ')[0];
+          // Handle special cases for folder names
+          if (productFolder === '6 inch bow') {
+            productFolder = '6 inch bow';
+          }
           return `/product_img/Sugarcane Tableware/${categoryFolder}/${productFolder}/${productFolder} (1).webp`;
         }
       }
@@ -204,7 +203,7 @@ export default function CategoryClient({
           </section>
         )}
 
-        {/* Third Level Categories (when subcategory is selected) */}
+        {/* Third Level Categories (when subcategory is selected) - Hidden for sugarcane-tableware */}
         {selectedSubcategory && level3.length > 0 && categorySlug !== 'sugarcane-tableware' && (
           <section className="mb-12">
             <div className="flex items-center justify-between mb-6">
@@ -259,7 +258,7 @@ export default function CategoryClient({
               {filteredProducts.map((product) => (
                 <Link
                   key={product.id}
-                  href={categorySlug === 'sugarcane-tableware' ? `/products/sugarcane-tableware/${product.slug}` : `/products/${categorySlug}/${product.slug}`}
+                  href={`/products/${categorySlug}/${product.slug}`}
                   className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow overflow-hidden"
                 >
                   <div className="aspect-square bg-gray-100 flex items-center justify-center">
@@ -272,7 +271,10 @@ export default function CategoryClient({
                   </div>
                   <div className="p-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {product.name || product.slug}
+                      {categorySlug === 'sugarcane-tableware' && product.name 
+                        ? product.name.split(' - ')[0] 
+                        : (product.name || product.slug)
+                      }
                     </h3>
                     {product.description && (
                       <p className="text-gray-600 text-sm line-clamp-2">

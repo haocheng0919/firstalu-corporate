@@ -1,0 +1,132 @@
+import { notFound } from 'next/navigation';
+import ProductDetailClient from './product-detail-client';
+import Footer from '@/components/Footer';
+import { supabase } from '@/lib/supabase';
+
+interface ProductPageProps {
+  params: {
+    product: string;
+  };
+}
+
+interface Product {
+  id: string;
+  slug: string;
+  sku: string;
+  name: Record<string, string>;
+  description: Record<string, string>;
+  images: any;
+  specs: any;
+  technical_specs: any;
+  categories: {
+    slug: string;
+    name_i18n: Record<string, string>;
+  } | null;
+}
+
+// Helper function to get product image URL from database
+function getDbProductImageUrl(product: Product): string {
+  if (product.images) {
+    try {
+      const images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
+      
+      // Try to get thumbnail first, then gallery[0], then fallback
+      if (images.thumbnail) {
+        return images.thumbnail;
+      }
+      if (images.gallery && images.gallery.length > 0) {
+        return images.gallery[0];
+      }
+    } catch (error) {
+      console.error('Error parsing product images:', error);
+    }
+  }
+  
+  // Fallback to placeholder
+  return '/product_img/placeholder.webp';
+}
+
+// Get product data from database
+async function getProduct(productSlug: string): Promise<Product | null> {
+  try {
+    const { data, error } = await supabase
+      .from('products')
+      .select(`
+        id,
+        slug,
+        sku,
+        name_i18n,
+        description_i18n,
+        images,
+        specs,
+        technical_specs,
+        categories!inner (
+          slug,
+          name_i18n
+        )
+      `)
+      .or(`slug.eq.${productSlug},sku.eq.${productSlug}`)
+      .eq('categories.slug', 'aluminum-foil')
+      .single();
+
+    if (error || !data) {
+      console.error('Error fetching product:', error);
+      return null;
+    }
+
+    return {
+      id: data.id,
+      slug: data.slug,
+      sku: data.sku,
+      name: data.name_i18n || {},
+      description: data.description_i18n || {},
+      images: data.images,
+      specs: data.specs,
+      technical_specs: data.technical_specs,
+      categories: data.categories
+    };
+  } catch (error) {
+    console.error('Error in getProduct:', error);
+    return null;
+  }
+}
+
+export default async function ProductPage({ params }: ProductPageProps) {
+  const product = await getProduct(params.product);
+  
+  if (!product) {
+    notFound();
+  }
+
+  return (
+    <>
+      <ProductDetailClient product={product} />
+      <Footer />
+    </>
+  );
+}
+
+// Generate static params for all aluminum foil products
+export async function generateStaticParams() {
+  try {
+    const { data: products, error } = await supabase
+      .from('products')
+      .select(`
+        slug,
+        sku
+      `)
+      .eq('category_slug', 'aluminum-foil');
+
+    if (error || !products) {
+      console.error('Error fetching products for static generation:', error);
+      return [];
+    }
+
+    return products.map((product) => ({
+      product: product.slug || product.sku,
+    }));
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error);
+    return [];
+  }
+}

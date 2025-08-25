@@ -96,7 +96,7 @@ export default function SubcategoryClient({
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
               {products.map((product) => (
-                <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+                <Link key={product.id} href={`/products/${categorySlug}/${product.slug}`} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow block">
                   <div className="h-48 relative overflow-hidden">
                     <img 
                       src={getProductCardImage(product)}
@@ -137,16 +137,11 @@ export default function SubcategoryClient({
                       </div>
                     )}
                     
-                    <div className="flex space-x-3">
-                      <button className="flex-1 bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-colors">
-                        {t('products.requestQuote')}
-                      </button>
-                      <button className="flex-1 border border-gray-300 text-gray-700 py-2 px-4 rounded hover:bg-gray-50 transition-colors">
-                        {t('products.viewDetails')}
-                      </button>
+                    <div className="text-blue-600 hover:text-blue-800 font-medium">
+                      {t('products.viewDetails')} →
                     </div>
                   </div>
-                </div>
+                </Link>
               ))}
             </div>
           )}
