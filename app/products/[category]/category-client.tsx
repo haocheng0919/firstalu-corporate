@@ -56,24 +56,28 @@ export default function CategoryClient({
   const [dbProducts, setDbProducts] = useState<AdaptedProduct[]>([]);
   const [loading, setLoading] = useState(false);
   
+  // State for hierarchical navigation
+  const [selectedSubcategory, setSelectedSubcategory] = useState<string | null>(null);
+  const [selectedThirdLevel, setSelectedThirdLevel] = useState<string | null>(null);
+  
   // Fetch products from database
   useEffect(() => {
-    if (categorySlug === 'aluminum-foil-containers' || categorySlug === 'kitchen-baking-papers') {
+    if (categorySlug === 'aluminum-foil' || categorySlug === 'baking-paper') {
       setLoading(true);
       getProducts(300)
         .then(products => {
           let filteredProducts: AdaptedProduct[] = [];
           
-          if (categorySlug === 'aluminum-foil-containers') {
+          if (categorySlug === 'aluminum-foil') {
             // Aluminum foil container products - filter by SKU pattern
             filteredProducts = products.filter(p => 
               p.sku && (p.sku.startsWith('C') || p.sku.startsWith('Y'))
             );
-          } else if (categorySlug === 'kitchen-baking-papers') {
+          } else if (categorySlug === 'baking-paper') {
             // Kitchen & Baking Papers products - filter by category
             filteredProducts = products.filter(p => {
               // Check if product belongs to Kitchen & Baking Papers category
-              return p.category_slug === 'kitchen-baking-papers' || 
+              return p.category_slug === 'baking-paper' || 
                      (p.name && p.name.toLowerCase().includes('baking paper')) ||
                      (p.sku && p.sku.startsWith('SBP'));
             });
@@ -95,22 +99,24 @@ export default function CategoryClient({
     if (product.images?.main) {
       return product.images.main;
     }
+    if (product.images?.thumbnail) {
+      return product.images.thumbnail;
+    }
 
     const categoryFolderMap: { [key: string]: string } = {
-      'kitchen-baking-papers': 'Silicone-Baking-Paper',
-      'paper-cups-drink-cups': 'Paper-Cups',
+      'paper-cups': 'Paper-Cups',
       'kraft-packaging': 'Kraft-Packaging',
-      'wooden-disposable-tableware': 'Wooden-Disposable-Tableware',
-      'bamboo-disposable-tableware': 'Bamboo-Disposable-Tableware'
+      'disposable-cutlery': 'Disposable-Cutlery',
+      'sugarcane-tableware': 'Sugarcane-Tableware'
     };
 
     const folderName = categoryFolderMap[categorySlug];
     if (!folderName) {
-      return `/product_img/placeholder.webp`;
+      return `/product_img/placeholder.svg`;
     }
 
-    if (categorySlug === 'kitchen-baking-papers') {
-      return `/product_img/Silicone-Baking-Paper/silicone-baking-paper.webp`;
+    if (categorySlug === 'baking-paper') {
+      return `/product_img/placeholder.svg`;
     }
 
     return `/product_img/${folderName}/${product.slug?.toLowerCase()}.webp`;
@@ -124,7 +130,7 @@ export default function CategoryClient({
     if (product.images?.additional && product.images.additional.length > 0) {
       return product.images.additional[0];
     }
-    return '/product_img/placeholder.webp';
+    return '/product_img/placeholder.svg';
   };
   
   // Function to determine product category from category_slug
@@ -173,25 +179,54 @@ export default function CategoryClient({
 
   const getCategoryDescription = (categorySlug: string) => {
     switch (categorySlug) {
-      case 'aluminum-foil-containers': 
-        return t('products.categories.aluminumContainers.description');
-      case 'kitchen-baking-papers': 
-        return t('products.categories.kitchenBaking.description');
-      case 'paper-cups-drink-cups': 
+      case 'aluminum-foil': 
+        return t('products.categories.aluminumFoil.description');
+      case 'baking-paper': 
+        return t('products.categories.bakingPaper.description');
+      case 'paper-cups': 
         return t('products.categories.paperCups.description');
       case 'kraft-packaging': 
         return t('products.categories.kraftPackaging.description');
-      case 'wooden-disposable-tableware': 
-        return t('products.categories.woodenTableware.description');
-      case 'bamboo-disposable-tableware': 
-        return t('products.categories.woodenTableware.description');
+      case 'disposable-cutlery': 
+        return t('products.categories.disposableCutlery.description');
+      case 'sugarcane-tableware': 
+        return t('products.categories.sugarcaneTableware.description');
       default: 
         return t('products.subtitle');
     }
   };
 
+  // Get subcategories organized by hierarchy level
+  const getSubcategoriesByLevel = () => {
+    const level2 = subcategories.filter(sub => {
+      // Check if this subcategory is a direct child of the main category
+      return sub.slug.includes(categorySlug) || 
+             ['aluminum-foil-container', 'aluminum-foil-sheets', 'bamboo-cutlery', 'wooden-cutlery', 
+              'single-wall-cups', 'double-wall-cups', 'ripple-wall-cups'].includes(sub.slug);
+    });
+    
+    const level3 = subcategories.filter(sub => {
+      // Third level categories (grandchildren)
+      return !level2.find(l2 => l2.slug === sub.slug) && 
+             ['smoothwall-containers', 'wrinklewall-containers', 'shrink-packaging-containers',
+              'pop-up-foil-sheets', 'kitchen-foil', 'hairdressing-foil-roll',
+              'round-kraft-soup-cups', 'round-kraft-salad-bowls', 'round-kraft-deli-bowls', 
+              'take-away-kraft-boxes', 'kraft-trays',
+              'single-wall-paper-cups', 'single-wall-hotel-cups', 'single-wall-printed-cups',
+              'double-wall-paper-cups', 'double-wall-cold-drink-cups', 'ripple-wall-paper-cups',
+              'wooden-spoons', 'wooden-knives', 'wooden-sporks', 'wooden-coffee-stirrers', 
+              'wooden-ice-cream-sticks', 'wooden-ice-cream-spoons',
+              'bamboo-forks', 'bamboo-spoons', 'bamboo-knives', 'bamboo-chopsticks',
+              'sugarcane-plates', 'sugarcane-bowls', 'sugarcane-clamshells', 'sugarcane-trays'].includes(sub.slug);
+    });
+    
+    return { level2, level3 };
+  };
+
+  const { level2, level3 } = getSubcategoriesByLevel();
+
   // For aluminum foil containers, use the new three-level system
-  if (categorySlug === 'aluminum-foil-containers') {
+  if (categorySlug === 'aluminum-foil') {
     // Use database products instead of local ProductImage data
     const displayProducts = getFilteredDbProducts();
     
@@ -298,6 +333,85 @@ export default function CategoryClient({
             </div>
           )}
 
+          {/* Subcategories Navigation */}
+          {!selectedSubcategory && level2.length > 0 && (
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold text-gray-900 mb-6">Product Categories</h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {level2.map((subcategory) => (
+                  <div
+                    key={subcategory.id}
+                    onClick={() => setSelectedSubcategory(subcategory.slug)}
+                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
+                  >
+                    <div className="h-32 relative overflow-hidden bg-gray-100">
+                      <img 
+                        src={`/product_cat/${subcategory.slug}.webp`}
+                        alt={subcategory.name || subcategory.slug}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = `/product_cat/${categorySlug}.webp`;
+                        }}
+                      />
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-lg font-semibold text-gray-900 mb-1 capitalize">
+                        {subcategory.name || subcategory.slug.replace(/-/g, ' ')}
+                      </h3>
+                      <p className="text-sm text-gray-600">{subcategory.productCount} products</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Third Level Categories */}
+          {selectedSubcategory && (
+            <section className="mb-8">
+              <div className="flex items-center mb-6">
+                <button
+                  onClick={() => setSelectedSubcategory(null)}
+                  className="flex items-center text-blue-600 hover:text-blue-800 font-medium mr-4"
+                >
+                  ← Back to Categories
+                </button>
+                <h2 className="text-2xl font-bold text-gray-900 capitalize">
+                  {selectedSubcategory.replace(/-/g, ' ')}
+                </h2>
+              </div>
+              
+              {level3.filter(sub => sub.slug.includes(selectedSubcategory)).length > 0 ? (
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                  {level3.filter(sub => sub.slug.includes(selectedSubcategory)).map((thirdLevel) => (
+                    <div
+                      key={thirdLevel.id}
+                      onClick={() => setSelectedThirdLevel(thirdLevel.slug)}
+                      className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
+                    >
+                      <div className="h-24 relative overflow-hidden bg-gray-100">
+                        <img 
+                          src={`/product_cat/${thirdLevel.slug}.webp`}
+                          alt={thirdLevel.name || thirdLevel.slug}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = `/product_cat/${categorySlug}.webp`;
+                          }}
+                        />
+                      </div>
+                      <div className="p-3">
+                        <h4 className="text-md font-semibold text-gray-900 capitalize">
+                          {thirdLevel.name || thirdLevel.slug.replace(/-/g, ' ')}
+                        </h4>
+                        <p className="text-xs text-gray-600">{thirdLevel.productCount} products</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : null}
+            </section>
+          )}
+
           {/* Products Grid */}
           <section>
             
@@ -314,7 +428,7 @@ export default function CategoryClient({
                   return (
                     <Link 
                       key={`${product.sku}-${index}`}
-                      href={`/products/aluminum-foil-containers/${productCategory}/${product.sku}`}
+                      href={`/products/aluminum-foil/${productCategory}/${product.sku}`}
                       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
                     >
                       <div className="h-48 relative overflow-hidden">
@@ -322,9 +436,7 @@ export default function CategoryClient({
                           src={getDbProductImageUrl(product)}
                           alt={product.name || product.sku || 'Product'}
                           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                          onError={(e) => {
-                            (e.target as HTMLImageElement).src = '/product_img/placeholder.webp';
-                          }}
+                          onError={(e) => { (e.target as HTMLImageElement).src = '/product_img/placeholder.svg'; }}
                         />
                       </div>
                       <div className="p-4">
@@ -348,7 +460,7 @@ export default function CategoryClient({
   // Get sample products data for categories without database products
   const getSampleProducts = (categorySlug: string) => {
     const sampleProducts: { [key: string]: any[] } = {
-      'paper-cups-drink-cups': [
+      'paper-cups': [
         {
           id: 'pc-8oz',
           name: '8oz Paper Coffee Cups',
@@ -394,7 +506,7 @@ export default function CategoryClient({
           image: '/disposablephoto/Disposable Food Boxes.webp'
         }
       ],
-      'wooden-disposable-tableware': [
+      'disposable-cutlery': [
         {
           id: 'wc-standard',
           name: 'Wooden Disposable Chopsticks',
@@ -417,7 +529,7 @@ export default function CategoryClient({
           image: '/disposablephoto/Disposable Chopsticks.webp'
         }
       ],
-      'bamboo-disposable-tableware': [
+      'sugarcane-tableware': [
         {
           id: 'bc-premium',
           name: 'Bamboo Disposable Chopsticks',
@@ -445,11 +557,11 @@ export default function CategoryClient({
     return sampleProducts[categorySlug] || [];
   };
 
-  // For other categories, use enhanced display with sample products or database products
+  // For other categories, show hierarchical navigation
   let displayProducts;
   let sampleProducts = [];
   
-  if (categorySlug === 'kitchen-baking-papers') {
+  if (categorySlug === 'baking-paper') {
     // Use database products for Kitchen & Baking Papers
     displayProducts = dbProducts;
   } else {
@@ -476,7 +588,84 @@ export default function CategoryClient({
           </Link>
         </div>
 
+        {/* Subcategories Navigation */}
+        {!selectedSubcategory && level2.length > 0 && (
+          <section className="mb-12">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Product Categories</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {level2.map((subcategory) => (
+                <div
+                  key={subcategory.id}
+                  onClick={() => setSelectedSubcategory(subcategory.slug)}
+                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
+                >
+                  <div className="h-32 relative overflow-hidden bg-gray-100">
+                    <img 
+                      src={`/product_cat/${subcategory.slug}.webp`}
+                      alt={subcategory.name || subcategory.slug}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = `/product_cat/${categorySlug}.webp`;
+                      }}
+                    />
+                  </div>
+                  <div className="p-4">
+                    <h3 className="text-lg font-semibold text-gray-900 mb-1 capitalize">
+                      {subcategory.name || subcategory.slug.replace(/-/g, ' ')}
+                    </h3>
+                    <p className="text-sm text-gray-600">{subcategory.productCount} products</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
 
+        {/* Third Level Categories */}
+        {selectedSubcategory && (
+          <section className="mb-8">
+            <div className="flex items-center mb-6">
+              <button
+                onClick={() => setSelectedSubcategory(null)}
+                className="flex items-center text-blue-600 hover:text-blue-800 font-medium mr-4"
+              >
+                ← Back to Categories
+              </button>
+              <h2 className="text-2xl font-bold text-gray-900 capitalize">
+                {selectedSubcategory.replace(/-/g, ' ')}
+              </h2>
+            </div>
+            
+            {level3.filter(sub => sub.slug.includes(selectedSubcategory)).length > 0 ? (
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {level3.filter(sub => sub.slug.includes(selectedSubcategory)).map((thirdLevel) => (
+                  <div
+                    key={thirdLevel.id}
+                    onClick={() => setSelectedThirdLevel(thirdLevel.slug)}
+                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow cursor-pointer group"
+                  >
+                    <div className="h-24 relative overflow-hidden bg-gray-100">
+                      <img 
+                        src={`/product_cat/${thirdLevel.slug}.webp`}
+                        alt={thirdLevel.name || thirdLevel.slug}
+                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = `/product_cat/${categorySlug}.webp`;
+                        }}
+                      />
+                    </div>
+                    <div className="p-3">
+                      <h4 className="text-md font-semibold text-gray-900 capitalize">
+                        {thirdLevel.name || thirdLevel.slug.replace(/-/g, ' ')}
+                      </h4>
+                      <p className="text-xs text-gray-600">{thirdLevel.productCount} products</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : null}
+          </section>
+        )}
 
         {/* Products Grid */}
         <section>
@@ -496,11 +685,11 @@ export default function CategoryClient({
             <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
               {displayProducts.map((product) => {
                 // Check if this is a database product (AdaptedProduct) or sample product
-                const isDbProduct = categorySlug === 'kitchen-baking-papers' || 'sku' in product;
+                const isDbProduct = categorySlug === 'baking-paper' || 'sku' in product;
                 
                 let productImage, productName, productDescription, productHref;
                 
-                if (categorySlug === 'kitchen-baking-papers' && 'sku' in product) {
+                if (categorySlug === 'baking-paper' && 'sku' in product) {
                   // Database product for Kitchen & Baking Papers
                   const dbProduct = product as AdaptedProduct;
                   productImage = getDbProductImageUrl(dbProduct);
@@ -558,10 +747,6 @@ export default function CategoryClient({
               })}
             </div>
           )}
-          
-
-          
-
         </section>
       </main>
       

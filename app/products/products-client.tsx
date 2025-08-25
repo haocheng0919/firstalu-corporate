@@ -8,8 +8,9 @@ import { useLanguage } from '@/lib/language-context';
 interface CategoryWithCount {
   id: string;
   slug: string;
-  name?: string;
+  name: string;
   productCount: number;
+  thumbnail_url?: string;
 }
 
 interface ProductsClientProps {
@@ -40,9 +41,10 @@ export default function ProductsClient({ categories }: ProductsClientProps) {
                >
                  <div className="h-48 relative overflow-hidden">
                    <img 
-                     src={category.slug === 'aluminum-foil-roll' ? '/Aluminum-Foil-Roll/Aluminum-Foil-Roll/aluminum-foil-roll.webp' : `/product_cat/${category.slug}.webp`}
+                     src={category.thumbnail_url || `/product_cat/${category.slug}.webp`}
                      alt={category.name || category.slug}
                      className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                     onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/product_img/placeholder.svg'; }}
                    />
                  </div>
                  <div className="p-6">

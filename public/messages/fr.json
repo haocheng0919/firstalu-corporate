@@ -56,28 +56,28 @@
       "learnMore": "En savoir plus",
       "items": {
         "aluminumFoil": {
-          "title": "Rouleaux de papier d'aluminium",
-          "description": "Rouleaux de papier d'aluminium de haute qualité pour la restauration et l'usage domestique."
+          "title": "Feuille d'aluminium",
+          "description": "Feuilles et contenants en aluminium de haute qualité pour la restauration et l'usage domestique."
         },
-        "kitchenPapers": {
-          "title": "Papiers de cuisson en silicone",
+        "bakingPaper": {
+          "title": "Papier de cuisson",
           "description": "Papiers de cuisson antiadhésifs avec options d'impression personnalisées disponibles."
         },
-        "aluminumContainers": {
-          "title": "Contenants alimentaires en aluminium",
-          "description": "Contenants durables parfaits pour les plats à emporter, la restauration et la livraison de repas."
-        },
         "kraftPackaging": {
-          "title": "Emballage en papier kraft",
+          "title": "Emballage kraft",
           "description": "Solutions en papier kraft écologiques pour les besoins d'emballage durable."
         },
         "paperCups": {
-          "title": "Gobelets en papier et accessoires",
+          "title": "Gobelets en papier",
           "description": "Gobelets en papier jetables avec couvercles et accessoires pour les boissons."
         },
-        "woodenBamboo": {
-          "title": "Ustensiles en bois et bambou",
-          "description": "Baguettes en bois durables et ustensiles en bambou pour la restauration."
+        "disposableCutlery": {
+          "title": "Couverts jetables",
+          "description": "Ustensiles jetables en bois et bambou durables pour la restauration."
+        },
+        "sugarcaneTableware": {
+          "title": "Vaisselle en canne à sucre",
+          "description": "Vaisselle écologique en bagasse de canne à sucre biodégradable."
         }
       }
     },
@@ -195,10 +195,10 @@
     "relatedProducts": "Produits connexes",
     "technicalSpecifications": "Spécifications Techniques",
     "categories": {
-      "aluminumContainers": {
-        "description": "Contenants en aluminium durables pour le stockage et la livraison d'aliments"
+      "aluminumFoil": {
+        "description": "Feuilles et contenants en aluminium de haute qualité"
       },
-      "kitchenBaking": {
+      "bakingPaper": {
         "description": "Papiers de cuisson professionnels et fournitures de cuisine"
       },
       "paperCups": {
@@ -207,8 +207,11 @@
       "kraftPackaging": {
         "description": "Solutions d'emballage en papier kraft écologiques"
       },
-      "woodenTableware": {
-        "description": "Ustensiles en bois et bambou durables"
+      "disposableCutlery": {
+        "description": "Ustensiles jetables en bois et bambou durables"
+      },
+      "sugarcaneTableware": {
+        "description": "Vaisselle écologique en bagasse de canne à sucre"
       }
     }
   },

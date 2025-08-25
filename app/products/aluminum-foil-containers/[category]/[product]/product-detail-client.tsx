@@ -40,12 +40,12 @@ export default function ProductDetailClient({ product, category, serverDetectedI
             Products
           </Link>
           <span className="mx-2 text-gray-500">›</span>
-          <Link href="/products/aluminum-foil-containers" className="text-blue-600 hover:text-blue-800">
+          <Link href="/products/aluminum-foil" className="text-blue-600 hover:text-blue-800">
             Aluminum Foil Containers
           </Link>
           <span className="mx-2 text-gray-500">›</span>
           <Link 
-            href={`/products/aluminum-foil-containers?category=${category}`} 
+            href={`/products/aluminum-foil?category=${category}`} 
             className="text-blue-600 hover:text-blue-800 capitalize"
           >
             {category} Containers
@@ -70,10 +70,7 @@ export default function ProductDetailClient({ product, category, serverDetectedI
                       src={selectedImage}
                       alt={`${product.name} - View ${selectedImageIndex + 1}`}
                       className="w-full h-full object-cover"
-                      onError={(e) => {
-                        const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
-                      }}
+                      onError={(e) => { (e.target as HTMLImageElement).src = '/product_img/placeholder.svg'; }}
                     />
                   )}
                 </div>
@@ -100,10 +97,7 @@ export default function ProductDetailClient({ product, category, serverDetectedI
                           src={image}
                           alt={`${product.name} - View ${index + 1}`}
                           className="w-full h-full object-cover"
-                          onError={(e) => {
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                          }}
+                          onError={(e) => { (e.target as HTMLImageElement).src = '/product_img/placeholder.svg'; }}
                         />
                       </button>
                     ))}
@@ -239,7 +233,7 @@ export default function ProductDetailClient({ product, category, serverDetectedI
                 {relatedProducts.map((relatedProduct) => (
                   <Link
                     key={relatedProduct.code}
-                    href={`/products/aluminum-foil-containers/${relatedProduct.category}/${relatedProduct.code}`}
+                    href={`/products/aluminum-foil/${relatedProduct.category}/${relatedProduct.code}`}
                     className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow block"
                   >
                     <div className="aspect-square bg-gray-100 overflow-hidden">
@@ -247,9 +241,7 @@ export default function ProductDetailClient({ product, category, serverDetectedI
                         src={relatedProduct.path}
                         alt={relatedProduct.name}
                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                        onError={(e) => {
-                          (e.target as HTMLImageElement).src = '/product_img/placeholder.webp';
-                        }}
+                        onError={(e) => { (e.target as HTMLImageElement).src = '/product_img/placeholder.svg'; } }
                       />
                     </div>
                     <div className="p-4">
@@ -262,7 +254,7 @@ export default function ProductDetailClient({ product, category, serverDetectedI
               </div>
               <div className="text-center">
                 <Link
-                  href={`/products/aluminum-foil-containers`}
+                  href={`/products/aluminum-foil`}
                   className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
                 >
                   View All {category.charAt(0).toUpperCase() + category.slice(1)} {product.shape.charAt(0).toUpperCase() + product.shape.slice(1)} Products →
@@ -273,7 +265,7 @@ export default function ProductDetailClient({ product, category, serverDetectedI
             <div className="text-center">
               <p className="text-gray-600 mb-4">No related products in this category and shape.</p>
               <Link
-                href={`/products/aluminum-foil-containers`}
+                href={`/products/aluminum-foil`}
                 className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
               >
                 ← View All Aluminum Foil Container Products

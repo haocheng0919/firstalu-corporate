@@ -56,28 +56,28 @@
       "learnMore": "Más Información",
       "items": {
         "aluminumFoil": {
-          "title": "Rollos de Papel de Aluminio",
-          "description": "Rollos de papel de aluminio de alta calidad para servicios de alimentos y uso doméstico."
+          "title": "Papel de Aluminio",
+          "description": "Láminas y contenedores de aluminio de alta calidad para servicios de alimentos y uso doméstico."
         },
-        "kitchenPapers": {
-          "title": "Papeles de Horneado de Silicona",
+        "bakingPaper": {
+          "title": "Papel de Hornear",
           "description": "Papeles de horneado antiadherentes con opciones de impresión personalizada disponibles."
         },
-        "aluminumContainers": {
-          "title": "Contenedores de Alimentos de Aluminio",
-          "description": "Contenedores duraderos perfectos para comida para llevar, catering y entrega de comidas."
-        },
         "kraftPackaging": {
-          "title": "Empaque de Papel Kraft",
+          "title": "Empaque Kraft",
           "description": "Soluciones de papel kraft ecológicas para necesidades de empaque sostenible."
         },
         "paperCups": {
-          "title": "Vasos de Papel y Accesorios",
+          "title": "Vasos de Papel",
           "description": "Vasos de papel desechables con tapas y accesorios para bebidas."
         },
-        "woodenBamboo": {
-          "title": "Utensilios de Madera y Bambú",
-          "description": "Palillos de madera sostenibles y utensilios de bambú para servicios de alimentos."
+        "disposableCutlery": {
+          "title": "Cubiertos Desechables",
+          "description": "Utensilios desechables sostenibles de madera y bambú para servicios de alimentos."
+        },
+        "sugarcaneTableware": {
+          "title": "Vajilla de Caña de Azúcar",
+          "description": "Vajilla ecológica de bagazo de caña de azúcar biodegradable."
         }
       }
     },
@@ -195,10 +195,10 @@
     "relatedProducts": "Productos Relacionados",
     "technicalSpecifications": "Especificaciones Técnicas",
     "categories": {
-      "aluminumContainers": {
-        "description": "Contenedores de aluminio duraderos para almacenamiento y entrega de alimentos"
+      "aluminumFoil": {
+        "description": "Láminas y contenedores de aluminio de alta calidad"
       },
-      "kitchenBaking": {
+      "bakingPaper": {
         "description": "Papeles de horneado profesionales y suministros de cocina"
       },
       "paperCups": {
@@ -207,8 +207,11 @@
       "kraftPackaging": {
         "description": "Soluciones de empaque de papel kraft ecológicas"
       },
-      "woodenTableware": {
-        "description": "Utensilios sostenibles de madera y bambú"
+      "disposableCutlery": {
+        "description": "Utensilios desechables sostenibles de madera y bambú"
+      },
+      "sugarcaneTableware": {
+        "description": "Vajilla ecológica de bagazo de caña de azúcar"
       }
     }
   },

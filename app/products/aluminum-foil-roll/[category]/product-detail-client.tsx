@@ -21,25 +21,37 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
   const getProductImages = () => {
     if (product.images) {
       const images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
-      if (images.gallery && Array.isArray(images.gallery)) {
-        return images.gallery.filter((img: string) => img && !img.includes('placeholder.webp'));
+      const result: string[] = [];
+      if (images.thumbnail && !String(images.thumbnail).includes('placeholder.svg')) {
+        result.push(images.thumbnail);
       }
-      if (images.main && !images.main.includes('placeholder.webp')) {
-        return [images.main];
+      if (images.additional && Array.isArray(images.additional)) {
+        for (const img of images.additional) {
+          if (img && !img.includes('placeholder.svg')) {
+            result.push(img);
+          }
+        }
+      }
+      if (result.length > 0) {
+        return Array.from(new Set(result));
       }
     }
     
     // Fallback to category-specific default images (webp format)
     if (product.category_slug === 'aluminum-foil-roll') {
       return [
-        '/Aluminum-Foil-Roll/Aluminum-Foil-Roll/aluminum-foil-roll.webp',
-        '/Aluminum-Foil-Roll/Aluminum-Foil-Roll/aluminum-foil-roll-2.webp',
-        '/Aluminum-Foil-Roll/Aluminum-Foil-Roll/aluminum-foil-roll-3.webp'
+        '/product_img/Aluminum Foil/Foil Sheets/Aluminum-Foil-Roll/aluminum-foil-roll.webp',
+        '/product_img/Aluminum Foil/Foil Sheets/Aluminum-Foil-Roll/aluminum-foil-roll-2.webp',
+        '/product_img/Aluminum Foil/Foil Sheets/Aluminum-Foil-Roll/aluminum-foil-roll-3.webp'
       ];
     } else if (product.category_slug === 'hairdressing-foil-roll') {
-      return ['/Aluminum-Foil-Roll/Hairdressing-Foil-Roll/hairdressing-foil-roll-1.jpg'];
+      return ['/product_img/Aluminum Foil/Foil Sheets/Hairdressing-Foil-Roll/hairdressing-foil-roll.webp'];
     } else if (product.category_slug === 'pop-up-foil-sheets') {
-      return ['/Aluminum-Foil-Roll/Pop-up-Foil-Sheets/pop-up-foil-sheets-1.jpg'];
+      return [
+        '/product_img/Aluminum Foil/Foil Sheets/Pop-up-Foil-Sheets/pop-up-foil-sheets.webp',
+        '/product_img/Aluminum Foil/Foil Sheets/Pop-up-Foil-Sheets/pop-up-foil-sheets-2.webp',
+        '/product_img/Aluminum Foil/Foil Sheets/Pop-up-Foil-Sheets/pop-up-foil-sheets-3.webp'
+      ];
     }
     
     return [];
@@ -121,7 +133,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                 className="w-full h-full object-contain p-4"
                 onError={(e) => {
                   const target = e.target as HTMLImageElement;
-                  target.style.display = 'none';
+                  target.src = '/product_img/placeholder.svg';
                 }}
               />
             </div>
@@ -145,7 +157,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                       className="w-full h-full object-contain p-1 bg-white"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement;
-                        target.style.display = 'none';
+                        target.src = '/product_img/placeholder.svg';
                       }}
                     />
                   </button>
@@ -256,7 +268,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                   const relatedImages = relatedProduct.images ? 
                     (typeof relatedProduct.images === 'string' ? JSON.parse(relatedProduct.images) : relatedProduct.images) : 
                     null;
-                  const relatedImageUrl = relatedImages?.main || relatedImages?.gallery?.[0] || '/product_img/placeholder.webp';
+                  const relatedImageUrl = relatedImages?.main || relatedImages?.gallery?.[0] || '/product_img/placeholder.svg';
                   const relatedName = currentLanguage === 'en' ? 
                     (relatedProduct.name || relatedProduct.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())) :
                     ((relatedProduct[`name_${currentLanguage}` as keyof AdaptedProduct] as string) || relatedProduct.name || relatedProduct.slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()));
@@ -264,7 +276,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                   return (
                     <Link
                       key={relatedProduct.id}
-                      href={`/products/aluminum-foil-roll/${relatedProduct.slug}`}
+                      href={`/products/aluminum-foil/${relatedProduct.slug}`}
                       className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow block"
                     >
                       <div className="aspect-square bg-gray-100 overflow-hidden">
@@ -274,7 +286,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                           className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
                           onError={(e) => {
                             const target = e.target as HTMLImageElement;
-                            target.src = '/product_img/placeholder.webp';
+                            target.src = '/product_img/placeholder.svg';
                           }}
                         />
                       </div>
@@ -289,10 +301,10 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
               </div>
               <div className="text-center">
                 <Link
-                  href={`/products/aluminum-foil-roll`}
+                  href={`/products/aluminum-foil`}
                   className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
                 >
-                  View All Aluminum Foil Roll Products →
+                  View All Aluminum Foil Products →
                 </Link>
               </div>
             </div>

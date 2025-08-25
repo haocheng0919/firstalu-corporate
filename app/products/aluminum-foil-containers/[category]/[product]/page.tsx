@@ -47,7 +47,7 @@ function getDbProductImageUrl(product: AdaptedProduct): string {
       return images.additional[0];
     }
   }
-  return '/product_img/placeholder.webp';
+  return '/product_img/placeholder.svg';
 }
 
 // Helper function to convert AdaptedProduct to ProductImage
@@ -109,7 +109,7 @@ async function getProductData(category: string, productCode: string): Promise<Pr
           name: dbProduct.name || productCode,
           category: category as 'smoothwall' | 'wrinklewall',
           shape: 'rectangle', // Default, could be enhanced later
-          path: serverDetectedImages[0] || '/placeholder.webp',
+          path: serverDetectedImages[0] || '/product_img/placeholder.svg',
           images: serverDetectedImages,
           type: 'aluminum-foil-container'
         };

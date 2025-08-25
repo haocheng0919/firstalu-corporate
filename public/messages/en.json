@@ -100,10 +100,10 @@
     "subcategories": "Subcategories",
     "noSubcategories": "No subcategories found.",
     "categories": {
-      "aluminumContainers": {
-        "description": "Durable aluminum containers for food storage and delivery"
+      "aluminumFoil": {
+        "description": "Durable aluminum foil and containers for food storage and delivery"
       },
-      "kitchenBaking": {
+      "bakingPaper": {
         "description": "Professional baking papers and kitchen supplies"
       },
       "paperCups": {
@@ -112,8 +112,11 @@
       "kraftPackaging": {
         "description": "Eco-friendly kraft paper packaging solutions"
       },
-      "woodenTableware": {
-        "description": "Sustainable wooden and bamboo utensils"
+      "disposableCutlery": {
+        "description": "Sustainable disposable wooden and bamboo utensils"
+      },
+      "sugarcaneTableware": {
+        "description": "Eco-friendly sugarcane bagasse tableware"
       }
     }
   },
@@ -330,28 +333,28 @@
       "learnMore": "Learn More",
       "items": {
         "aluminumFoil": {
-          "title": "Aluminum Foil Rolls",
-          "description": "High-quality aluminum foil rolls for food service and household use."
+          "title": "Aluminum Foil",
+          "description": "Premium quality aluminum foil products for food packaging and storage solutions."
         },
-        "kitchenPapers": {
-          "title": "Silicone Baking Papers",
-          "description": "Non-stick baking papers with custom printing options available."
-        },
-        "aluminumContainers": {
-          "title": "Aluminum Food Containers",
-          "description": "Durable containers perfect for takeaway, catering, and meal delivery."
+        "bakingPaper": {
+          "title": "Baking Paper",
+          "description": "High-quality parchment and baking papers for professional and home kitchens."
         },
         "kraftPackaging": {
-          "title": "Kraft Paper Packaging",
-          "description": "Eco-friendly kraft paper solutions for sustainable packaging needs."
+          "title": "Kraft Packaging",
+          "description": "Sustainable kraft paper packaging solutions for food service industry."
         },
         "paperCups": {
-          "title": "Paper Cups & Accessories",
-          "description": "Disposable paper cups with lids and accessories for beverages."
+          "title": "Paper Cups",
+          "description": "Eco-friendly disposable paper cups for hot and cold beverages."
         },
-        "woodenBamboo": {
-          "title": "Wooden & Bamboo Utensils",
-          "description": "Sustainable wooden chopsticks and bamboo utensils for food service."
+        "disposableCutlery": {
+          "title": "Disposable Cutlery",
+          "description": "Natural wooden and bamboo cutlery for eco-conscious dining."
+        },
+        "sugarcaneTableware": {
+          "title": "Sugarcane Tableware",
+          "description": "Biodegradable sugarcane fiber tableware for sustainable food service."
         }
       }
     },

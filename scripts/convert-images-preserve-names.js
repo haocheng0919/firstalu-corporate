@@ -5,13 +5,13 @@ const path = require('path');
 // 图片文件夹路径 - 保持原始文件名和文件夹结构
 const imageFolders = [
   {
-    source: '/Users/haochengwang/Desktop/claude/firstalu/public/纸盒编辑文件',
-    target: '/Users/haochengwang/Desktop/claude/firstalu/public/纸盒编辑文件',
+    source: '/Users/haochengwang/Desktop/claude/firstalu/public/product_cat',
+    target: '/Users/haochengwang/Desktop/claude/firstalu/public/product_cat',
     preserveNames: true
   },
   {
-    source: '/Users/haochengwang/Desktop/claude/firstalu/public/刀叉图上传',
-    target: '/Users/haochengwang/Desktop/claude/firstalu/public/刀叉图上传',
+    source: '/Users/haochengwang/Desktop/claude/firstalu/public/product_img',
+    target: '/Users/haochengwang/Desktop/claude/firstalu/public/product_img',
     preserveNames: true
   }
 ];

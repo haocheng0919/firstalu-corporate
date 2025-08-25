@@ -20,7 +20,7 @@ function getDbProductImageUrl(product: AdaptedProduct): string {
       return images.additional[0];
     }
   }
-  return '/product_img/Silicone-Baking-Paper/silicone-baking-paper.webp';
+  return '/product_img/placeholder.svg';
 }
 
 export default function ProductDetailClient({ product }: ProductDetailClientProps) {
@@ -45,7 +45,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
             Products
           </Link>
           <span className="mx-2 text-gray-500">›</span>
-          <Link href="/products/kitchen-baking-papers" className="text-blue-600 hover:text-blue-800">
+          <Link href="/products/baking-paper" className="text-blue-600 hover:text-blue-800">
             Kitchen & Baking Papers
           </Link>
           <span className="mx-2 text-gray-500">›</span>
@@ -62,7 +62,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                   alt={product.name || product.sku || 'Product'}
                   className="w-full h-full object-cover"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = '/product_img/Silicone-Baking-Paper/silicone-baking-paper.webp';
+                    (e.currentTarget as HTMLImageElement).src = '/product_img/placeholder.svg';
                   }}
                 />
               </div>
@@ -82,6 +82,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
                         src={image}
                         alt={`${product.name || product.sku} view ${index + 1}`}
                         className="w-full h-full object-cover"
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/product_img/placeholder.svg'; }}
                       />
                     </button>
                   ))}
@@ -227,7 +228,7 @@ export default function ProductDetailClient({ product }: ProductDetailClientProp
         {/* Back to Category */}
         <div className="mt-8">
           <Link 
-            href="/products/kitchen-baking-papers"
+            href="/products/baking-paper"
             className="inline-flex items-center text-blue-600 hover:text-blue-800 font-medium"
           >
             ← Back to Kitchen & Baking Papers

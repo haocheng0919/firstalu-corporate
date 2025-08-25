@@ -23,7 +23,7 @@ function getDbProductImageUrl(product: AdaptedProduct): string {
       return images.additional[0];
     }
   }
-  return '/product_img/Silicone-Baking-Paper/silicone-baking-paper.webp';
+  return '/product_img/placeholder.svg';
 }
 
 async function getProductData(sku: string): Promise<AdaptedProduct | null> {
@@ -54,7 +54,7 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 export async function generateStaticParams() {
   try {
     const products = await getProducts(200);
-    const kitchenBakingProducts = products.filter(p => p.category_slug === 'kitchen-baking-papers');
+    const kitchenBakingProducts = products.filter(p => p.category_slug === 'baking-paper');
     
     return kitchenBakingProducts.map((product) => ({
       sku: product.sku,

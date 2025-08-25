@@ -15,22 +15,22 @@ interface AluminumFoilRollPageProps {
 function getDbProductImageUrl(product: AdaptedProduct): string {
   if (product.images) {
     const images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
-    if (images.main) return images.main;
-    if (images.gallery && Array.isArray(images.gallery) && images.gallery.length > 0) {
-      return images.gallery[0];
+    if (images.thumbnail) return images.thumbnail;
+    if (images.additional && Array.isArray(images.additional) && images.additional.length > 0) {
+      return images.additional[0];
     }
   }
   
   // Fallback to public images based on category (webp format)
   if (product.category_slug === 'aluminum-foil-roll') {
-    return '/Aluminum-Foil-Roll/Aluminum-Foil-Roll/aluminum-foil-roll.webp';
+    return '/product_img/Aluminum Foil/Foil Sheets/Aluminum-Foil-Roll/aluminum-foil-roll.webp';
   } else if (product.category_slug === 'hairdressing-foil-roll') {
-    return '/Aluminum-Foil-Roll/Hairdressing-Foil-Roll/hairdressing-foil-roll-1.jpg';
+    return '/product_img/Aluminum Foil/Foil Sheets/Hairdressing-Foil-Roll/hairdressing-foil-roll.webp';
   } else if (product.category_slug === 'pop-up-foil-sheets') {
-    return '/Aluminum-Foil-Roll/Pop-up-Foil-Sheets/pop-up-foil-sheets-1.jpg';
+    return '/product_img/Aluminum Foil/Foil Sheets/Pop-up-Foil-Sheets/pop-up-foil-sheets.webp';
   }
   
-  return '/product_img/placeholder.webp';
+  return '/product_img/placeholder.svg';
 }
 
 async function getAluminumFoilRollData() {
@@ -114,6 +114,10 @@ export default async function AluminumFoilRollPage() {
                         src={productImage}
                         alt={productName}
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        onError={(e: any) => {
+                          const target = e.target as HTMLImageElement;
+                          target.src = '/product_img/placeholder.svg';
+                        }}
                       />
                     </div>
                     <div className="p-4">

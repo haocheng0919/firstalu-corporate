@@ -56,28 +56,28 @@
       "learnMore": "Mehr erfahren",
       "items": {
         "aluminumFoil": {
-          "title": "Aluminiumfolienrollen",
-          "description": "Hochwertige Aluminiumfolienrollen für Gastronomie und Haushaltsgebrauch."
+          "title": "Aluminiumfolie",
+          "description": "Hochwertige Aluminiumfolienprodukte für Lebensmittelverpackung und Lagerung."
         },
-        "kitchenPapers": {
-          "title": "Silikon-Backpapiere",
-          "description": "Antihaft-Backpapiere mit kundenspezifischen Druckoptionen verfügbar."
-        },
-        "aluminumContainers": {
-          "title": "Aluminium-Lebensmittelbehälter",
-          "description": "Langlebige Behälter perfekt für Takeaway, Catering und Mahlzeitenlieferung."
+        "bakingPaper": {
+          "title": "Backpapier",
+          "description": "Hochwertiges Pergament- und Backpapier für professionelle und Haushaltsküchen."
         },
         "kraftPackaging": {
           "title": "Kraftpapier-Verpackungen",
-          "description": "Umweltfreundliche Kraftpapier-Lösungen für nachhaltige Verpackungsanforderungen."
+          "description": "Nachhaltige Kraftpapier-Verpackungslösungen für die Gastronomie."
         },
         "paperCups": {
-          "title": "Papierbecher & Zubehör",
-          "description": "Einweg-Papierbecher mit Deckeln und Zubehör für Getränke."
+          "title": "Papierbecher",
+          "description": "Umweltfreundliche Einweg-Papierbecher für heiße und kalte Getränke."
         },
-        "woodenBamboo": {
-          "title": "Holz- & Bambusbesteck",
-          "description": "Nachhaltige Holzstäbchen und Bambusbesteck für die Gastronomie."
+        "disposableCutlery": {
+          "title": "Einwegbesteck",
+          "description": "Natürliches Holz- und Bambusbesteck für umweltbewusstes Speisen."
+        },
+        "sugarcaneTableware": {
+          "title": "Zuckerrohr-Geschirr",
+          "description": "Biologisch abbaubares Zuckerrohrfaser-Geschirr für nachhaltigen Foodservice."
         }
       }
     },
@@ -207,10 +207,10 @@
         "title": "Einweg-Essstäbchen",
         "description": "Hochwertige Holz- und Bambus-Essstäbchen für asiatische Küche-Restaurants."
       },
-      "aluminumContainers": {
-        "description": "Langlebige Aluminiumbehälter für Lebensmittellagerung und -lieferung"
+      "aluminumFoil": {
+        "description": "Langlebige Aluminiumfolie und -behälter für Lebensmittellagerung und -lieferung"
       },
-      "kitchenBaking": {
+      "bakingPaper": {
         "description": "Professionelle Backpapiere und Küchenzubehör"
       },
       "paperCups": {
@@ -219,8 +219,11 @@
       "kraftPackaging": {
         "description": "Umweltfreundliche Kraftpapier-Verpackungslösungen"
       },
-      "woodenTableware": {
-        "description": "Nachhaltiges Holz- und Bambusbesteck"
+      "disposableCutlery": {
+        "description": "Nachhaltiges Einwegbesteck aus Holz und Bambus"
+      },
+      "sugarcaneTableware": {
+        "description": "Umweltfreundliches Geschirr aus Zuckerrohr-Bagasse"
       }
     },
     "moq": "Mindestbestellmenge: 100 Kartons pro Produkt"

@@ -24,12 +24,12 @@ interface ProductWithImages extends AdaptedProduct {
 function getDbProductImageUrl(product: AdaptedProduct): string {
   if (product.images) {
     const images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
-    if (images.main) return images.main;
-    if (images.gallery && Array.isArray(images.gallery) && images.gallery.length > 0) {
-      return images.gallery[0];
+    if (images.thumbnail) return images.thumbnail;
+    if (images.additional && Array.isArray(images.additional) && images.additional.length > 0) {
+      return images.additional[0];
     }
   }
-  return '/product_img/placeholder.webp';
+  return '/product_img/placeholder.svg';
 }
 
 async function getProductData(categorySlug: string): Promise<ProductWithImages | null> {

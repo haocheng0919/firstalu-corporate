@@ -36,6 +36,23 @@ export default function SubcategoryClient({
 }: SubcategoryClientProps) {
   const { t } = useLanguage();
 
+  const getProductCardImage = (product: Product) => {
+    const fallback = `/product_img/placeholder.svg`;
+    if (!product.images) return fallback;
+
+    try {
+      const images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
+      if (images?.thumbnail) return images.thumbnail;
+      if (images?.main) return images.main;
+      if (images?.additional && Array.isArray(images.additional) && images.additional.length > 0) {
+        return images.additional[0];
+      }
+    } catch {
+      // ignore parse errors and fallback
+    }
+    return fallback;
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       <PageHeader 
@@ -82,9 +99,10 @@ export default function SubcategoryClient({
                 <div key={product.id} className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                   <div className="h-48 relative overflow-hidden">
                     <img 
-                      src={(product.images?.main) || `/product_cat/${parentCategory.slug}.webp`}
+                      src={getProductCardImage(product)}
                       alt={product.name || product.slug}
                       className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                      onError={(e) => { (e.currentTarget as HTMLImageElement).src = '/product_img/placeholder.svg'; }}
                     />
                   </div>
                   <div className="p-6">

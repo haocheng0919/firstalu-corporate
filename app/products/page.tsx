@@ -24,49 +24,33 @@ async function getStaticData() {
     
     // Calculate product counts for each parent category
     const categoriesWithCounts = categories.map(category => {
-      let productCount = 0;
+      // Get all subcategories of this parent category
+      const subcategories = (allCategories || []).filter(cat => cat.parent_id === category.id);
+      const subcategoryIds = subcategories.map(cat => cat.id);
       
-      // Special handling for aluminum-foil-containers category
-      if (category.slug === 'aluminum-foil-containers') {
-        // Import aluminum container products dynamically
-        const { getAllAluminumContainerProductImages } = require('@/utils/product-images');
-        const aluminumProducts = getAllAluminumContainerProductImages();
-        productCount = aluminumProducts.length;
-      } else {
-        // Get all subcategories of this parent category
-        const subcategories = (allCategories || []).filter(cat => cat.parent_id === category.id);
-        const subcategoryIds = subcategories.map(cat => cat.id);
-        
-        // Count products in all subcategories AND in the parent category itself
-        productCount = products.filter(product => 
-          subcategoryIds.includes(product.category_id || '') || product.category_id === category.id
-        ).length;
-      }
+      // Count products in all subcategories AND in the parent category itself
+      const productCount = products.filter(product => 
+        subcategoryIds.includes(product.category_id || '') || product.category_id === category.id
+      ).length;
       
       return {
         ...category,
+        name: category.name || category.slug,
         productCount
       };
     });
 
-    // Ensure Aluminum Foil Roll appears as a card even if it's not a top-level category
-    const foilRollSlugs = ['aluminum-foil-roll', 'hairdressing-foil-roll', 'pop-up-foil-sheets'];
-    const hasFoilRollTopLevel = categories.some(c => c.slug === 'aluminum-foil-roll');
+    // Restrict to the six top-level product categories only
+    const ALLOWED_TOP_LEVEL_CATEGORY_SLUGS = new Set([
+      'aluminum-foil',
+      'baking-paper',
+      'paper-cups',
+      'kraft-packaging',
+      'disposable-cutlery',
+      'sugarcane-tableware',
+    ]);
 
-    // Compute product count for the Aluminum Foil Roll family based on related subcategory slugs
-    const foilRollProductCount = products.filter(p => foilRollSlugs.includes((p.category_slug || '').toLowerCase())).length;
-
-    const finalCategories = hasFoilRollTopLevel
-      ? categoriesWithCounts
-      : [
-          ...categoriesWithCounts,
-          {
-            id: 'synthetic:aluminum-foil-roll',
-            slug: 'aluminum-foil-roll',
-            name: 'Aluminum Foil Roll',
-            productCount: foilRollProductCount,
-          },
-        ];
+    const finalCategories = categoriesWithCounts.filter(cat => ALLOWED_TOP_LEVEL_CATEGORY_SLUGS.has(cat.slug));
     
     return {
       categories: finalCategories
