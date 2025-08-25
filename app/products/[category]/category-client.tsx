@@ -49,6 +49,15 @@ export default function CategoryClient({
   const [selectedThirdLevel, setSelectedThirdLevel] = useState<string | null>(null);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
 
+  // Function to format product names by removing hyphens and capitalizing words
+  const formatProductName = (name: string | undefined) => {
+    if (!name) return 'Product';
+    return name
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  };
+
   // Update filtered products when subcategory selection changes
   useEffect(() => {
     let filtered = products;
@@ -276,17 +285,14 @@ export default function CategoryClient({
                   <div className="aspect-square bg-gray-100 flex items-center justify-center">
                     <img
                       src={getProductImagePath(product)}
-                      alt={product.name || product.slug}
+                      alt={formatProductName(product.name || product.slug)}
                       className="w-full h-full object-cover"
                       onError={handleImageError}
                     />
                   </div>
                   <div className="p-4">
                     <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                      {categorySlug === 'sugarcane-tableware' && product.name 
-                        ? product.name.split(' - ')[0] 
-                        : (product.name || product.slug)
-                      }
+                      {formatProductName(product.name || product.slug)}
                     </h3>
                     {product.description && (
                       <p className="text-gray-600 text-sm line-clamp-2">
