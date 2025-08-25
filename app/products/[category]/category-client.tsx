@@ -49,8 +49,13 @@ export default function CategoryClient({
   const [selectedThirdLevel, setSelectedThirdLevel] = useState<string | null>(null);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>(products);
 
-  // Update filtered products when subcategory selection changes
+  // Update filtered products when subcategory selection changes (only for non-sugarcane categories)
   useEffect(() => {
+    if (categorySlug === 'sugarcane-tableware') {
+      setFilteredProducts(products);
+      return;
+    }
+    
     let filtered = products;
     
     if (selectedSubcategory) {
@@ -70,7 +75,7 @@ export default function CategoryClient({
     }
     
     setFilteredProducts(filtered);
-  }, [selectedSubcategory, selectedThirdLevel, products, subcategories]);
+  }, [selectedSubcategory, selectedThirdLevel, products, subcategories, categorySlug]);
 
   // Function to get product image path
   const getProductImagePath = (product: Product) => {
@@ -79,6 +84,25 @@ export default function CategoryClient({
     }
     if (product.images?.thumbnail) {
       return product.images.thumbnail;
+    }
+    // For sugarcane tableware, try to construct image path based on category and product name
+    if (categorySlug === 'sugarcane-tableware') {
+      const subcategory = subcategories.find(sub => sub.id === product.category_id);
+      if (subcategory && product.name) {
+        // Map category slugs to folder names
+        const categoryFolderMap: { [key: string]: string } = {
+          'sugarcane-plates': 'plate',
+          'sugarcane-bowls': 'Bowls',
+          'sugarcane-clamshells': 'chamshell',
+          'sugarcane-trays': 'tray'
+        };
+        const categoryFolder = categoryFolderMap[subcategory.slug];
+        if (categoryFolder) {
+          // Extract the product folder name from the product name (before ' - ')
+          const productFolder = product.name.split(' - ')[0];
+          return `/product_img/Sugarcane Tableware/${categoryFolder}/${productFolder}/${productFolder} (1).webp`;
+        }
+      }
     }
     return '/product_img/placeholder.svg';
   };
@@ -150,73 +174,38 @@ export default function CategoryClient({
         </div>
 
         {/* Subcategories Navigation */}
-        {!selectedSubcategory && level2.length > 0 && (
+        {!selectedSubcategory && level2.length > 0 && categorySlug !== 'sugarcane-tableware' && (
           <section className="mb-12">
-            {categorySlug === 'sugarcane-tableware' ? (
-              // Filter view for sugarcane-tableware
-              <>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Filter by Category</h2>
-                <div className="flex gap-4 flex-wrap mb-8">
-                  <button
-                    onClick={() => setSelectedSubcategory(null)}
-                    className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                      !selectedSubcategory 
-                        ? 'bg-blue-600 text-white' 
-                        : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                    }`}
-                  >
-                    All Products ({products.length})
-                  </button>
-                  {level2.map((subcategory) => (
-                    <button
-                      key={subcategory.id}
-                      onClick={() => setSelectedSubcategory(subcategory.slug)}
-                      className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                        selectedSubcategory === subcategory.slug 
-                          ? 'bg-blue-600 text-white' 
-                          : 'bg-white border border-gray-300 text-gray-700 hover:bg-gray-50'
-                      }`}
-                    >
-                      {subcategory.name || subcategory.slug} ({subcategory.productCount})
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">Product Categories</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {level2.map((subcategory) => (
+                <div
+                  key={subcategory.id}
+                  onClick={() => setSelectedSubcategory(subcategory.slug)}
+                  className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
+                >
+                  <div className="aspect-video bg-gray-100 flex items-center justify-center">
+                    <span className="text-gray-500">Image</span>
+                  </div>
+                  <div className="p-6">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-2">
+                      {subcategory.name || subcategory.slug}
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      {subcategory.productCount} products
+                    </p>
+                    <button className="text-blue-600 hover:text-blue-800 font-medium">
+                      View Products →
                     </button>
-                  ))}
+                  </div>
                 </div>
-              </>
-            ) : (
-              // Card view for other categories
-              <>
-                <h2 className="text-2xl font-bold text-gray-900 mb-6">Product Categories</h2>
-                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {level2.map((subcategory) => (
-                    <div
-                      key={subcategory.id}
-                      onClick={() => setSelectedSubcategory(subcategory.slug)}
-                      className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow cursor-pointer overflow-hidden"
-                    >
-                      <div className="aspect-video bg-gray-100 flex items-center justify-center">
-                        <span className="text-gray-500">Image</span>
-                      </div>
-                      <div className="p-6">
-                        <h3 className="text-xl font-semibold text-gray-900 mb-2">
-                          {subcategory.name || subcategory.slug}
-                        </h3>
-                        <p className="text-gray-600 mb-4">
-                          {subcategory.productCount} products
-                        </p>
-                        <button className="text-blue-600 hover:text-blue-800 font-medium">
-                          View Products →
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
+              ))}
+            </div>
           </section>
         )}
 
         {/* Third Level Categories (when subcategory is selected) */}
-        {selectedSubcategory && level3.length > 0 && (
+        {selectedSubcategory && level3.length > 0 && categorySlug !== 'sugarcane-tableware' && (
           <section className="mb-12">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-2xl font-bold text-gray-900">Filter by Category</h2>
@@ -258,7 +247,7 @@ export default function CategoryClient({
         {/* Products Grid */}
         <section>
           <h2 className="text-2xl font-bold text-gray-900 mb-6">
-            {selectedSubcategory ? 'Products' : 'All Products'}
+            {categorySlug === 'sugarcane-tableware' ? 'All Products' : (selectedSubcategory ? 'Products' : 'All Products')}
           </h2>
           
           {filteredProducts.length === 0 ? (
