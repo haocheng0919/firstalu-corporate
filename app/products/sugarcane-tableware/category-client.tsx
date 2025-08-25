@@ -39,14 +39,40 @@ export default function CategoryClient({
 
   // Function to get product image path
   const getProductImagePath = (product: Product, subcategory?: ProductCategory) => {
-    const baseImagePath = '/images/products';
-    
-    // For sugarcane-tableware products, use the subcategory slug in the path
-    if (categorySlug === 'sugarcane-tableware' && subcategory) {
-      return `${baseImagePath}/${subcategory.slug}/${product.slug}.jpg`;
+    // Check if product has images from database first
+    if (product.images) {
+      const images = typeof product.images === 'string' ? JSON.parse(product.images) : product.images;
+      if (images.main) return images.main;
+      if (images.thumbnail) return images.thumbnail;
+      if (images.additional && Array.isArray(images.additional) && images.additional.length > 0) {
+        return images.additional[0];
+      }
     }
     
-    return `${baseImagePath}/${categorySlug}/${product.slug}.jpg`;
+    // For sugarcane tableware, try to construct image path based on category and product name
+    if (categorySlug === 'sugarcane-tableware') {
+      if (subcategory && product.name) {
+        // Map category slugs to folder names
+        const categoryFolderMap: { [key: string]: string } = {
+          'sugarcane-plates': 'plate',
+          'sugarcane-bowls': 'bowls',
+          'sugarcane-clamshells': 'chamshell',
+          'sugarcane-trays': 'tray'
+        };
+        const categoryFolder = categoryFolderMap[subcategory.slug];
+        if (categoryFolder) {
+          // Extract the product folder name from the product name (before ' - ')
+          let productFolder = product.name.split(' - ')[0];
+          // Handle special cases for folder names
+          if (productFolder === '6 inch bow') {
+            productFolder = '6 inch bow';
+          }
+          return `/product_img/Sugarcane Tableware/${categoryFolder}/${productFolder}/${productFolder} (1).webp`;
+        }
+      }
+    }
+    
+    return '/product_img/placeholder.svg';
   };
 
   // Function to get category description
