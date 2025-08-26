@@ -85,8 +85,8 @@ export default async function DynamicProductPage({ params }: Props) {
         breadcrumbItems.push({ label: categoryName, href: `/products/${categorySlug}` });
       }
 
-      // Add current product
-      breadcrumbItems.push({ label: directProduct.name_i18n?.[locale] || directProduct.slug });
+      // Add current product (no href as it's the current page)
+      breadcrumbItems.push({ label: directProduct.name_i18n?.[locale] || directProduct.slug, href: undefined });
 
       // Render product detail page
       return (
