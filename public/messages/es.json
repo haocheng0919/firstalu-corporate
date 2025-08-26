@@ -49,8 +49,8 @@
       }
     },
     "homeProducts": {
-      "title": "Nuestra Gama de Productos",
-      "subtitle": "Soluciones integrales de envases de alimentos desechables para las necesidades de su negocio",
+      "title": "Nuestros Productos",
+      "subtitle": "Soluciones premium de embalaje de alimentos desechables para su empresa",
       "learnMore": "Más Información",
       "viewAll": "Ver Todos los Productos",
       "items": {
@@ -77,6 +77,56 @@
         "sugarcaneTableware": {
           "title": "Vajilla de Caña de Azúcar",
           "description": "Vajilla ecológica de bagazo de caña de azúcar biodegradable."
+        }
+      }
+    },
+    "products": {
+      "title": "Nuestros Productos",
+      "subtitle": "Soluciones premium de embalaje de alimentos desechables para su empresa",
+      "learnMore": "Saber más",
+      "viewAll": "Ver todos los productos",
+      "items": {
+        "aluminum-foil": {
+          "description": "Contenedores y rollos de papel aluminio premium perfectos para almacenamiento de alimentos, servicios de entrega y aplicaciones de catering comercial."
+        },
+        "baking-paper": {
+          "description": "Papeles pergamino y de horneado de calidad profesional diseñados para cocinas comerciales y operaciones de restauración."
+        },
+        "paper-cups": {
+          "description": "Vasos de papel ecológicos desechables disponibles en diversos tamaños para bebidas calientes y frías en la industria de la restauración."
+        },
+        "disposable-cutlery": {
+          "description": "Juegos de cubiertos de madera y bambú sostenibles ideales para restaurantes conscientes del medio ambiente y servicios de catering."
+        },
+        "kraft-packaging": {
+          "description": "Soluciones de embalaje en papel kraft duraderas diseñadas para aplicaciones de restauración sostenible y venta minorista."
+        },
+        "sugarcane-tableware": {
+          "description": "Vajilla biodegradable de bagazo de caña de azúcar que ofrece soluciones de restauración respetuosas con el medio ambiente para servicios de alimentos modernos."
+        },
+        "aluminumFoil": {
+          "title": "Papel aluminio",
+          "description": "Hojas y contenedores de aluminio duraderos para almacenamiento y entrega de alimentos"
+        },
+        "bakingPaper": {
+          "title": "Papel para hornear",
+          "description": "Papeles para hornear profesionales y accesorios de cocina"
+        },
+        "kraftPackaging": {
+          "title": "Embalaje kraft",
+          "description": "Soluciones de embalaje ecológicas en papel kraft"
+        },
+        "paperCups": {
+          "title": "Vasos de papel",
+          "description": "Vasos de papel desechables y accesorios para bebidas"
+        },
+        "disposableCutlery": {
+          "title": "Cubiertos desechables",
+          "description": "Utensilios desechables sostenibles de madera y bambú"
+        },
+        "sugarcaneTableware": {
+          "title": "Vajilla de caña de azúcar",
+          "description": "Vajilla biodegradable de bagazo de caña de azúcar"
         }
       }
     },

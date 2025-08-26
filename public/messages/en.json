@@ -16,8 +16,8 @@
       "contact": "Contact Us"
     },
     "homeProducts": {
-      "title": "Our Product Range",
-      "subtitle": "Complete disposable food packaging solutions for your business needs",
+      "title": "Our Products",
+      "subtitle": "Premium disposable food packaging solutions for your business",
       "learnMore": "Learn More",
       "viewAll": "View All Products",
       "items": {
@@ -61,10 +61,6 @@
         "title": "Global Reach",
         "description": "Serving customers worldwide with reliable shipping and logistics."
       }
-    },
-    "homeProducts": {
-      "title": "Our Products",
-      "subtitle": "Premium disposable food packaging solutions for your business"
     },
     "products": {
       "title": "Our Products",

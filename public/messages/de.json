@@ -49,8 +49,8 @@
       }
     },
     "homeProducts": {
-      "title": "Unser Produktsortiment",
-      "subtitle": "Umfassende Einweg-Lebensmittelverpackungslösungen für Ihre Geschäftsanforderungen",
+      "title": "Unsere Produkte",
+      "subtitle": "Premium-Einweg-Lebensmittelverpackungslösungen für Ihr Unternehmen",
         "learnMore": "Mehr erfahren",
         "viewAll": "Alle Produkte anzeigen",
         "items": {
@@ -321,12 +321,12 @@
       "quality": "Qualität"
     },
     "articles": {
-      "article1": {
-        "title": "Nachhaltige Verpackungslösungen: Unser Engagement für die Umwelt",
-        "excerpt": "Erfahren Sie mehr über unsere neuesten Initiativen für umweltfreundliche Verpackungen und wie wir die Umweltbelastung reduzieren, während wir die Produktqualität aufrechterhalten.",
-        "date": "1. Dezember 2024",
-        "readTime": "5 Min. Lesezeit"
-      },
+              "article1": {
+          "title": "Nachhaltige Verpackungslösungen: Unser Engagement für die Umwelt",
+          "excerpt": "Erfahren Sie mehr über unsere neuesten Initiativen für umweltfreundliche Verpackungen und wie wir die Umweltbelastung reduzieren, während wir die Produktqualität aufrechterhalten.",
+          "date": "1. Dezember 2024",
+          "category": "Nachhaltigkeit"
+        },
       "article2": {
         "title": "Innovationen in der Aluminiumbehälter-Technologie",
         "excerpt": "Neueste Fortschritte in Design und Funktionalität von Aluminiumbehältern für kommerzielle Anwendungen.",
