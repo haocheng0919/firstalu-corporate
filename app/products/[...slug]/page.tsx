@@ -74,7 +74,7 @@ export default async function DynamicProductPage({ params }: Props) {
 
     if (!directProductError && directProduct) {
       // Generate breadcrumbs based on slug path
-      const breadcrumbItems = [
+      const breadcrumbItems: { label: string; href?: string }[] = [
         { label: 'Products', href: '/products' }
       ];
 
