@@ -175,6 +175,13 @@ export async function createProduct(product: Omit<AdaptedProduct, 'id' | 'create
 
 export async function getProducts(limit?: number): Promise<AdaptedProduct[]> {
   try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const isPlaceholder = !url || !key || url.includes('placeholder.supabase.co') || key === 'placeholder-key';
+    if (isPlaceholder) {
+      return [];
+    }
+
     let query = supabase
       .from('products')
       .select(`
@@ -216,19 +223,19 @@ export async function getProducts(limit?: number): Promise<AdaptedProduct[]> {
       const merged = { ...product }
       
       // Add category_slug from the joined categories table
-      if (product.categories && product.categories.slug) {
-        merged.category_slug = product.categories.slug
+      if ((product as any).categories && (product as any).categories.slug) {
+        ;(merged as any).category_slug = (product as any).categories.slug
       }
 
       productI18n.forEach(i18n => {
         if (i18n.locale === 'en') {
-          merged.name = i18n.name
-          merged.intro = i18n.intro
-          merged.description = i18n.description
+          ;(merged as any).name = i18n.name
+          ;(merged as any).intro = i18n.intro
+          ;(merged as any).description = i18n.description
         } else {
-          merged[`name_${i18n.locale}`] = i18n.name
-          merged[`intro_${i18n.locale}`] = i18n.intro
-          merged[`description_${i18n.locale}`] = i18n.description
+          ;(merged as any)[`name_${i18n.locale}`] = i18n.name
+          ;(merged as any)[`intro_${i18n.locale}`] = i18n.intro
+          ;(merged as any)[`description_${i18n.locale}`] = i18n.description
         }
       })
 

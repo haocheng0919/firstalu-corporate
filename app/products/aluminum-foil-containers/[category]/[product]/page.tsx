@@ -1,5 +1,6 @@
 // Enable static generation with ISR
 export const revalidate = 3600; // Revalidate every hour
+export const dynamic = 'force-static';
 
 import { PageHeader } from '@/components/ui/page-header';
 import Footer from '../../../../../components/Footer';
@@ -70,13 +71,39 @@ function adaptedProductToProductImage(dbProduct: AdaptedProduct): ProductImage {
 
 async function getProductData(category: string, productCode: string): Promise<ProductWithImages | null> {
   try {
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const isPlaceholder = !url || !key || url.includes('placeholder.supabase.co') || key === 'placeholder-key';
+    const isDev = process.env.NODE_ENV !== 'production';
+
+    // In dev or when Supabase envs are placeholders, avoid any server DB calls completely and use local fallback
+    if (isDev || isPlaceholder) {
+      const product = getProductByCode(productCode);
+      if (!product || product.category !== category) {
+        return null;
+      }
+      const imageInfo = getAvailableWebPImages(product.category, product.shape, product.code);
+      const specifications = getProductSpecification(product.code);
+      const allProducts = getAllAluminumContainerProductImages();
+      const relatedProducts = allProducts
+        .filter(p => p.category === product.category && p.shape === product.shape && p.code !== product.code)
+        .slice(0, 4);
+
+      return {
+        ...product,
+        serverDetectedImages: imageInfo.availableImages,
+        specifications,
+        relatedProducts
+      };
+    }
+
     // First try to get product from database
     const dbProduct = await getProductBySku(productCode);
     
     if (dbProduct && dbProduct.images) {
       // Parse images from database
       const images = typeof dbProduct.images === 'string' ? JSON.parse(dbProduct.images) : dbProduct.images;
-      const serverDetectedImages = [];
+      const serverDetectedImages = [] as string[];
       
       // Add thumbnail if exists
       if (images.thumbnail) {
@@ -184,6 +211,20 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 // Generate static params for all aluminum-foil-containers products
 export async function generateStaticParams() {
   try {
+    const makeFallbackPaths = () => {
+      const all = getAllAluminumContainerProductImages();
+      return all.map((p) => ({ category: p.category, product: p.code }));
+    };
+
+    // Avoid DB calls in development or when Supabase envs are placeholders
+    const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    const isPlaceholder = !url || !key || url.includes('placeholder.supabase.co') || key === 'placeholder-key';
+    const isDev = process.env.NODE_ENV !== 'production';
+    if (isDev || isPlaceholder) {
+      return makeFallbackPaths();
+    }
+
     // First get the main aluminum-foil-containers category
     const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
@@ -193,7 +234,7 @@ export async function generateStaticParams() {
 
     if (mainCategoryError || !mainCategory) {
       console.error('Error fetching main aluminum-foil-containers category:', mainCategoryError);
-      return [];
+      return makeFallbackPaths();
     }
 
     // Get all subcategories of aluminum-foil-containers
@@ -214,7 +255,7 @@ export async function generateStaticParams() {
       .select('slug, sku')
       .in('category_id', categoryIds);
 
-    return products?.map((product) => {
+    const paths = products?.map((product) => {
       const sku = product.sku || product.slug;
       const category = sku?.startsWith('C') ? 'smoothwall' : 'wrinklewall';
       
@@ -223,6 +264,8 @@ export async function generateStaticParams() {
         product: sku,
       };
     }).filter(p => p.product) || [];
+
+    return paths.length > 0 ? paths : makeFallbackPaths();
   } catch (error) {
     console.error('Error in generateStaticParams:', error);
     return [];
