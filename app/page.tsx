@@ -199,11 +199,6 @@ function FAQSection() {
 
 export default function Home() {
   const { t } = useLanguage();
-  
-  // Debug translations
-  console.log('Debug translations:');
-  console.log('home.homeProducts.title:', t('home.homeProducts.title'));
-  console.log('home.homeProducts.subtitle:', t('home.homeProducts.subtitle'));
 
   return (
     <>

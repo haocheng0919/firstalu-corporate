@@ -42,32 +42,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const keys = key.split('.');
     let value = messages;
     
-    // Debug logging for specific keys
-    if (key.includes('homeProducts')) {
-      console.log('Translation debug for key:', key);
-      console.log('Messages object:', messages);
-      console.log('Keys array:', keys);
-    }
-    
     for (const k of keys) {
       if (value && typeof value === 'object') {
         value = value[k];
-        if (key.includes('homeProducts')) {
-          console.log(`After key "${k}":`, value);
-        }
       } else {
-        if (key.includes('homeProducts')) {
-          console.log('Translation failed at key:', k, 'value was:', value);
-        }
         return key; // Return key if translation not found
       }
     }
     
-    const result = typeof value === 'string' ? value : key;
-    if (key.includes('homeProducts')) {
-      console.log('Final result:', result);
-    }
-    return result;
+    return typeof value === 'string' ? value : key;
   };
 
   return (
