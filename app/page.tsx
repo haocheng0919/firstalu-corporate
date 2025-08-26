@@ -92,7 +92,7 @@ function ProductCategories() {
                 {category.name || t(`categories.${category.slug}.title`)}
               </h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                {t(`categories.${category.slug}.description`)}
+                {t(`products.categories.${category.slug}.description`)}
               </p>
             </div>
           </Link>
@@ -221,13 +221,7 @@ export default function Home() {
 
           <ProductCategories />
 
-          <div className="text-center mt-12">
-            <Link href="/products">
-              <Button size="lg" className="bg-blue-600 hover:bg-blue-700">
-                {t('home.products.viewAll')}
-              </Button>
-            </Link>
-          </div>
+
         </div>
       </section>
 
