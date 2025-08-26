@@ -48,7 +48,7 @@
         }
       }
     },
-    "products": {
+    "homeProducts": {
       "title": "Notre Gamme de Produits",
       "subtitle": "Solutions complètes d'emballage alimentaire jetable pour les besoins de votre entreprise",
         "learnMore": "En savoir plus",
@@ -89,7 +89,8 @@
         "article1": {
           "title": "Solutions d'emballage durable : notre engagement environnemental",
           "excerpt": "Découvrez nos dernières initiatives en matière d'emballage écologique et de réduction de l'impact environnemental.",
-          "date": "1er décembre 2024"
+          "date": "1er décembre 2024",
+          "category": "Durabilité"
         },
         "article2": {
           "title": "Nouvelle installation de fabrication en Malaisie ouvre ses portes",

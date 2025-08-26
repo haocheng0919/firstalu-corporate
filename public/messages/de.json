@@ -48,7 +48,7 @@
         }
       }
     },
-    "products": {
+    "homeProducts": {
       "title": "Unser Produktsortiment",
       "subtitle": "Umfassende Einweg-Lebensmittelverpackungslösungen für Ihre Geschäftsanforderungen",
         "learnMore": "Mehr erfahren",
@@ -89,7 +89,8 @@
         "article1": {
           "title": "Nachhaltige Verpackungslösungen: Unser Umwelt-Engagement",
           "excerpt": "Erfahren Sie mehr über unsere neuesten Initiativen für umweltfreundliche Verpackungen und die Reduzierung der Umweltbelastung.",
-          "date": "1. Dezember 2024"
+          "date": "1. Dezember 2024",
+          "category": "Nachhaltigkeit"
         },
         "article2": {
           "title": "Neue Produktionsanlage in Malaysia eröffnet",
@@ -226,22 +227,22 @@
           "description": "Hochwertige Holz- und Bambus-Essstäbchen für asiatische Küche-Restaurants."
         },
         "aluminum-foil": {
-          "description": "Premium Aluminiumfolienbehälter und -rollen perfekt für Lebensmittellagerung, Lieferservice und gewerbliche Catering-Anwendungen."
+          "description": "Premium-Aluminiumfolienbehälter und -rollen, perfekt für Lebensmittellagerung, Lieferdienste und kommerzielle Catering-Anwendungen."
         },
         "baking-paper": {
-          "description": "Professionelles Pergament- und Backpapier entwickelt für Großküchen und Gastronomiebetriebe."
+          "description": "Professionelle Pergament- und Backpapiere für Großküchen und Gastronomie-Betriebe."
         },
         "paper-cups": {
           "description": "Umweltfreundliche Einweg-Papierbecher in verschiedenen Größen für heiße und kalte Getränke in der Gastronomie."
         },
         "disposable-cutlery": {
-          "description": "Nachhaltiges Holz- und Bambusbesteck-Sets ideal für umweltbewusste Restaurants und Catering-Services."
+          "description": "Nachhaltige Holz- und Bambus-Bestecksets, ideal für umweltbewusste Restaurants und Catering-Services."
         },
         "kraft-packaging": {
-          "description": "Langlebige Kraftpapier-Verpackungslösungen entwickelt für nachhaltige Gastronomie und Einzelhandelsanwendungen."
+          "description": "Langlebige Kraftpapier-Verpackungslösungen für nachhaltige Gastronomie und Einzelhandelsanwendungen."
         },
         "sugarcane-tableware": {
-          "description": "Biologisch abbaubares Zuckerrohr-Bagasse-Geschirr bietet umweltverantwortliche Speisenlösungen für moderne Gastronomie."
+          "description": "Biologisch abbaubares Zuckerrohr-Bagasse-Geschirr für umweltverantwortliche Dining-Lösungen in der modernen Gastronomie."
         },
         "aluminumFoil": {
           "description": "Langlebige Aluminiumfolie und -behälter für Lebensmittellagerung und -lieferung"

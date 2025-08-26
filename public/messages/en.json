@@ -30,7 +30,7 @@
         "description": "Serving customers worldwide with reliable shipping and logistics."
       }
     },
-    "products": {
+    "homeProducts": {
       "title": "Our Product Range",
       "subtitle": "Comprehensive disposable food packaging solutions for your business needs"
     }
@@ -347,13 +347,13 @@
         "viewAll": "View All Products",
         "items": {
         "aluminum-foil": {
-          "description": "Premium aluminum foil containers and rolls perfect for food storage, takeaway services, and commercial catering applications."
+          "description": "Premium aluminum foil containers and rolls perfect for food storage, delivery services, and commercial catering applications."
         },
         "baking-paper": {
           "description": "Professional-grade parchment and baking papers designed for commercial kitchens and food service operations."
         },
         "paper-cups": {
-          "description": "Eco-friendly disposable paper cups available in various sizes for hot and cold beverages in food service industry."
+          "description": "Eco-friendly disposable paper cups available in various sizes for hot and cold beverages in the food service industry."
         },
         "disposable-cutlery": {
           "description": "Sustainable wooden and bamboo cutlery sets ideal for eco-conscious restaurants and catering services."
@@ -362,7 +362,7 @@
           "description": "Durable kraft paper packaging solutions designed for sustainable food service and retail applications."
         },
         "sugarcane-tableware": {
-          "description": "Biodegradable sugarcane bagasse tableware offering environmentally responsible dining solutions for modern food service."
+          "description": "Biodegradable sugarcane bagasse tableware offering environmentally responsible dining solutions for modern food services."
         },
         "aluminumFoil": {
           "title": "Aluminum Foil",
@@ -399,7 +399,8 @@
         "article1": {
           "title": "Sustainable Packaging Solutions: Our Environmental Commitment",
           "excerpt": "Learn about our latest initiatives in eco-friendly packaging and reducing environmental impact.",
-          "date": "December 1, 2024"
+          "date": "December 1, 2024",
+          "category": "Sustainability"
         },
         "article2": {
           "title": "New Malaysia Manufacturing Facility Opens",

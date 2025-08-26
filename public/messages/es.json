@@ -48,7 +48,7 @@
         }
       }
     },
-    "products": {
+    "homeProducts": {
       "title": "Nuestra Gama de Productos",
       "subtitle": "Soluciones integrales de envases de alimentos desechables para las necesidades de su negocio",
       "learnMore": "Más Información",
@@ -89,7 +89,8 @@
         "article1": {
           "title": "Soluciones de Empaque Sostenible: Nuestro Compromiso Ambiental",
           "excerpt": "Conozca nuestras últimas iniciativas en empaque ecológico y la reducción del impacto ambiental.",
-          "date": "1 de diciembre, 2024"
+          "date": "1 de diciembre, 2024",
+          "category": "Sostenibilidad"
         },
         "article2": {
           "title": "Nueva Instalación de Fabricación en Malasia Abre",
