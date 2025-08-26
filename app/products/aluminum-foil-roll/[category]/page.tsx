@@ -79,18 +79,30 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 // Generate static params for all aluminum foil roll products
 export async function generateStaticParams() {
   try {
-    // Get all aluminum foil roll related category IDs
-    const { data: aluminumRollCategories, error: categoryError } = await supabase
+    // First get the main aluminum-foil-roll category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.eq.aluminum-foil-roll,parent_id.in.(select id from categories where slug = \'aluminum-foil-roll\')');
+      .eq('slug', 'aluminum-foil-roll')
+      .single();
 
-    if (categoryError || !aluminumRollCategories) {
-      console.error('Error fetching aluminum foil roll categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main aluminum-foil-roll category:', mainCategoryError);
       return [];
     }
 
-    const categoryIds = aluminumRollCategories.map(cat => cat.id);
+    // Get all subcategories of aluminum-foil-roll
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
+
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    // Combine main category and subcategory IDs
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
 
     const { data: products } = await supabase
       .from('products')

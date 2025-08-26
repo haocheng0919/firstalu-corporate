@@ -115,18 +115,30 @@ export default async function ProductPage({ params }: ProductPageProps) {
 // Generate static params for all sugarcane-bowls products
 export async function generateStaticParams() {
   try {
-    // Get all sugarcane-bowls related category IDs
-    const { data: sugarcaneBowlCategories, error: categoryError } = await supabase
+    // First get the main sugarcane-bowls category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.eq.sugarcane-bowls,parent_id.in.(select id from categories where slug = \'sugarcane-bowls\')');
+      .eq('slug', 'sugarcane-bowls')
+      .single();
 
-    if (categoryError || !sugarcaneBowlCategories) {
-      console.error('Error fetching sugarcane bowl categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main sugarcane-bowls category:', mainCategoryError);
       return [];
     }
 
-    const categoryIds = sugarcaneBowlCategories.map(cat => cat.id);
+    // Get all subcategories of sugarcane-bowls
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
+
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    // Combine main category and subcategory IDs
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
 
     const { data: products } = await supabase
       .from('products')

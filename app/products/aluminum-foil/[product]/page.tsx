@@ -138,34 +138,40 @@ export default async function ProductPage({ params }: ProductPageProps) {
   );
 }
 
-// Generate static params for all aluminum foil products
+// Generate static params for all aluminum-foil products
 export async function generateStaticParams() {
   try {
-    // Get all aluminum-related categories
-    const { data: aluminumCategories, error: categoryError } = await supabase
+    // First get the main aluminum-foil category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.ilike.%aluminum%,slug.ilike.%foil%,slug.ilike.%smoothwall%,slug.ilike.%wrinklewall%');
+      .eq('slug', 'aluminum-foil')
+      .single();
 
-    if (categoryError || !aluminumCategories) {
-      console.error('Error fetching aluminum categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main aluminum-foil category:', mainCategoryError);
       return [];
     }
 
-    const categoryIds = aluminumCategories.map(cat => cat.id);
+    // Get all subcategories of aluminum-foil
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
 
-    const { data: products, error } = await supabase
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    // Combine main category and subcategory IDs
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
+
+    const { data: products } = await supabase
       .from('products')
-      .select(`
-        slug,
-        sku
-      `)
+      .select('slug, sku')
       .in('category_id', categoryIds);
 
-    if (error || !products) {
-      console.error('Error fetching products for static generation:', error);
-      return [];
-    }
+    if (!products) return [];
 
     return products.map((product) => ({
       product: product.slug || product.sku,

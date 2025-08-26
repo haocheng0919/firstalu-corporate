@@ -55,18 +55,29 @@ function getDbProductImageUrl(product: Product): string {
 // Function to get product by slug or SKU
 async function getProduct(productSlug: string): Promise<Product | null> {
   try {
-    // First get all sugarcane-tableware related category IDs
-    const { data: sugarcaneTablewareCategories, error: categoryError } = await supabase
+    // First get the main sugarcane-tableware category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.eq.sugarcane-tableware,parent_id.in.(select id from categories where slug = \'sugarcane-tableware\')');
+      .eq('slug', 'sugarcane-tableware')
+      .single();
 
-    if (categoryError) {
-      console.error('Error fetching sugarcane tableware categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main sugarcane-tableware category:', mainCategoryError);
       return null;
     }
 
-    const categoryIds = sugarcaneTablewareCategories?.map(cat => cat.id) || [];
+    // Get all subcategories of sugarcane-tableware
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
+
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
     
     // Get all subcategories recursively
     let allCategoryIds = [...categoryIds];
@@ -137,18 +148,30 @@ export default async function ProductPage({ params }: ProductPageProps) {
 // Generate static paths for all sugarcane products
 export async function generateStaticParams() {
   try {
-    // Get all sugarcane-tableware related category IDs
-    const { data: sugarcaneTablewareCategories, error: categoryError } = await supabase
+    // First get the main sugarcane-tableware category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.eq.sugarcane-tableware,parent_id.in.(select id from categories where slug = \'sugarcane-tableware\')');
+      .eq('slug', 'sugarcane-tableware')
+      .single();
 
-    if (categoryError || !sugarcaneTablewareCategories) {
-      console.error('Error fetching sugarcane tableware categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main sugarcane-tableware category:', mainCategoryError);
       return [];
     }
 
-    const categoryIds = sugarcaneTablewareCategories.map(cat => cat.id);
+    // Get all subcategories of sugarcane-tableware
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
+
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    // Combine main category and subcategory IDs
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
 
     const { data: products, error } = await supabase
       .from('products')

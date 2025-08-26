@@ -181,21 +181,33 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   );
 }
 
-// Generate static paths for all aluminum foil container products
+// Generate static params for all aluminum-foil-containers products
 export async function generateStaticParams() {
   try {
-    // Get all aluminum foil container related category IDs
-    const { data: aluminumCategories, error: categoryError } = await supabase
+    // First get the main aluminum-foil-containers category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.ilike.%aluminum%,slug.ilike.%foil%,slug.ilike.%container%,slug.ilike.%smoothwall%,slug.ilike.%wrinklewall%');
+      .eq('slug', 'aluminum-foil-containers')
+      .single();
 
-    if (categoryError || !aluminumCategories) {
-      console.error('Error fetching aluminum container categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main aluminum-foil-containers category:', mainCategoryError);
       return [];
     }
 
-    const categoryIds = aluminumCategories.map(cat => cat.id);
+    // Get all subcategories of aluminum-foil-containers
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
+
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    // Combine main category and subcategory IDs
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
 
     const { data: products } = await supabase
       .from('products')

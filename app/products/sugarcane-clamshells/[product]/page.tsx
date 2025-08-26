@@ -110,21 +110,33 @@ export default async function ProductPage({ params }: ProductPageProps) {
   );
 }
 
-// Generate static params for all products in this category
+// Generate static params for all sugarcane-clamshells products
 export async function generateStaticParams() {
   try {
-    // Get all sugarcane-clamshells related category IDs
-    const { data: sugarcaneClamshellCategories, error: categoryError } = await supabase
+    // First get the main sugarcane-clamshells category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.eq.sugarcane-clamshells,parent_id.in.(select id from categories where slug = \'sugarcane-clamshells\')');
+      .eq('slug', 'sugarcane-clamshells')
+      .single();
 
-    if (categoryError || !sugarcaneClamshellCategories) {
-      console.error('Error fetching sugarcane clamshell categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main sugarcane-clamshells category:', mainCategoryError);
       return [];
     }
 
-    const categoryIds = sugarcaneClamshellCategories.map(cat => cat.id);
+    // Get all subcategories of sugarcane-clamshells
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
+
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    // Combine main category and subcategory IDs
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
 
     const { data: products } = await supabase
       .from('products')

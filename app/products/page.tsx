@@ -31,18 +31,21 @@ async function getStaticData() {
     // Get products with a reasonable limit to prevent memory issues
     const products = await getProducts(1000);
     
-    // Calculate product counts for each main category
+    // Calculate product counts for each main category using recursive approach
     const categoriesWithCounts = (mainCategories || []).map(category => {
-      // Get all subcategories of this parent category (level 2)
-      const level2Categories = (allCategories || []).filter(cat => cat.parent_id === category.id);
-      const level2Ids = level2Categories.map(cat => cat.id);
+      // Function to recursively get all descendant category IDs
+      const getAllDescendantIds = (parentId: string, categories: any[]): string[] => {
+        const children = categories.filter(cat => cat.parent_id === parentId);
+        const childIds = children.map(cat => cat.id);
+        const grandchildIds = children.flatMap(child => getAllDescendantIds(child.id, categories));
+        return [...childIds, ...grandchildIds];
+      };
       
-      // Get level 3 categories (grandchildren)
-      const level3Categories = (allCategories || []).filter(cat => level2Ids.includes(cat.parent_id || ''));
-      const level3Ids = level3Categories.map(cat => cat.id);
+      // Get all descendant category IDs for this main category
+      const allDescendantIds = getAllDescendantIds(category.id, allCategories || []);
+      const allRelevantCategoryIds = [category.id, ...allDescendantIds];
       
-      // Count products in parent category, all level 2 subcategories, and all level 3 subcategories
-      const allRelevantCategoryIds = [category.id, ...level2Ids, ...level3Ids];
+      // Count products in this category and all its descendants
       const productCount = products.filter(product => 
         allRelevantCategoryIds.includes(product.category_id || '')
       ).length;

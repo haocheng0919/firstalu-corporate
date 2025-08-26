@@ -48,29 +48,44 @@ export default async function ProductPage({ params }: PageProps) {
   );
 }
 
+// Generate static params for all sugarcane-trays products
 export async function generateStaticParams() {
   try {
-    // Get all sugarcane-trays related category IDs
-    const { data: sugarcaneTrayCategories, error: categoryError } = await supabase
+    // First get the main sugarcane-trays category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.eq.sugarcane-trays,parent_id.in.(select id from categories where slug = \'sugarcane-trays\')');
+      .eq('slug', 'sugarcane-trays')
+      .single();
 
-    if (categoryError || !sugarcaneTrayCategories) {
-      console.error('Error fetching sugarcane tray categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main sugarcane-trays category:', mainCategoryError);
       return [];
     }
 
-    const categoryIds = sugarcaneTrayCategories.map(cat => cat.id);
+    // Get all subcategories of sugarcane-trays
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
+
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    // Combine main category and subcategory IDs
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
 
     const { data: products } = await supabase
       .from('products')
       .select('slug, sku')
       .in('category_id', categoryIds);
 
-    return products?.map((product) => ({
+    if (!products) return [];
+
+    return products.map((product) => ({
       product: product.slug || product.sku,
-    })) || [];
+    }));
   } catch (error) {
     console.error('Error in generateStaticParams:', error);
     return [];

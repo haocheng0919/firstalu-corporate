@@ -62,18 +62,29 @@ function getDbProductImageUrl(product: Product): string {
 // Function to get product by slug or SKU
 async function getProduct(productSlug: string): Promise<Product | null> {
   try {
-    // First get all disposable-cutlery related category IDs
-    const { data: disposableCutleryCategories, error: categoryError } = await supabase
+    // First get the main disposable-cutlery category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.eq.disposable-cutlery,parent_id.in.(select id from categories where slug = \'disposable-cutlery\')');
+      .eq('slug', 'disposable-cutlery')
+      .single();
 
-    if (categoryError) {
-      console.error('Error fetching disposable cutlery categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main disposable-cutlery category:', mainCategoryError);
       return null;
     }
 
-    const categoryIds = disposableCutleryCategories?.map(cat => cat.id) || [];
+    // Get all subcategories of disposable-cutlery
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
+
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
     
     // Get all subcategories recursively
     let allCategoryIds = [...categoryIds];
@@ -155,18 +166,30 @@ export default async function ProductPage({ params }: ProductPageProps) {
 // Generate static params for all disposable-cutlery products
 export async function generateStaticParams() {
   try {
-    // Get all disposable-cutlery related category IDs
-    const { data: disposableCutleryCategories, error: categoryError } = await supabase
+    // First get the main disposable-cutlery category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.eq.disposable-cutlery,parent_id.in.(select id from categories where slug = \'disposable-cutlery\')');
+      .eq('slug', 'disposable-cutlery')
+      .single();
 
-    if (categoryError || !disposableCutleryCategories) {
-      console.error('Error fetching disposable cutlery categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main disposable-cutlery category:', mainCategoryError);
       return [];
     }
 
-    const categoryIds = disposableCutleryCategories.map(cat => cat.id);
+    // Get all subcategories of disposable-cutlery
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
+
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    // Combine main category and subcategory IDs
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
 
     const { data: products } = await supabase
       .from('products')

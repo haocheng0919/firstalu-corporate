@@ -62,18 +62,29 @@ function getDbProductImageUrl(product: Product): string {
 // Function to get product by slug or SKU
 async function getProduct(productSlug: string): Promise<Product | null> {
   try {
-    // First get all paper-cups related category IDs
-    const { data: paperCupsCategories, error: categoryError } = await supabase
+    // First get the main paper-cups category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.eq.paper-cups,parent_id.in.(select id from categories where slug = \'paper-cups\')');
+      .eq('slug', 'paper-cups')
+      .single();
 
-    if (categoryError) {
-      console.error('Error fetching paper cups categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main paper-cups category:', mainCategoryError);
       return null;
     }
 
-    const categoryIds = paperCupsCategories?.map(cat => cat.id) || [];
+    // Get all subcategories of paper-cups
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
+
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
     
     // Get all subcategories recursively
     let allCategoryIds = [...categoryIds];
@@ -156,18 +167,30 @@ export default async function ProductPage({ params }: ProductPageProps) {
 // Generate static params for all paper-cups products
 export async function generateStaticParams() {
   try {
-    // Get all paper-cups related category IDs
-    const { data: paperCupsCategories, error: categoryError } = await supabase
+    // First get the main paper-cups category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.eq.paper-cups,parent_id.in.(select id from categories where slug = \'paper-cups\')');
+      .eq('slug', 'paper-cups')
+      .single();
 
-    if (categoryError || !paperCupsCategories) {
-      console.error('Error fetching paper cups categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main paper-cups category:', mainCategoryError);
       return [];
     }
 
-    const categoryIds = paperCupsCategories.map(cat => cat.id);
+    // Get all subcategories of paper-cups
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
+
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    // Combine main category and subcategory IDs
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
 
     const { data: products } = await supabase
       .from('products')

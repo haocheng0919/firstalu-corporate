@@ -98,18 +98,30 @@ export default async function ProductPage({ params }: ProductPageProps) {
 // Generate static params for all bamboo products
 export async function generateStaticParams() {
   try {
-    // Get all bamboo related category IDs
-    const { data: bambooCategories, error: categoryError } = await supabase
+    // First get the main bamboo category
+    const { data: mainCategory, error: mainCategoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.eq.bamboo,parent_id.in.(select id from categories where slug = \'bamboo\')');
+      .eq('slug', 'bamboo')
+      .single();
 
-    if (categoryError || !bambooCategories) {
-      console.error('Error fetching bamboo categories:', categoryError);
+    if (mainCategoryError || !mainCategory) {
+      console.error('Error fetching main bamboo category:', mainCategoryError);
       return [];
     }
 
-    const categoryIds = bambooCategories.map(cat => cat.id);
+    // Get all subcategories of bamboo
+    const { data: subcategories, error: subcategoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .eq('parent_id', mainCategory.id);
+
+    if (subcategoryError) {
+      console.error('Error fetching subcategories:', subcategoryError);
+    }
+
+    // Combine main category and subcategory IDs
+    const categoryIds = [mainCategory.id, ...(subcategories?.map(cat => cat.id) || [])];
 
     const { data: products } = await supabase
       .from('products')
