@@ -29,17 +29,45 @@ export default async function ProductsPage() {
       )
     }
 
-    // Get product counts for each category
+    // Recursively get all descendant category IDs and count products
+    const getProductCountForCategory = async (categoryId: string): Promise<number> => {
+      // Get all descendant category IDs
+      const getAllDescendantIds = async (catId: string): Promise<string[]> => {
+        const { data: children } = await supabase
+          .from('categories')
+          .select('id')
+          .eq('parent_id', catId)
+
+        if (!children || children.length === 0) {
+          return [catId]
+        }
+
+        const allIds = [catId]
+        for (const child of children) {
+          const descendantIds = await getAllDescendantIds(child.id)
+          allIds.push(...descendantIds)
+        }
+        return allIds
+      }
+
+      const allCategoryIds = await getAllDescendantIds(categoryId)
+
+      const { count } = await supabase
+        .from('products')
+        .select('id', { count: 'exact', head: true })
+        .in('category_id', allCategoryIds)
+
+      return count || 0
+    }
+
+    // Get product counts for each category including all subcategories
     const categoriesWithCount = await Promise.all(
       (categories || []).map(async (category) => {
-        const { count } = await supabase
-          .from('products')
-          .select('id', { count: 'exact', head: true })
-          .eq('category_id', category.id)
+        const productCount = await getProductCountForCategory(category.id)
 
         return {
           ...category,
-          productCount: count || 0
+          productCount
         }
       })
     )
