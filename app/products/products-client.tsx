@@ -8,7 +8,7 @@ import { useLanguage } from '@/lib/language-context';
 interface CategoryWithCount {
   id: string;
   slug: string;
-  name: string;
+  name?: string;
   name_i18n?: {
     en: string;
     de: string;
