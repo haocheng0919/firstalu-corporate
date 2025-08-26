@@ -143,16 +143,34 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
 // Generate static params for all baking-paper products
 export async function generateStaticParams() {
-  const { data: products } = await supabase
-    .from('products')
-    .select('slug, sku')
-    .eq('category_slug', 'baking-paper');
+  try {
+    // Get all baking-paper related category IDs
+    const { data: bakingPaperCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.eq.baking-paper,parent_id.in.(select id from categories where slug = \'baking-paper\')');
 
-  if (!products) return [];
+    if (categoryError || !bakingPaperCategories) {
+      console.error('Error fetching baking paper categories:', categoryError);
+      return [];
+    }
 
-  return products.map((product) => ({
-    product: product.slug || product.sku,
-  }));
+    const categoryIds = bakingPaperCategories.map(cat => cat.id);
+
+    const { data: products } = await supabase
+      .from('products')
+      .select('slug, sku')
+      .in('category_id', categoryIds);
+
+    if (!products) return [];
+
+    return products.map((product) => ({
+      product: product.slug || product.sku,
+    }));
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error);
+    return [];
+  }
 }
 
 // Enable static generation with ISR

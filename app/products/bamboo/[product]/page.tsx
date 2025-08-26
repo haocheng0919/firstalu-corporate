@@ -97,16 +97,32 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
 // Generate static params for all bamboo products
 export async function generateStaticParams() {
-  const { data: products } = await supabase
-    .from('products')
-    .select('slug, sku')
-    .eq('category_slug', 'bamboo');
+  try {
+    // Get all bamboo related category IDs
+    const { data: bambooCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.eq.bamboo,parent_id.in.(select id from categories where slug = \'bamboo\')');
 
-  if (!products) return [];
+    if (categoryError || !bambooCategories) {
+      console.error('Error fetching bamboo categories:', categoryError);
+      return [];
+    }
 
-  return products.map((product) => ({
-    product: product.slug || product.sku,
-  }));
+    const categoryIds = bambooCategories.map(cat => cat.id);
+
+    const { data: products } = await supabase
+      .from('products')
+      .select('slug, sku')
+      .in('category_id', categoryIds);
+
+    return products?.map((product) => ({
+      product: product.slug || product.sku,
+    })) || [];
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error);
+    return [];
+  }
 }
 
 // Enable static generation with ISR

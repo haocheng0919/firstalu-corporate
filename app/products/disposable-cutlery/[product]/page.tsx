@@ -154,16 +154,34 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
 // Generate static params for all disposable-cutlery products
 export async function generateStaticParams() {
-  const { data: products } = await supabase
-    .from('products')
-    .select('slug, sku')
-    .eq('category_slug', 'disposable-cutlery');
+  try {
+    // Get all disposable-cutlery related category IDs
+    const { data: disposableCutleryCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.eq.disposable-cutlery,parent_id.in.(select id from categories where slug = \'disposable-cutlery\')');
 
-  if (!products) return [];
+    if (categoryError || !disposableCutleryCategories) {
+      console.error('Error fetching disposable cutlery categories:', categoryError);
+      return [];
+    }
 
-  return products.map((product) => ({
-    product: product.slug || product.sku,
-  }));
+    const categoryIds = disposableCutleryCategories.map(cat => cat.id);
+
+    const { data: products } = await supabase
+      .from('products')
+      .select('slug, sku')
+      .in('category_id', categoryIds);
+
+    if (!products) return [];
+
+    return products.map((product) => ({
+      product: product.slug || product.sku,
+    }));
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error);
+    return [];
+  }
 }
 
 // Enable static generation with ISR

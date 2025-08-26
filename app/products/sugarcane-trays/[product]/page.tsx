@@ -49,15 +49,32 @@ export default async function ProductPage({ params }: PageProps) {
 }
 
 export async function generateStaticParams() {
-  
-  const { data: products } = await supabase
-    .from('products')
-    .select('slug, categories!inner(slug)')
-    .eq('categories.slug', 'sugarcane-trays');
+  try {
+    // Get all sugarcane-trays related category IDs
+    const { data: sugarcaneTrayCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.eq.sugarcane-trays,parent_id.in.(select id from categories where slug = \'sugarcane-trays\')');
 
-  return products?.map((product) => ({
-    product: product.slug,
-  })) || [];
+    if (categoryError || !sugarcaneTrayCategories) {
+      console.error('Error fetching sugarcane tray categories:', categoryError);
+      return [];
+    }
+
+    const categoryIds = sugarcaneTrayCategories.map(cat => cat.id);
+
+    const { data: products } = await supabase
+      .from('products')
+      .select('slug, sku')
+      .in('category_id', categoryIds);
+
+    return products?.map((product) => ({
+      product: product.slug || product.sku,
+    })) || [];
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error);
+    return [];
+  }
 }
 
 export async function generateMetadata({ params }: PageProps) {

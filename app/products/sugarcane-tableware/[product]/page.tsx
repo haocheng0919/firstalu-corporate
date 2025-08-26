@@ -137,16 +137,23 @@ export default async function ProductPage({ params }: ProductPageProps) {
 // Generate static paths for all sugarcane products
 export async function generateStaticParams() {
   try {
+    // Get all sugarcane-tableware related category IDs
+    const { data: sugarcaneTablewareCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.eq.sugarcane-tableware,parent_id.in.(select id from categories where slug = \'sugarcane-tableware\')');
+
+    if (categoryError || !sugarcaneTablewareCategories) {
+      console.error('Error fetching sugarcane tableware categories:', categoryError);
+      return [];
+    }
+
+    const categoryIds = sugarcaneTablewareCategories.map(cat => cat.id);
+
     const { data: products, error } = await supabase
       .from('products')
-      .select(`
-        slug,
-        sku,
-        categories!inner(
-          slug
-        )
-      `)
-      .eq('categories.slug', 'sugarcane-tableware');
+      .select('slug, sku')
+      .in('category_id', categoryIds);
 
     if (error) {
       console.error('Error generating static params:', error);

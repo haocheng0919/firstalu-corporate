@@ -112,16 +112,34 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
 // Generate static params for all products in this category
 export async function generateStaticParams() {
-  const { data: products } = await supabase
-    .from('products')
-    .select('slug, categories!inner(slug)')
-    .eq('categories.slug', 'sugarcane-clamshells');
+  try {
+    // Get all sugarcane-clamshells related category IDs
+    const { data: sugarcaneClamshellCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.eq.sugarcane-clamshells,parent_id.in.(select id from categories where slug = \'sugarcane-clamshells\')');
 
-  if (!products) return [];
+    if (categoryError || !sugarcaneClamshellCategories) {
+      console.error('Error fetching sugarcane clamshell categories:', categoryError);
+      return [];
+    }
 
-  return products.map((product) => ({
-    product: product.slug,
-  }));
+    const categoryIds = sugarcaneClamshellCategories.map(cat => cat.id);
+
+    const { data: products } = await supabase
+      .from('products')
+      .select('slug, sku')
+      .in('category_id', categoryIds);
+
+    if (!products) return [];
+
+    return products.map((product) => ({
+      product: product.slug || product.sku,
+    }));
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error);
+    return [];
+  }
 }
 
 // Revalidate every hour

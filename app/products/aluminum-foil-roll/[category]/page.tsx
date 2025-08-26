@@ -5,6 +5,7 @@ import { PageHeader } from '@/components/ui/page-header';
 import Footer from '../../../../components/Footer';
 import Link from 'next/link';
 import { getProducts, type AdaptedProduct } from '@/lib/supabase-service-adapted';
+import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import ProductDetailClient from './product-detail-client';
 
@@ -78,19 +79,30 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 // Generate static params for all aluminum foil roll products
 export async function generateStaticParams() {
   try {
-    const products = await getProducts(200);
-    const aluminumFoilRollProducts = products
-      .filter(p => 
-        p.category_slug === 'aluminum-foil-roll' || 
-        (p.category_id && ['13194b42-ebdd-4696-8851-afc26748badb', 'ceec4c30-31f2-4067-a527-876a6fe92062', 'fd74437a-3d37-4c3b-89f2-5a461c2fb805'].includes(p.category_id))
-      )
-      .filter(p => p.slug && typeof p.slug === 'string'); // Ensure slug is a valid string
-    
-    return aluminumFoilRollProducts.map(product => ({
-      category: product.slug as string // Type assertion since we filtered for valid strings
-    }));
+    // Get all aluminum foil roll related category IDs
+    const { data: aluminumRollCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.eq.aluminum-foil-roll,parent_id.in.(select id from categories where slug = \'aluminum-foil-roll\')');
+
+    if (categoryError || !aluminumRollCategories) {
+      console.error('Error fetching aluminum foil roll categories:', categoryError);
+      return [];
+    }
+
+    const categoryIds = aluminumRollCategories.map(cat => cat.id);
+
+    const { data: products } = await supabase
+      .from('products')
+      .select('slug, sku')
+      .in('category_id', categoryIds)
+      .not('slug', 'is', null);
+
+    return products?.map((product) => ({
+      category: product.slug,
+    })).filter(p => p.category) || [];
   } catch (error) {
-    console.error('Error generating static params:', error);
+    console.error('Error in generateStaticParams:', error);
     return [];
   }
 }

@@ -49,18 +49,18 @@ function getDbProductImageUrl(product: Product): string {
 // Get product data from database
 async function getProduct(productSlug: string): Promise<Product | null> {
   try {
-    // First get all aluminum-foil related category IDs
-    const { data: aluminumFoilCategories, error: categoryError } = await supabase
+    // Get all aluminum-related categories
+    const { data: aluminumCategories, error: categoryError } = await supabase
       .from('categories')
       .select('id')
-      .or('slug.eq.aluminum-foil,parent_id.in.(select id from categories where slug = \'aluminum-foil\')');
+      .or('slug.ilike.%aluminum%,slug.ilike.%foil%,slug.ilike.%smoothwall%,slug.ilike.%wrinklewall%');
 
     if (categoryError) {
-      console.error('Error fetching aluminum foil categories:', categoryError);
+      console.error('Error fetching aluminum categories:', categoryError);
       return null;
     }
 
-    const categoryIds = aluminumFoilCategories?.map(cat => cat.id) || [];
+    const categoryIds = aluminumCategories?.map(cat => cat.id) || [];
     
     // Get all subcategories recursively
     let allCategoryIds = [...categoryIds];
@@ -141,13 +141,26 @@ export default async function ProductPage({ params }: ProductPageProps) {
 // Generate static params for all aluminum foil products
 export async function generateStaticParams() {
   try {
+    // Get all aluminum-related categories
+    const { data: aluminumCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.ilike.%aluminum%,slug.ilike.%foil%,slug.ilike.%smoothwall%,slug.ilike.%wrinklewall%');
+
+    if (categoryError || !aluminumCategories) {
+      console.error('Error fetching aluminum categories:', categoryError);
+      return [];
+    }
+
+    const categoryIds = aluminumCategories.map(cat => cat.id);
+
     const { data: products, error } = await supabase
       .from('products')
       .select(`
         slug,
         sku
       `)
-      .eq('category_slug', 'aluminum-foil');
+      .in('category_id', categoryIds);
 
     if (error || !products) {
       console.error('Error fetching products for static generation:', error);

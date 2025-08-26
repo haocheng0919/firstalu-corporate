@@ -8,6 +8,7 @@ import { getProductByCode, getAllAluminumContainerProductImages, type ProductIma
 import { getAvailableWebPImages } from '@/utils/server-image-detection';
 import { getProductSpecification } from '@/utils/aluminum-product-specs';
 import { getProductBySku, getProducts, type AdaptedProduct } from '@/lib/supabase-service-adapted';
+import { supabase } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import ProductDetailClient from './product-detail-client';
 
@@ -182,17 +183,36 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
 
 // Generate static paths for all aluminum foil container products
 export async function generateStaticParams() {
-  const { getAllAluminumContainerProductImages } = await import('@/utils/product-images');
-  const allProducts = getAllAluminumContainerProductImages();
-  
-  // Filter to ensure all parameters are valid strings
-  const validProducts = allProducts.filter(product => 
-    product.category && typeof product.category === 'string' &&
-    product.code && typeof product.code === 'string'
-  );
-  
-  return validProducts.map((product) => ({
-    category: product.category,
-    product: product.code,
-  }));
+  try {
+    // Get all aluminum foil container related category IDs
+    const { data: aluminumCategories, error: categoryError } = await supabase
+      .from('categories')
+      .select('id')
+      .or('slug.ilike.%aluminum%,slug.ilike.%foil%,slug.ilike.%container%,slug.ilike.%smoothwall%,slug.ilike.%wrinklewall%');
+
+    if (categoryError || !aluminumCategories) {
+      console.error('Error fetching aluminum container categories:', categoryError);
+      return [];
+    }
+
+    const categoryIds = aluminumCategories.map(cat => cat.id);
+
+    const { data: products } = await supabase
+      .from('products')
+      .select('slug, sku')
+      .in('category_id', categoryIds);
+
+    return products?.map((product) => {
+      const sku = product.sku || product.slug;
+      const category = sku?.startsWith('C') ? 'smoothwall' : 'wrinklewall';
+      
+      return {
+        category,
+        product: sku,
+      };
+    }).filter(p => p.product) || [];
+  } catch (error) {
+    console.error('Error in generateStaticParams:', error);
+    return [];
+  }
 }
