@@ -12,9 +12,12 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+// Import default English messages statically
+import enMessages from '../public/messages/en.json';
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<Language>('en');
-  const [messages, setMessages] = useState<any>({});
+  const [messages, setMessages] = useState<any>(enMessages);
 
   useEffect(() => {
     // Load messages for the current language
@@ -25,10 +28,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         setMessages(data);
       } catch (error) {
         console.error('Failed to load messages:', error);
+        // Fallback to English messages
+        setMessages(enMessages);
       }
     };
 
-    loadMessages();
+    if (language !== 'en') {
+      loadMessages();
+    }
   }, [language]);
 
   const t = (key: string): string => {

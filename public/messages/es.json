@@ -215,40 +215,28 @@
     "technicalSpecifications": "Especificaciones Técnicas",
     "categories": {
       "aluminum-foil": {
-        "description": "Contenedores y rollos de papel de aluminio premium perfectos para almacenamiento de alimentos, servicios de entrega y aplicaciones de catering comercial."
       },
       "baking-paper": {
-        "description": "Papeles pergamino y de hornear de grado profesional diseñados para cocinas comerciales y operaciones de servicios alimentarios."
       },
       "paper-cups": {
-        "description": "Vasos de papel desechables ecológicos disponibles en varios tamaños para bebidas calientes y frías en la industria de servicios alimentarios."
       },
       "disposable-cutlery": {
-        "description": "Conjuntos de cubiertos sostenibles de madera y bambú ideales para restaurantes eco-conscientes y servicios de catering."
       },
       "kraft-packaging": {
-        "description": "Soluciones de embalaje de papel kraft duraderas diseñadas para aplicaciones sostenibles de servicios alimentarios y venta al por menor."
       },
       "sugarcane-tableware": {
-        "description": "Vajilla biodegradable de bagazo de caña de azúcar que ofrece soluciones de comedor ambientalmente responsables para servicios alimentarios modernos."
       },
       "aluminumFoil": {
-        "description": "Láminas y contenedores de aluminio de alta calidad"
       },
       "bakingPaper": {
-        "description": "Papeles de horneado profesionales y suministros de cocina"
       },
       "paperCups": {
-        "description": "Vasos de papel desechables y accesorios para bebidas"
       },
       "kraftPackaging": {
-        "description": "Soluciones de empaque de papel kraft ecológicas"
       },
       "disposableCutlery": {
-        "description": "Utensilios desechables sostenibles de madera y bambú"
       },
       "sugarcaneTableware": {
-        "description": "Vajilla ecológica de bagazo de caña de azúcar"
       }
     }
   },

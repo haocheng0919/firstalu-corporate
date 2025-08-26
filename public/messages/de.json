@@ -277,40 +277,28 @@
           "description": "Hochwertige Holz- und Bambus-Essstäbchen für asiatische Küche-Restaurants."
         },
         "aluminum-foil": {
-          "description": "Premium-Aluminiumfolienbehälter und -rollen, perfekt für Lebensmittellagerung, Lieferdienste und kommerzielle Catering-Anwendungen."
         },
         "baking-paper": {
-          "description": "Professionelle Pergament- und Backpapiere für Großküchen und Gastronomie-Betriebe."
         },
         "paper-cups": {
-          "description": "Umweltfreundliche Einweg-Papierbecher in verschiedenen Größen für heiße und kalte Getränke in der Gastronomie."
         },
         "disposable-cutlery": {
-          "description": "Nachhaltige Holz- und Bambus-Bestecksets, ideal für umweltbewusste Restaurants und Catering-Services."
         },
         "kraft-packaging": {
-          "description": "Langlebige Kraftpapier-Verpackungslösungen für nachhaltige Gastronomie und Einzelhandelsanwendungen."
         },
         "sugarcane-tableware": {
-          "description": "Biologisch abbaubares Zuckerrohr-Bagasse-Geschirr für umweltverantwortliche Dining-Lösungen in der modernen Gastronomie."
         },
         "aluminumFoil": {
-          "description": "Langlebige Aluminiumfolie und -behälter für Lebensmittellagerung und -lieferung"
         },
         "bakingPaper": {
-          "description": "Professionelle Backpapiere und Küchenzubehör"
         },
         "paperCups": {
-          "description": "Einweg-Papierbecher und Getränkezubehör"
         },
         "kraftPackaging": {
-          "description": "Umweltfreundliche Kraftpapier-Verpackungslösungen"
         },
         "disposableCutlery": {
-          "description": "Nachhaltiges Einwegbesteck aus Holz und Bambus"
         },
         "sugarcaneTableware": {
-          "description": "Umweltfreundliches Geschirr aus Zuckerrohr-Bagasse"
         }
       },
     "moq": "Mindestbestellmenge: 100 Kartons pro Produkt"

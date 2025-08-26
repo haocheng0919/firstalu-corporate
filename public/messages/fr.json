@@ -50,7 +50,35 @@
     },
     "homeProducts": {
       "title": "Notre Gamme de Produits",
-      "subtitle": "Solutions complètes d'emballage alimentaire jetable pour les besoins de votre entreprise"
+      "subtitle": "Solutions complètes d'emballage alimentaire jetable pour les besoins de votre entreprise",
+      "learnMore": "En savoir plus",
+      "viewAll": "Voir tous les produits",
+      "items": {
+        "aluminumFoil": {
+          "title": "Papier d'Aluminium",
+          "description": "Feuilles et contenants en aluminium de haute qualité pour les services alimentaires et l'usage domestique."
+        },
+        "bakingPaper": {
+          "title": "Papier de Cuisson",
+          "description": "Papiers de cuisson antiadhésifs avec options d'impression personnalisée disponibles."
+        },
+        "kraftPackaging": {
+          "title": "Emballage Kraft",
+          "description": "Solutions d'emballage en papier kraft écologiques pour les besoins d'emballage durable."
+        },
+        "paperCups": {
+          "title": "Gobelets en Papier",
+          "description": "Gobelets en papier jetables avec couvercles et accessoires pour boissons."
+        },
+        "disposableCutlery": {
+          "title": "Couverts Jetables",
+          "description": "Ustensiles jetables durables en bois et bambou pour les services alimentaires."
+        },
+        "sugarcaneTableware": {
+          "title": "Vaisselle en Canne à Sucre",
+          "description": "Vaisselle écologique en bagasse de canne à sucre biodégradable."
+        }
+      }
     },
     "products": {
       "title": "Nos Produits",

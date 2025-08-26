@@ -91,9 +91,7 @@ function ProductCategories() {
               <h3 className="text-xl font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors">
                 {category.name || t(`categories.${category.slug}.title`)}
               </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                {t(`products.categories.${category.slug}.description`)}
-              </p>
+
             </div>
           </Link>
         );

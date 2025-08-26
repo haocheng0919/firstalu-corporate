@@ -15,6 +15,38 @@
       "cta": "View Our Products",
       "contact": "Contact Us"
     },
+    "homeProducts": {
+      "title": "Our Product Range",
+      "subtitle": "Complete disposable food packaging solutions for your business needs",
+      "learnMore": "Learn More",
+      "viewAll": "View All Products",
+      "items": {
+        "aluminumFoil": {
+          "title": "Aluminum Foil",
+          "description": "High-quality aluminum foil sheets and containers for food service and household use."
+        },
+        "bakingPaper": {
+          "title": "Baking Paper",
+          "description": "Non-stick baking papers with custom printing options available."
+        },
+        "kraftPackaging": {
+          "title": "Kraft Packaging",
+          "description": "Eco-friendly kraft paper packaging solutions for sustainable packaging needs."
+        },
+        "paperCups": {
+          "title": "Paper Cups",
+          "description": "Disposable paper cups with lids and accessories for beverages."
+        },
+        "disposableCutlery": {
+          "title": "Disposable Cutlery",
+          "description": "Durable disposable wooden and bamboo utensils for food service."
+        },
+        "sugarcaneTableware": {
+          "title": "Sugarcane Tableware",
+          "description": "Eco-friendly biodegradable sugarcane bagasse tableware."
+        }
+      }
+    },
     "features": {
       "title": "Why Choose Us",
       "quality": {
@@ -130,42 +162,18 @@
     "subcategories": "Subcategories",
     "noSubcategories": "No subcategories found.",
     "categories": {
-      "aluminum-foil": {
-        "description": "Durable aluminum foil and containers for food storage and delivery"
-      },
-      "baking-paper": {
-        "description": "Professional baking papers and kitchen supplies"
-      },
-      "paper-cups": {
-        "description": "Disposable paper cups and beverage accessories"
-      },
-      "kraft-packaging": {
-        "description": "Eco-friendly kraft paper packaging solutions"
-      },
-      "disposable-cutlery": {
-        "description": "Sustainable disposable wooden and bamboo utensils"
-      },
-      "sugarcane-tableware": {
-        "description": "Eco-friendly sugarcane bagasse tableware"
-      },
-      "aluminumFoil": {
-        "description": "Durable aluminum foil and containers for food storage and delivery"
-      },
-      "bakingPaper": {
-        "description": "Professional baking papers and kitchen supplies"
-      },
-      "paperCups": {
-        "description": "Disposable paper cups and beverage accessories"
-      },
-      "kraftPackaging": {
-        "description": "Eco-friendly kraft paper packaging solutions"
-      },
-      "disposableCutlery": {
-        "description": "Sustainable disposable wooden and bamboo utensils"
-      },
-      "sugarcaneTableware": {
-        "description": "Eco-friendly sugarcane bagasse tableware"
-      }
+      "aluminum-foil": {},
+      "baking-paper": {},
+      "paper-cups": {},
+      "kraft-packaging": {},
+      "disposable-cutlery": {},
+      "sugarcane-tableware": {},
+      "aluminumFoil": {},
+      "bakingPaper": {},
+      "paperCups": {},
+      "kraftPackaging": {},
+      "disposableCutlery": {},
+      "sugarcaneTableware": {}
     }
   },
   "news": {
