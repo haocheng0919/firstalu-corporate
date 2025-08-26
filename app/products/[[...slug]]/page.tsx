@@ -2,102 +2,296 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
+import { PageHeader } from '@/components/ui/page-header'
+import Footer from '@/components/Footer'
 
 type Props = {
   params: { slug: string[] }
 }
 
-export default async function DynamicProductPage({ params }: Props) {
-  const locale = 'en' // Temporary hardcoded for testing; adjust to use proper locale handling
+interface Product {
+  id: string
+  slug: string
+  name_i18n?: { [key: string]: string }
+  description_i18n?: { [key: string]: string }
+  introduction?: { [key: string]: string }
+  images?: string[] | { gallery?: string[]; thumbnail?: string }
+  technical_specs?: any
+  sku?: string
+}
 
+interface Category {
+  id: string
+  slug: string
+  name_i18n?: { [key: string]: string }
+  parent_id?: string
+}
+
+// Helper function to extract images
+function getProductImages(images: any): string[] {
+  if (!images) return [];
+  
+  if (Array.isArray(images)) {
+    return images;
+  }
+  
+  if (typeof images === 'object') {
+    if (images.gallery && Array.isArray(images.gallery)) {
+      return images.gallery;
+    }
+    if (images.thumbnail) {
+      return [images.thumbnail];
+    }
+  }
+  
+  return [];
+}
+
+// Helper function to get first image
+function getFirstImage(images: any): string | null {
+  const imageList = getProductImages(images);
+  return imageList.length > 0 ? imageList[0] : null;
+}
+
+export default async function DynamicProductPage({ params }: Props) {
+  const locale = 'en'
   const slugPath = params.slug || []
+  
   if (slugPath.length === 0) {
     return notFound()
   }
 
-  let currentCategory: any = null
-  let parentId: string | null = null
-  let fullPath = []
+  try {
+    // Try to find the final slug as a product first
+    const finalSlug = slugPath[slugPath.length - 1]
+    
+    // Check if this is a direct product slug
+    const { data: directProduct, error: directProductError } = await supabase
+      .from('products')
+      .select('id, slug, sku, name_i18n, description_i18n, introduction, images, technical_specs')
+      .eq('slug', finalSlug)
+      .single()
 
-  for (const slug of slugPath) {
-    fullPath.push(slug)
-    console.log(`Checking category for slug: ${slug}, parentId: ${parentId ?? 'null'}`);
-    let query = supabase
-      .from('categories')
-      .select('id, slug, name_i18n, parent_id')
-      .eq('slug', slug)
-
-    if (parentId === null) {
-      query = query.is('parent_id', null)
-    } else {
-      query = query.eq('parent_id', parentId)
-    }
-
-    const { data, error } = await query.single()
-
-    if (error || !data) {
-      console.log(`No category found, checking product for slug: ${slug}, category_id: ${parentId}`);
-      if (parentId === null) return notFound()
-
-      const { data: productData, error: productError } = await supabase
-        .from('products')
-        .select('id, slug, name_i18n, images')
-        .eq('slug', slug)
-        .eq('category_id', parentId)
-        .single()
-
-      if (productError || !productData) {
-        console.log(`No product found`);
-        return notFound()
-      }
-
-      console.log(`Found product: ${productData.id}`);
-      // Render product detail
+    if (!directProductError && directProduct) {
+      // Render product detail page
       return (
-        <div>
-          <h1>{productData.name_i18n?.[locale] || productData.slug}</h1>
-          {productData.images?.gallery?.map((img: string, index: number) => (
-            <Image key={index} src={img} alt={`${productData.slug} image ${index + 1}`} width={500} height={300} />
-          ))}
-          {/* Add more product info */}
+        <div className="min-h-screen bg-gray-50">
+          <PageHeader 
+            title={directProduct.name_i18n?.[locale] || directProduct.slug}
+            description={directProduct.introduction?.[locale] || directProduct.description_i18n?.[locale] || ''}
+          />
+          
+          <main className="container mx-auto px-4 py-12">
+            <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+              {/* Product Images */}
+              <div className="grid md:grid-cols-2 gap-8 p-8">
+                <div className="space-y-4">
+                  {(() => {
+                    const imagesToShow = getProductImages(directProduct.images);
+                    
+                    return imagesToShow.length > 0 ? (
+                      imagesToShow.map((img: string, index: number) => (
+                        <div key={index} className="relative aspect-square">
+                          <Image 
+                            src={img} 
+                            alt={`${directProduct.name_i18n?.[locale] || directProduct.slug} - Image ${index + 1}`}
+                            fill
+                            className="object-cover rounded-lg"
+                            sizes="(max-width: 768px) 100vw, 50vw"
+                          />
+                        </div>
+                      ))
+                    ) : (
+                      <div className="aspect-square bg-gray-200 rounded-lg flex items-center justify-center">
+                        <span className="text-gray-500">No image available</span>
+                      </div>
+                    );
+                  })()}
+                </div>
+
+                {/* Product Information */}
+                <div className="space-y-6">
+                  <div>
+                    <h1 className="text-3xl font-bold text-gray-900 mb-2">
+                      {directProduct.name_i18n?.[locale] || directProduct.slug}
+                    </h1>
+                    {directProduct.sku && (
+                      <p className="text-gray-600">SKU: {directProduct.sku}</p>
+                    )}
+                  </div>
+
+                  {directProduct.introduction?.[locale] && (
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2">Introduction</h3>
+                      <p className="text-gray-700">{directProduct.introduction[locale]}</p>
+                    </div>
+                  )}
+
+                  {directProduct.description_i18n?.[locale] && (
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2">Description</h3>
+                      <p className="text-gray-700">{directProduct.description_i18n[locale]}</p>
+                    </div>
+                  )}
+
+                  {directProduct.technical_specs && (
+                    <div>
+                      <h3 className="text-xl font-semibold mb-2">Technical Specifications</h3>
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        {Object.entries(directProduct.technical_specs).map(([key, value]) => (
+                          <div key={key} className="flex justify-between py-1">
+                            <span className="font-medium capitalize">{key.replace(/_/g, ' ')}:</span>
+                            <span>{String(value)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </main>
+          
+          <Footer />
         </div>
       )
     }
 
-    console.log(`Found category: ${data.id}`);
-    currentCategory = data
-    parentId = data.id
+    // If not a direct product, try to resolve as category path
+    let currentCategory: Category | null = null
+    let parentId: string | null = null
+
+    for (const slug of slugPath) {
+      let query = supabase
+        .from('categories')
+        .select('id, slug, name_i18n, parent_id')
+        .eq('slug', slug)
+
+      if (parentId === null) {
+        query = query.is('parent_id', null)
+      } else {
+        query = query.eq('parent_id', parentId)
+      }
+
+      const { data, error } = await query.single()
+
+      if (error || !data) {
+        return notFound()
+      }
+
+      currentCategory = data
+      parentId = data.id
+    }
+
+    if (!currentCategory) {
+      return notFound()
+    }
+
+    // Get subcategories and products for this category
+    const [subcategoriesResult, productsResult] = await Promise.all([
+      supabase
+        .from('categories')
+        .select('id, slug, name_i18n')
+        .eq('parent_id', currentCategory.id),
+      supabase
+        .from('products')
+        .select('id, slug, name_i18n, images, description_i18n')
+        .eq('category_id', currentCategory.id)
+    ])
+
+    const subcategories = subcategoriesResult.data || []
+    const products = productsResult.data || []
+
+    return (
+      <div className="min-h-screen bg-gray-50">
+        <PageHeader 
+          title={currentCategory.name_i18n?.[locale] || currentCategory.slug}
+          description={`Browse our ${currentCategory.name_i18n?.[locale] || currentCategory.slug} products`}
+        />
+        
+        <main className="container mx-auto px-4 py-12">
+          {/* Subcategories */}
+          {subcategories.length > 0 && (
+            <section className="mb-12">
+              <h2 className="text-2xl font-bold mb-6">Categories</h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {subcategories.map((sub) => (
+                  <Link
+                    key={sub.id}
+                    href={`/products/${slugPath.join('/')}/${sub.slug}`}
+                    className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow"
+                  >
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {sub.name_i18n?.[locale] || sub.slug}
+                    </h3>
+                    <span className="text-blue-600 hover:text-blue-800 text-sm">
+                      View Products →
+                    </span>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {/* Products */}
+          {products.length > 0 && (
+            <section>
+              <h2 className="text-2xl font-bold mb-6">Products</h2>
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                {products.map((product) => (
+                  <Link
+                    key={product.id}
+                    href={`/products/${slugPath.join('/')}/${product.slug}`}
+                    className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow"
+                  >
+                    <div className="aspect-square relative">
+                      {(() => {
+                        const imageToShow = getFirstImage(product.images);
+                        
+                        return imageToShow ? (
+                          <Image
+                            src={imageToShow}
+                            alt={product.name_i18n?.[locale] || product.slug}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+                            <span className="text-gray-500">No image</span>
+                          </div>
+                        );
+                      })()}
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-semibold text-gray-900 mb-2">
+                        {product.name_i18n?.[locale] || product.slug}
+                      </h3>
+                      {product.description_i18n?.[locale] && (
+                        <p className="text-sm text-gray-600 line-clamp-2">
+                          {product.description_i18n[locale]}
+                        </p>
+                      )}
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </section>
+          )}
+
+          {subcategories.length === 0 && products.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-gray-600">No products or categories found in this section.</p>
+            </div>
+          )}
+        </main>
+        
+        <Footer />
+      </div>
+    )
+
+  } catch (error) {
+    console.error('Error loading product page:', error)
+    return notFound()
   }
-
-  // If we reach here, it's a category page
-  const { data: subcategories } = await supabase
-    .from('categories')
-    .select('id, slug, name_i18n')
-    .eq('parent_id', currentCategory.id)
-
-  const { data: products } = await supabase
-    .from('products')
-    .select('id, slug, name_i18n, images')
-    .eq('category_id', currentCategory.id)
-
-  return (
-    <div>
-      <h1>{currentCategory.name_i18n?.[locale] || currentCategory.slug}</h1>
-      {/* Render subcategories */}
-      {subcategories?.map(sub => (
-        <Link key={sub.id} href={`/products/${fullPath.join('/')}/${sub.slug}`}>
-          {sub.name_i18n?.[locale] || sub.slug}
-        </Link>
-      ))}
-      {/* Render products */}
-      {products?.map(product => (
-        <div key={product.id}>
-          <Link href={`/products/${fullPath.join('/')}/${product.slug}`}>
-            {product.name_i18n?.[locale] || product.slug}
-          </Link>
-          <Image src={product.images?.thumbnail || ''} alt={product.name_i18n?.[locale] || product.slug} width={200} height={200} />
-        </div>
-      ))}
-    </div>
-  )
 }
