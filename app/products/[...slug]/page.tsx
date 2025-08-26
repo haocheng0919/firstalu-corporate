@@ -48,6 +48,64 @@ function getProductImages(images: any): string[] {
   return [];
 }
 
+// Helper function to format product description
+function formatProductDescription(description: string): JSX.Element {
+  // Split by lines and process each line
+  const lines = description.split('\n');
+  const elements: JSX.Element[] = [];
+  
+  lines.forEach((line, index) => {
+    const trimmedLine = line.trim();
+    
+    if (!trimmedLine) {
+      elements.push(<br key={`br-${index}`} />);
+      return;
+    }
+    
+    // Handle bold text with **
+    if (trimmedLine.includes('**')) {
+      const parts = trimmedLine.split('**');
+      const processedParts: (string | JSX.Element)[] = [];
+      
+      parts.forEach((part, partIndex) => {
+        if (partIndex % 2 === 1) {
+          // This is bold text
+          processedParts.push(
+            <strong key={`bold-${index}-${partIndex}`} className="font-bold text-gray-900">
+              {part}
+            </strong>
+          );
+        } else {
+          processedParts.push(part);
+        }
+      });
+      
+      elements.push(
+        <p key={`line-${index}`} className="mb-3 text-gray-700 leading-relaxed">
+          {processedParts}
+        </p>
+      );
+    } else if (trimmedLine.startsWith('- ')) {
+      // Handle bullet points
+      elements.push(
+        <div key={`bullet-${index}`} className="flex items-start mb-2">
+          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+          <span className="text-gray-700 leading-relaxed">{trimmedLine.substring(2)}</span>
+        </div>
+      );
+    } else {
+      // Regular text
+      elements.push(
+        <p key={`line-${index}`} className="mb-3 text-gray-700 leading-relaxed">
+          {trimmedLine}
+        </p>
+      );
+    }
+  });
+  
+  return <div className="space-y-1">{elements}</div>;
+}
+
 export default async function DynamicProductPage({ params }: Props) {
   const locale = 'en'
   const slugPath = params.slug || []
@@ -96,7 +154,7 @@ export default async function DynamicProductPage({ params }: Props) {
               <HeroHeader />
               
               {/* Product Hero Section */}
-              <section className="pt-8 pb-16">
+              <section className="pt-24 pb-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <Breadcrumbs items={breadcrumbItems} />
                   <div className="mt-8">
@@ -131,12 +189,10 @@ export default async function DynamicProductPage({ params }: Props) {
                         <svg className="w-6 h-6 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        Technical Specifications
+                        Product Details
                       </h2>
-                      <div className="prose prose-lg max-w-none">
-                        <div className="whitespace-pre-line text-gray-700 leading-relaxed bg-gray-50 rounded-xl p-6 border-l-4 border-blue-500">
-                          {directProduct.description_i18n[locale]}
-                        </div>
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100 shadow-inner">
+                        {formatProductDescription(directProduct.description_i18n[locale])}
                       </div>
                     </div>
                   )}
