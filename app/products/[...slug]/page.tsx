@@ -195,11 +195,29 @@ export default async function DynamicProductPage({ params }: Props) {
     
     const subcategories = subcategoriesResult.data || []
     
-    // Get all subcategory IDs to include their products
-    const subcategoryIds = subcategories.map(sub => sub.id)
-    const allCategoryIds = [currentCategory.id, ...subcategoryIds]
+    // Recursively get all descendant category IDs
+    async function getAllDescendantIds(categoryId: string): Promise<string[]> {
+      const { data: children } = await supabase
+        .from('categories')
+        .select('id')
+        .eq('parent_id', categoryId)
+      
+      if (!children || children.length === 0) {
+        return [categoryId]
+      }
+      
+      const allIds = [categoryId]
+      for (const child of children) {
+        const descendantIds = await getAllDescendantIds(child.id)
+        allIds.push(...descendantIds)
+      }
+      return allIds
+    }
     
-    // Get products from this category and all subcategories
+    // Get all category IDs including nested subcategories
+    const allCategoryIds = await getAllDescendantIds(currentCategory.id)
+    
+    // Get products from this category and all nested subcategories
     const productsResult = await supabase
       .from('products')
       .select('id, slug, name_i18n, images, description_i18n')
