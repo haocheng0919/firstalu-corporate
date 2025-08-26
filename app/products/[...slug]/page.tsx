@@ -291,7 +291,10 @@ export default async function DynamicProductPage({ params }: Props) {
     }
 
     // Add current category
-    categoryBreadcrumbs.push({ label: currentCategory.name_i18n?.[locale] || currentCategory.slug });
+    categoryBreadcrumbs.push({ 
+      label: currentCategory.name_i18n?.[locale] || currentCategory.slug,
+      href: `/products/${slugPath.join('/')}`
+    });
 
     return (
       <div className="min-h-screen bg-gray-50">
