@@ -196,7 +196,7 @@ export default async function DynamicProductPage({ params }: Props) {
     const subcategories = subcategoriesResult.data || []
     
     // Recursively get all descendant category IDs
-    async function getAllDescendantIds(categoryId: string): Promise<string[]> {
+    const getAllDescendantIds = async (categoryId: string): Promise<string[]> => {
       const { data: children } = await supabase
         .from('categories')
         .select('id')
