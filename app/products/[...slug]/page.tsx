@@ -1,13 +1,11 @@
-'use client';
-
 import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
-import Header from '@/components/Header'
 import Footer from '@/components/Footer'
 import { Breadcrumbs } from '@/components/ui/breadcrumbs'
+import { HeroHeader } from '@/components/ui/hero-section-1'
+import ProductImageCarousel from '@/components/ui/product-image-carousel'
 
 type Props = {
   params: { slug: string[] }
@@ -50,203 +48,6 @@ function getProductImages(images: any): string[] {
   return [];
 }
 
-// Image Carousel Component
-function ImageCarousel({ images }: { images: string[] }) {
-  const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-  const nextImage = () => {
-    setCurrentImageIndex((prev) => (prev + 1) % images.length);
-  };
-
-  const prevImage = () => {
-    setCurrentImageIndex((prev) => (prev - 1 + images.length) % images.length);
-  };
-
-  if (images.length === 0) {
-    return (
-      <div className="aspect-square bg-gradient-to-br from-gray-100 to-gray-200 rounded-2xl flex items-center justify-center border border-gray-300">
-        <div className="text-center">
-          <div className="w-20 h-20 mx-auto mb-4 bg-white rounded-full flex items-center justify-center shadow-lg">
-            <svg className="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-            </svg>
-          </div>
-          <span className="text-gray-500 font-medium text-lg">No image available</span>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="relative group">
-      <div className="aspect-square relative overflow-hidden rounded-2xl shadow-lg">
-        <Image
-          src={images[currentImageIndex]}
-          alt={`Product image ${currentImageIndex + 1}`}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          sizes="(max-width: 768px) 100vw, 50vw"
-        />
-        {/* Overlay gradient */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-      </div>
-
-      {images.length > 1 && (
-        <>
-          {/* Navigation buttons */}
-          <button
-            onClick={prevImage}
-            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
-            aria-label="Previous image"
-          >
-            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-
-          <button
-            onClick={nextImage}
-            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 hover:bg-white rounded-full shadow-lg flex items-center justify-center transition-all duration-200 hover:scale-110 opacity-0 group-hover:opacity-100"
-            aria-label="Next image"
-          >
-            <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-
-          {/* Image counter */}
-          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-black/50 text-white px-3 py-1 rounded-full text-sm">
-            {currentImageIndex + 1} / {images.length}
-          </div>
-
-          {/* Dots indicator */}
-          <div className="flex justify-center space-x-2 mt-6">
-            {images.map((_, index) => (
-              <button
-                key={index}
-                onClick={() => setCurrentImageIndex(index)}
-                className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                  index === currentImageIndex ? 'bg-blue-600 w-8' : 'bg-gray-300'
-                }`}
-                aria-label={`Go to image ${index + 1}`}
-              />
-            ))}
-          </div>
-        </>
-      )}
-    </div>
-  );
-}
-
-// Client component wrapper
-function ProductPageContent({ directProduct, breadcrumbItems, slugPath, locale }: {
-  directProduct: Product;
-  breadcrumbItems: { label: string; href?: string }[];
-  slugPath: string[];
-  locale: string;
-}) {
-  const productImages = getProductImages(directProduct.images);
-
-  return (
-    <>
-      <Header />
-
-      {/* Hero Section */}
-      <section className="relative pt-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <Breadcrumbs items={breadcrumbItems} />
-          <div className="mt-8">
-            <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-              {directProduct.name_i18n?.[locale] || directProduct.slug}
-            </h1>
-            {directProduct.introduction?.[locale] && (
-              <p className="text-lg text-gray-600 max-w-2xl">
-                {directProduct.introduction[locale]}
-              </p>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Product Content */}
-      <section className="py-12 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12">
-            {/* Product Images */}
-            <div className="space-y-4">
-              <ImageCarousel images={productImages} />
-            </div>
-
-            {/* Product Information */}
-            <div className="space-y-8">
-              {directProduct.description_i18n?.[locale] && (
-                <div className="bg-white rounded-2xl p-8 shadow-sm">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                    <svg className="w-6 h-6 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                    </svg>
-                    Technical Specifications
-                  </h2>
-                  <div className="prose prose-lg max-w-none">
-                    <div className="whitespace-pre-line text-gray-700 leading-relaxed bg-gray-50 rounded-xl p-6 border-l-4 border-blue-500">
-                      {directProduct.description_i18n[locale]}
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {directProduct.technical_specs && Object.keys(directProduct.technical_specs).length > 0 && (
-                <div className="bg-white rounded-2xl p-8 shadow-sm">
-                  <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                    <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    Additional Details
-                  </h3>
-                  <div className="grid gap-4">
-                    {Object.entries(directProduct.technical_specs).map(([key, value]) => (
-                      <div key={key} className="flex justify-between items-center py-3 px-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-100">
-                        <span className="font-medium text-gray-700 capitalize">{key.replace(/_/g, ' ')}:</span>
-                        <span className="text-gray-900 font-semibold bg-white px-3 py-1 rounded-lg shadow-sm">{String(value)}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Action buttons */}
-              <div className="bg-white rounded-2xl p-8 shadow-sm">
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link
-                    href="/products"
-                    className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                    </svg>
-                    Back to Products
-                  </Link>
-                  <Link
-                    href="/contact"
-                    className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 font-medium rounded-xl border-2 border-blue-600 hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-                  >
-                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                    Contact Us
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <Footer />
-    </>
-  );
-}
-
 export default async function DynamicProductPage({ params }: Props) {
   const locale = 'en'
   const slugPath = params.slug || []
@@ -284,13 +85,111 @@ export default async function DynamicProductPage({ params }: Props) {
         label: directProduct.name_i18n?.[locale] || directProduct.slug
       });
 
+      const productImages = getProductImages(directProduct.images);
+
       return (
-        <ProductPageContent
-          directProduct={directProduct}
-          breadcrumbItems={breadcrumbItems}
-          slugPath={slugPath}
-          locale={locale}
-        />
+        <>
+          {/* Hero Header with Navigation */}
+          <div className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50">
+            <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+            <div className="relative">
+              <HeroHeader />
+              
+              {/* Product Hero Section */}
+              <section className="pt-8 pb-16">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                  <Breadcrumbs items={breadcrumbItems} />
+                  <div className="mt-8">
+                    <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                      {directProduct.name_i18n?.[locale] || directProduct.slug}
+                    </h1>
+                    {directProduct.introduction?.[locale] && (
+                      <p className="text-lg text-gray-600 max-w-2xl">
+                        {directProduct.introduction[locale]}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </section>
+            </div>
+          </div>
+
+          {/* Product Content */}
+          <section className="py-12 bg-gray-50">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div className="grid lg:grid-cols-2 gap-12">
+                {/* Product Images */}
+                <div className="space-y-4">
+                  <ProductImageCarousel images={productImages} productName={directProduct.name_i18n?.[locale] || directProduct.slug} />
+                </div>
+
+                {/* Product Information */}
+                <div className="space-y-8">
+                  {directProduct.description_i18n?.[locale] && (
+                    <div className="bg-white rounded-2xl p-8 shadow-sm">
+                      <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
+                        <svg className="w-6 h-6 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Technical Specifications
+                      </h2>
+                      <div className="prose prose-lg max-w-none">
+                        <div className="whitespace-pre-line text-gray-700 leading-relaxed bg-gray-50 rounded-xl p-6 border-l-4 border-blue-500">
+                          {directProduct.description_i18n[locale]}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {directProduct.technical_specs && Object.keys(directProduct.technical_specs).length > 0 && (
+                    <div className="bg-white rounded-2xl p-8 shadow-sm">
+                      <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
+                        <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Additional Details
+                      </h3>
+                      <div className="grid gap-4">
+                        {Object.entries(directProduct.technical_specs).map(([key, value]) => (
+                          <div key={key} className="flex justify-between items-center py-3 px-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-100">
+                            <span className="font-medium text-gray-700 capitalize">{key.replace(/_/g, ' ')}:</span>
+                            <span className="text-gray-900 font-semibold bg-white px-3 py-1 rounded-lg shadow-sm">{String(value)}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action buttons */}
+                  <div className="bg-white rounded-2xl p-8 shadow-sm">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Link
+                        href="/products"
+                        className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+                      >
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Back to Products
+                      </Link>
+                      <Link
+                        href="/#contact"
+                        className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 font-medium rounded-xl border-2 border-blue-600 hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+                      >
+                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        Contact Us
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <Footer />
+        </>
       )
     }
 
@@ -382,25 +281,31 @@ export default async function DynamicProductPage({ params }: Props) {
       href: `/products/${slugPath.join('/')}`
     });
 
-        return (
+    return (
       <>
-        <Header />
-
-        {/* Hero Section */}
-        <section className="relative pt-20 bg-white">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <Breadcrumbs items={categoryBreadcrumbs} />
-            <div className="mt-8">
-              <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                {currentCategory.name_i18n?.[locale] || currentCategory.slug}
-              </h1>
-              <p className="text-lg text-gray-600 max-w-2xl">
-                Browse our premium {currentCategory.name_i18n?.[locale] || currentCategory.slug} collection
-                {products.length > 0 && ` with ${products.length} products`}
-              </p>
-            </div>
+        {/* Hero Header with Navigation */}
+        <div className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50">
+          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+          <div className="relative">
+            <HeroHeader />
+            
+            {/* Category Hero Section */}
+            <section className="pt-8 pb-16">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <Breadcrumbs items={categoryBreadcrumbs} />
+                <div className="mt-8">
+                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                    {currentCategory.name_i18n?.[locale] || currentCategory.slug}
+                  </h1>
+                  <p className="text-lg text-gray-600 max-w-2xl">
+                    Browse our premium {currentCategory.name_i18n?.[locale] || currentCategory.slug} collection
+                    {products.length > 0 && ` with ${products.length} products`}
+                  </p>
+                </div>
+              </div>
+            </section>
           </div>
-        </section>
+        </div>
 
         {/* Subcategories */}
         {subcategories.length > 0 && (
@@ -477,7 +382,8 @@ export default async function DynamicProductPage({ params }: Props) {
                             </div>
                           </div>
                         );
-                      })()}
+                      })()
+                      }
                     </div>
                     <div className="p-6">
                       <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">

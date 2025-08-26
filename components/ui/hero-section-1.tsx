@@ -140,7 +140,7 @@ export function HeroSection() {
     )
 }
 
-const HeroHeader = () => {
+export const HeroHeader = () => {
     const [menuState, setMenuState] = React.useState(false)
     const [isScrolled, setIsScrolled] = React.useState(false)
     const [languageDropdown, setLanguageDropdown] = React.useState(false)
