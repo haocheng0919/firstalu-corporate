@@ -187,19 +187,24 @@ export default async function DynamicProductPage({ params }: Props) {
       return notFound()
     }
 
-    // Get subcategories and products for this category
-    const [subcategoriesResult, productsResult] = await Promise.all([
-      supabase
-        .from('categories')
-        .select('id, slug, name_i18n')
-        .eq('parent_id', currentCategory.id),
-      supabase
-        .from('products')
-        .select('id, slug, name_i18n, images, description_i18n')
-        .eq('category_id', currentCategory.id)
-    ])
-
+    // Get subcategories for this category
+    const subcategoriesResult = await supabase
+      .from('categories')
+      .select('id, slug, name_i18n')
+      .eq('parent_id', currentCategory.id)
+    
     const subcategories = subcategoriesResult.data || []
+    
+    // Get all subcategory IDs to include their products
+    const subcategoryIds = subcategories.map(sub => sub.id)
+    const allCategoryIds = [currentCategory.id, ...subcategoryIds]
+    
+    // Get products from this category and all subcategories
+    const productsResult = await supabase
+      .from('products')
+      .select('id, slug, name_i18n, images, description_i18n')
+      .in('category_id', allCategoryIds)
+
     const products = productsResult.data || []
 
     return (
