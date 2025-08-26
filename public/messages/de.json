@@ -80,6 +80,56 @@
         }
       }
     },
+    "products": {
+      "title": "Unsere Produkte",
+      "subtitle": "Premium-Einweg-Lebensmittelverpackungslösungen für Ihre Geschäftsanforderungen",
+      "learnMore": "Mehr erfahren",
+      "viewAll": "Alle Produkte anzeigen",
+      "items": {
+        "aluminum-foil": {
+          "description": "Hochwertige Aluminiumfolienbehälter und -rollen, perfekt für Lebensmittellagerung, Lieferservices und kommerzielle Catering-Anwendungen."
+        },
+        "baking-paper": {
+          "description": "Professionelle Pergament- und Backpapiere für Großküchen und Gastronomie-Betriebe."
+        },
+        "paper-cups": {
+          "description": "Umweltfreundliche Einweg-Papierbecher in verschiedenen Größen für heiße und kalte Getränke in der Gastronomie."
+        },
+        "disposable-cutlery": {
+          "description": "Nachhaltige Holz- und Bambus-Bestecksets, ideal für umweltbewusste Restaurants und Catering-Services."
+        },
+        "kraft-packaging": {
+          "description": "Langlebige Kraftpapier-Verpackungslösungen für nachhaltige Gastronomie und Einzelhandelsanwendungen."
+        },
+        "sugarcane-tableware": {
+          "description": "Biologisch abbaubares Zuckerrohr-Bagasse-Geschirr für umweltverantwortliche Dining-Lösungen in der modernen Gastronomie."
+        },
+        "aluminumFoil": {
+          "title": "Aluminiumfolie",
+          "description": "Langlebige Aluminiumfolie und -behälter für Lebensmittellagerung und -lieferung"
+        },
+        "bakingPaper": {
+          "title": "Backpapier",
+          "description": "Professionelle Backpapiere und Küchenzubehör"
+        },
+        "kraftPackaging": {
+          "title": "Kraft-Verpackung",
+          "description": "Umweltfreundliche Kraftpapier-Verpackungslösungen"
+        },
+        "paperCups": {
+          "title": "Papierbecher",
+          "description": "Einweg-Papierbecher und Getränkezubehör"
+        },
+        "disposableCutlery": {
+          "title": "Einwegbesteck",
+          "description": "Nachhaltiges Einwegbesteck aus Holz und Bambus"
+        },
+        "sugarcaneTableware": {
+          "title": "Zuckerrohr-Geschirr",
+          "description": "Umweltfreundliches Geschirr aus Zuckerrohr-Bagasse"
+        }
+      }
+    },
     "news": {
       "title": "Neueste Nachrichten",
       "subtitle": "Bleiben Sie auf dem Laufenden mit Brancheneinblicken und Unternehmensankündigungen",

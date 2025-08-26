@@ -50,33 +50,55 @@
     },
     "homeProducts": {
       "title": "Notre Gamme de Produits",
-      "subtitle": "Solutions complètes d'emballage alimentaire jetable pour les besoins de votre entreprise",
-        "learnMore": "En savoir plus",
-        "viewAll": "Voir Tous les Produits",
-        "items": {
+      "subtitle": "Solutions complètes d'emballage alimentaire jetable pour les besoins de votre entreprise"
+    },
+    "products": {
+      "title": "Nos Produits",
+      "subtitle": "Solutions premium d'emballage alimentaire jetable pour votre entreprise",
+      "learnMore": "En savoir plus",
+      "viewAll": "Voir tous les produits",
+      "items": {
+        "aluminum-foil": {
+          "description": "Contenants et rouleaux en papier d'aluminium premium parfaits pour le stockage alimentaire, les services de livraison et les applications de restauration commerciale."
+        },
+        "baking-paper": {
+          "description": "Papiers parchemin et de cuisson de qualité professionnelle conçus pour les cuisines commerciales et les opérations de restauration."
+        },
+        "paper-cups": {
+          "description": "Gobelets en papier écologiques jetables disponibles en diverses tailles pour boissons chaudes et froides dans l'industrie de la restauration."
+        },
+        "disposable-cutlery": {
+          "description": "Ensembles de couverts en bois et bambou durables idéaux pour les restaurants éco-conscients et les services de restauration."
+        },
+        "kraft-packaging": {
+          "description": "Solutions d'emballage en papier kraft durables conçues pour les applications de restauration durable et de vente au détail."
+        },
+        "sugarcane-tableware": {
+          "description": "Vaisselle biodégradable en bagasse de canne à sucre offrant des solutions de restauration respectueuses de l'environnement pour les services alimentaires modernes."
+        },
         "aluminumFoil": {
           "title": "Feuille d'aluminium",
-          "description": "Feuilles et contenants en aluminium de haute qualité pour la restauration et l'usage domestique."
+          "description": "Feuilles et contenants en aluminium durables pour le stockage et la livraison des aliments"
         },
         "bakingPaper": {
           "title": "Papier de cuisson",
-          "description": "Papiers de cuisson antiadhésifs avec options d'impression personnalisées disponibles."
+          "description": "Papiers de cuisson professionnels et accessoires de cuisine"
         },
         "kraftPackaging": {
           "title": "Emballage kraft",
-          "description": "Solutions en papier kraft écologiques pour les besoins d'emballage durable."
+          "description": "Solutions d'emballage en papier kraft écologiques"
         },
         "paperCups": {
           "title": "Gobelets en papier",
-          "description": "Gobelets en papier jetables avec couvercles et accessoires pour les boissons."
+          "description": "Gobelets en papier jetables et accessoires pour boissons"
         },
         "disposableCutlery": {
           "title": "Couverts jetables",
-          "description": "Ustensiles jetables en bois et bambou durables pour la restauration."
+          "description": "Ustensiles jetables durables en bois et bambou"
         },
         "sugarcaneTableware": {
           "title": "Vaisselle en canne à sucre",
-          "description": "Vaisselle écologique en bagasse de canne à sucre biodégradable."
+          "description": "Vaisselle biodégradable en bagasse de canne à sucre"
         }
       }
     },
