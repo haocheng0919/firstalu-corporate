@@ -29,33 +29,35 @@ export default async function ProductsPage() {
       )
     }
 
-    // Recursively get all descendant category IDs and count products
+    // Get product count for category by only counting products in leaf categories (categories without children)
     const getProductCountForCategory = async (categoryId: string): Promise<number> => {
-      // Get all descendant category IDs
-      const getAllDescendantIds = async (catId: string): Promise<string[]> => {
+      // Get all descendant leaf category IDs (categories that have no children)
+      const getLeafDescendantIds = async (catId: string): Promise<string[]> => {
         const { data: children } = await supabase
           .from('categories')
           .select('id')
           .eq('parent_id', catId)
 
         if (!children || children.length === 0) {
+          // This is a leaf category
           return [catId]
         }
 
-        const allIds = [catId]
+        // This category has children, so get leaf descendants from all children
+        const leafIds: string[] = []
         for (const child of children) {
-          const descendantIds = await getAllDescendantIds(child.id)
-          allIds.push(...descendantIds)
+          const childLeafIds = await getLeafDescendantIds(child.id)
+          leafIds.push(...childLeafIds)
         }
-        return allIds
+        return leafIds
       }
 
-      const allCategoryIds = await getAllDescendantIds(categoryId)
+      const leafCategoryIds = await getLeafDescendantIds(categoryId)
 
       const { count } = await supabase
         .from('products')
         .select('id', { count: 'exact', head: true })
-        .in('category_id', allCategoryIds)
+        .in('category_id', leafCategoryIds)
 
       return count || 0
     }

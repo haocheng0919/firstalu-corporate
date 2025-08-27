@@ -191,11 +191,30 @@ export default async function DynamicProductPage({ params }: Props) {
     // Check if this is a direct product slug
     const { data: directProduct, error: directProductError } = await supabase
       .from('products')
-      .select('id, slug, name_i18n, description_i18n, introduction, images, technical_specs, category_id, subcategory_id')
+      .select('id, slug, name_i18n, description_i18n, introduction, images, technical_specs, category_id')
       .eq('slug', finalSlug)
       .single()
 
     if (!directProductError && directProduct) {
+      // Verify that the category path matches the slug path
+      // Get the full category hierarchy for this product
+      const { data: categoryHierarchy } = await supabase.rpc('get_category_path', {
+        category_id: directProduct.category_id
+      })
+      
+      // If we have category hierarchy, verify the path matches
+      if (categoryHierarchy && categoryHierarchy.length > 0) {
+        const expectedPath = categoryHierarchy[0].path.split('/')
+        const providedCategoryPath = slugPath.slice(0, -1) // Remove product slug
+        
+        // Check if the provided path matches the expected category path
+         const pathMatches = expectedPath.length === providedCategoryPath.length &&
+           expectedPath.every((slug: string, index: number) => slug === providedCategoryPath[index])
+        
+        if (!pathMatches) {
+          return notFound()
+        }
+      }
       // Generate breadcrumbs based on slug path
       const breadcrumbItems: { label: string; href?: string }[] = [
         { label: 'Products', href: '/products' }
@@ -218,7 +237,7 @@ export default async function DynamicProductPage({ params }: Props) {
       // Get related products
       const relatedProducts = await getRelatedProducts(
         directProduct.id,
-        directProduct.subcategory_id,
+        undefined,
         directProduct.category_id
       );
 
@@ -357,12 +376,7 @@ export default async function DynamicProductPage({ params }: Props) {
                           <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
                             {product.name_i18n?.[locale] || product.slug}
                           </h3>
-                          <div className="mt-2 flex items-center text-sm text-blue-600 font-medium">
-                            <span>View Details</span>
-                            <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                            </svg>
-                          </div>
+
                         </div>
                       </Link>
                     );
