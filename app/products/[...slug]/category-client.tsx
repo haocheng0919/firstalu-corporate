@@ -48,7 +48,7 @@ function FilterDropdown({
         { value: 'printed-paper-cups-lids', label: 'Printed Paper Cups (lids)' }
       ]
     }
-    if (selectedFilter === 'container-smoothwall' || selectedFilter === 'container-wrinklewall') {
+    if (selectedFilter === 'aluminum-foil-container-smoothwall' || selectedFilter === 'aluminum-foil-container-wrinklewall') {
       return [
         { value: '', label: 'All Containers' },
         { value: 'rectangular', label: 'Rectangular' },
