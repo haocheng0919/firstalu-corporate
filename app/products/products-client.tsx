@@ -1,7 +1,9 @@
 'use client'
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { useLanguage } from '@/lib/language-context';
+import { useState } from 'react';
 
 interface CategoryWithCount {
   id: string;
@@ -23,12 +25,24 @@ interface ProductsClientProps {
 
 export default function ProductsClient({ categories }: ProductsClientProps) {
   const { t, language } = useLanguage();
+  const [failedImages, setFailedImages] = useState<Set<string>>(new Set());
 
   const getCategoryName = (category: CategoryWithCount) => {
     if (category.name_i18n && category.name_i18n[language as keyof typeof category.name_i18n]) {
       return category.name_i18n[language as keyof typeof category.name_i18n];
     }
     return category.name || category.slug;
+  };
+
+  const handleImageError = (categorySlug: string) => {
+    setFailedImages(prev => new Set(prev).add(categorySlug));
+  };
+
+  const getImageSrc = (category: CategoryWithCount) => {
+    if (failedImages.has(category.slug)) {
+      return '/placeholder-category.svg';
+    }
+    return category.thumbnail_url || `/product_cat/${category.slug}.webp`;
   };
 
 
@@ -61,10 +75,13 @@ export default function ProductsClient({ categories }: ProductsClientProps) {
                  className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow block"
                >
                  <div className="h-48 relative overflow-hidden">
-                   <img 
-                     src={category.thumbnail_url || `/product_cat/${category.slug}.webp`}
+                   <Image 
+                     src={getImageSrc(category)}
                      alt={getCategoryName(category)}
-                     className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                     fill
+                     className="object-cover hover:scale-105 transition-transform duration-300"
+                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                     onError={() => handleImageError(category.slug)}
                    />
                  </div>
                  <div className="p-6">
