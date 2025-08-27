@@ -78,6 +78,22 @@ async function getRelatedProducts(currentProductId: string, subcategoryId?: stri
   return randomProducts || [];
 }
 
+// Helper function to check if product is aluminum foil related
+function isAluminumFoilProduct(categoryId: string): boolean {
+  const aluminumFoilCategoryIds = [
+    '61534b79-37af-4bce-874a-560082a2b551', // aluminum-foil
+    'abd42c08-1881-46b2-9af2-013290eba1ea', // aluminum-foil-container-smoothwall
+    '26edbee4-03c8-4cb4-b0f7-1960609bea31', // aluminum-foil-container-wrinklewall
+    'df0223b5-5faf-4f46-a2eb-f6ddd8a3055a', // aluminum-foil-sheets
+    '461ab8a3-947f-4f3c-9be4-aa30ecdbafa1', // aluminum-foil-container-wrinklewall-rectangle
+    '647e0041-8a35-421b-b87a-bfddbcf750c3', // aluminum-foil-container-wrinklewall-round
+    '17e5051a-c761-4c65-93a2-17ae26cc38ee', // aluminum-foil-container-wrinklewall-square
+    '9015e33c-fc0a-48bc-864b-d3ca428cff0a', // aluminum-foil-container-smoothwall-rectangle
+    'c53e4d7f-bdfe-464e-b8fa-ce20e88c133a'  // aluminum-foil-container-smoothwall-round
+  ];
+  return aluminumFoilCategoryIds.includes(categoryId);
+}
+
 // Helper function to format product description
 function formatProductDescription(description: string): JSX.Element {
   // Split by lines and process each line
@@ -280,8 +296,8 @@ export default async function DynamicProductPage({ params }: Props) {
 
                 {/* Product Information */}
                 <div className="lg:col-span-1 space-y-6">
-                  {/* Technical Specifications - Priority Section */}
-                  {directProduct.technical_specs && Object.keys(directProduct.technical_specs).length > 0 && (
+                  {/* Technical Specifications - Priority Section - Only for Aluminum Foil Products */}
+                  {directProduct.technical_specs && Object.keys(directProduct.technical_specs).length > 0 && isAluminumFoilProduct(directProduct.category_id) && (
                     <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-blue-200">
                       <div className="text-center mb-6">
                         <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mb-4">
@@ -305,7 +321,7 @@ export default async function DynamicProductPage({ params }: Props) {
                     </div>
                   )}
 
-                  {directProduct.description_i18n?.[locale] && (
+                  {directProduct.description_i18n?.[locale] && isAluminumFoilProduct(directProduct.category_id) && (
                     <div className="bg-white rounded-2xl p-6 shadow-sm">
                       <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
                         <svg className="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -377,7 +393,7 @@ export default async function DynamicProductPage({ params }: Props) {
                           />
                         </div>
                         <div className="p-4">
-                          <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
+                          <h3 className="text-sm font-medium text-gray-800 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2 leading-relaxed">
                             {product.name_i18n?.[locale] || product.slug}
                           </h3>
 
