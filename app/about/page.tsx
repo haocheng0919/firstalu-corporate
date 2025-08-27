@@ -49,6 +49,12 @@ export default function About() {
                 <p className="mb-8">
                   {t('about.story.paragraph2')}
                 </p>
+                <p className="mb-8">
+                  {t('about.story.paragraph3')}
+                </p>
+                <p className="mb-8">
+                  {t('about.story.paragraph4')}
+                </p>
                 <div className="grid grid-cols-2 gap-8">
                   <div className="text-center p-6 bg-background/50 backdrop-blur-sm rounded-2xl border">
                     <div className="text-4xl font-bold text-primary-600 mb-2">500+</div>
@@ -70,12 +76,6 @@ export default function About() {
                         className="w-full h-48 object-cover rounded-2xl mx-auto"
                       />
                     </div>
-                    <h3 className="mb-4">
-                      {t('about.manufacturing.title')}
-                    </h3>
-                    <p className="text-lead">
-                      {t('about.manufacturing.description')}
-                    </p>
                   </div>
                 </div>
               </AnimatedGroup>
@@ -206,6 +206,60 @@ export default function About() {
                 </div>
                 <h5 className="text-secondary-900 font-medium">{t('certifications.fda')}</h5>
                 <p className="text-caption text-secondary-600 mt-1">{t('certifications.fdaDesc')}</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* Contact Form Section */}
+        <section className="section-padding bg-secondary-50">
+          <div className="container-max">
+            <div className="text-center mb-16">
+              <h2 className="mb-8">
+                Get in Touch
+              </h2>
+              <p className="text-lead max-w-2xl mx-auto">
+                Ready to discuss your packaging needs? Contact us today for a customized solution.
+              </p>
+            </div>
+            
+            <div className="max-w-4xl mx-auto">
+              <div className="bg-white rounded-2xl p-8 shadow-lg">
+                <form className="space-y-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                      <label className="block text-sm font-medium text-secondary-700 mb-2">First Name</label>
+                      <input className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Enter your first name" type="text" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-secondary-700 mb-2">Last Name</label>
+                      <input className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Enter your last name" type="text" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-2">Email</label>
+                    <input className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Enter your email address" type="email" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-2">Company</label>
+                    <input className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Enter your company name" type="text" />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-2">Product Interest</label>
+                    <select className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500">
+                      <option>Select a product category</option>
+                      <option>Aluminum Foil Containers</option>
+                      <option>Disposable Food Boxes</option>
+                      <option>Disposable Utensils</option>
+                      <option>All Products</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-secondary-700 mb-2">Message</label>
+                    <textarea rows={4} className="w-full px-4 py-3 border border-secondary-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="Tell us about your requirements..."></textarea>
+                  </div>
+                  <button type="submit" className="w-full bg-primary-600 hover:bg-primary-700 text-white font-semibold py-3 px-6 rounded-lg transition-colors duration-200">Send Message</button>
+                </form>
               </div>
             </div>
           </div>

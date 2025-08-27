@@ -29,7 +29,7 @@ export default async function ProductsPage() {
       )
     }
 
-    // Get product count for category by counting products in all descendant categories
+    // Get product count for category by counting products in leaf categories only (to avoid double counting)
     const getProductCountForCategory = async (categoryId: string): Promise<number> => {
       // Use RPC function to get all descendant category IDs
       const { data: descendantIds, error } = await supabase
@@ -40,13 +40,42 @@ export default async function ProductsPage() {
         return 0
       }
 
-      // Include the parent category itself
-      const allCategoryIds = [categoryId, ...(descendantIds || [])]
+      // If there are no descendants, this is a leaf category, count its products
+      if (!descendantIds || descendantIds.length === 0) {
+        const { count } = await supabase
+          .from('products')
+          .select('id', { count: 'exact', head: true })
+          .eq('category_id', categoryId)
+        
+        return count || 0
+      }
+
+      // If there are descendants, find leaf categories (categories with no children)
+      // and count products only in those leaf categories
+      const allCategoryIds = [categoryId, ...descendantIds]
+      
+      // Get leaf categories (categories that don't have any children)
+      const { data: leafCategories, error: leafError } = await supabase
+        .from('categories')
+        .select('id')
+        .in('id', allCategoryIds)
+        .not('id', 'in', `(SELECT DISTINCT parent_id FROM categories WHERE parent_id IS NOT NULL AND parent_id = ANY(ARRAY[${allCategoryIds.map(id => `'${id}'`).join(',')}]))`)
+
+      if (leafError) {
+        console.error('Error getting leaf categories:', leafError)
+        return 0
+      }
+
+      const leafCategoryIds = leafCategories?.map(cat => cat.id) || []
+      
+      if (leafCategoryIds.length === 0) {
+        return 0
+      }
 
       const { count } = await supabase
         .from('products')
         .select('id', { count: 'exact', head: true })
-        .in('category_id', allCategoryIds)
+        .in('category_id', leafCategoryIds)
 
       return count || 0
     }
