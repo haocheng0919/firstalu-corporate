@@ -213,71 +213,73 @@ export default async function DynamicProductPage({ params }: Props) {
           </div>
 
           {/* Product Content */}
-          <section className="py-12 bg-gray-50">
+          <section className="py-8 bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid lg:grid-cols-2 gap-12">
-                {/* Product Images */}
-                <div className="space-y-4">
-                  <ProductImageCarousel images={productImages} productName={directProduct.name_i18n?.[locale] || directProduct.slug} />
-                </div>
+              {/* Product Images - Full Width */}
+              <div className="mb-8">
+                <ProductImageCarousel images={productImages} productName={directProduct.name_i18n?.[locale] || directProduct.slug} />
+              </div>
 
-                {/* Product Information */}
-                <div className="space-y-8">
-                  {directProduct.description_i18n?.[locale] && (
-                    <div className="bg-white rounded-2xl p-8 shadow-sm">
-                      <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-                        <svg className="w-6 h-6 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Technical Specifications
-                      </h2>
-                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100 shadow-inner">
-                        {formatProductDescription(directProduct.description_i18n[locale])}
-                      </div>
+              {/* Product Information Grid */}
+              <div className="grid lg:grid-cols-2 gap-6">
+                {directProduct.description_i18n?.[locale] && (
+                  <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                      <svg className="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                      Additional Details
+                    </h2>
+                    <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-100">
+                      {formatProductDescription(directProduct.description_i18n[locale])}
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {directProduct.technical_specs && Object.keys(directProduct.technical_specs).length > 0 && (
-                    <div className="bg-white rounded-2xl p-8 shadow-sm">
-                      <h3 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-                        <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
-                        Additional Details
-                      </h3>
-                      <div className="grid gap-4">
+                {directProduct.technical_specs && Object.keys(directProduct.technical_specs).length > 0 && (
+                  <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                      <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                      Technical Specifications
+                    </h3>
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                      <div className="grid gap-3">
                         {Object.entries(directProduct.technical_specs).map(([key, value]) => (
-                          <div key={key} className="flex justify-between items-center py-3 px-4 bg-gradient-to-r from-gray-50 to-blue-50 rounded-xl border border-gray-100">
-                            <span className="font-medium text-gray-700 capitalize">{key.replace(/_/g, ' ')}:</span>
-                            <span className="text-gray-900 font-semibold bg-white px-3 py-1 rounded-lg shadow-sm">{String(value)}</span>
+                          <div key={key} className="flex justify-between items-center py-3 px-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                            <span className="font-semibold text-gray-700 capitalize">{key.replace(/_/g, ' ')}:</span>
+                            <span className="text-gray-900 font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{String(value)}</span>
                           </div>
                         ))}
                       </div>
                     </div>
-                  )}
+                  </div>
+                )}
+              </div>
 
-                  {/* Action buttons */}
-                  <div className="bg-white rounded-2xl p-8 shadow-sm">
-                    <div className="flex flex-col sm:flex-row gap-4">
-                      <Link
-                        href="/products"
-                        className="inline-flex items-center justify-center px-8 py-4 bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-                      >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        Back to Products
-                      </Link>
-                      <Link
-                        href="/contact"
-                        className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 font-medium rounded-xl border-2 border-blue-600 hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-                      >
-                        <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                        </svg>
-                        Contact Us
-                      </Link>
-                    </div>
+              {/* Action buttons - Centered */}
+              <div className="mt-8 flex justify-center">
+                <div className="bg-white rounded-2xl p-6 shadow-sm">
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Link
+                      href="/products"
+                      className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                      </svg>
+                      Back to Products
+                    </Link>
+                    <Link
+                      href="/contact"
+                      className="inline-flex items-center justify-center px-6 py-3 bg-white text-blue-600 font-medium rounded-lg border-2 border-blue-600 hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+                    >
+                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                      </svg>
+                      Contact Us
+                    </Link>
                   </div>
                 </div>
               </div>
