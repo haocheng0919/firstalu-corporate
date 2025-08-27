@@ -378,12 +378,42 @@ export default async function DynamicProductPage({ params }: Props) {
                       </div>
                       <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-6 border border-blue-200">
                         <div className="grid gap-4">
-                          {Object.entries(directProduct.technical_specs).map(([key, value]) => (
-                            <div key={key} className="flex justify-between items-center py-4 px-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                              <span className="font-bold text-gray-800 text-lg capitalize">{key.replace(/_/g, ' ')}:</span>
-                              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{String(value)}</span>
-                            </div>
-                          ))}
+                          {Object.entries(directProduct.technical_specs).map(([key, value]) => {
+                            // Skip features as they are displayed separately
+                            if (key === 'features') return null;
+                            
+                            let displayValue = 'n/a';
+                            
+                            if (value !== null && value !== undefined) {
+                              if (typeof value === 'object') {
+                                if (key === 'packaging') {
+                                  const pkg = value as any;
+                                  if (pkg.carton_size && pkg.inner_package && pkg.outer_package) {
+                                    displayValue = `${pkg.carton_size}, ${pkg.inner_package}, ${pkg.outer_package}`;
+                                  }
+                                } else if (key === 'dimensions') {
+                                  const dims = [];
+                                  const dim = value as any;
+                                  if (dim.width) dims.push(`W: ${dim.width}`);
+                                  if (dim.length) dims.push(`L: ${dim.length}`);
+                                  if (dim.height) dims.push(`H: ${dim.height}`);
+                                  if (dim.diameter) dims.push(`D: ${dim.diameter}`);
+                                  displayValue = dims.length > 0 ? dims.join(', ') : 'n/a';
+                                } else {
+                                  displayValue = 'n/a';
+                                }
+                              } else {
+                                displayValue = String(value);
+                              }
+                            }
+                            
+                            return (
+                              <div key={key} className="flex justify-between items-center py-4 px-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                                <span className="font-bold text-gray-800 text-lg capitalize">{key.replace(/_/g, ' ')}:</span>
+                                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{displayValue}</span>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
@@ -403,12 +433,44 @@ export default async function DynamicProductPage({ params }: Props) {
                       </div>
                       <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-6 border border-blue-200">
                         <div className="grid gap-4">
-                          {Object.entries(directProduct.technical_specs).map(([key, value]) => (
-                            <div key={key} className="flex justify-between items-center py-4 px-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
-                              <span className="font-bold text-gray-800 text-lg capitalize">{key.replace(/_/g, ' ')}:</span>
-                              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{String(value)}</span>
-                            </div>
-                          ))}
+                          {Object.entries(directProduct.technical_specs).map(([key, value]) => {
+                            // Skip features as they are displayed separately
+                            if (key === 'features') return null;
+                            
+                            let displayValue = 'n/a';
+                            
+                            if (value !== null && value !== undefined) {
+                              if (typeof value === 'object') {
+                                if (key === 'packaging') {
+                                  const pkg = value as any;
+                                  const parts = [];
+                                  if (pkg.carton_size) parts.push(`Carton: ${pkg.carton_size}`);
+                                  if (pkg.inner_package) parts.push(`Inner: ${pkg.inner_package}`);
+                                  if (pkg.outer_package) parts.push(`Outer: ${pkg.outer_package}`);
+                                  displayValue = parts.length > 0 ? parts.join(', ') : 'n/a';
+                                } else if (key === 'dimensions') {
+                                  const dims = [];
+                                  const dim = value as any;
+                                  if (dim.width) dims.push(`W: ${dim.width}`);
+                                  if (dim.length) dims.push(`L: ${dim.length}`);
+                                  if (dim.height) dims.push(`H: ${dim.height}`);
+                                  if (dim.diameter) dims.push(`D: ${dim.diameter}`);
+                                  displayValue = dims.length > 0 ? dims.join(', ') : 'n/a';
+                                } else {
+                                  displayValue = 'n/a';
+                                }
+                              } else {
+                                displayValue = String(value);
+                              }
+                            }
+                            
+                            return (
+                              <div key={key} className="flex justify-between items-center py-4 px-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                                <span className="font-bold text-gray-800 text-lg capitalize">{key.replace(/_/g, ' ')}:</span>
+                                <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{displayValue}</span>
+                              </div>
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
