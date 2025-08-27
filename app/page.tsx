@@ -332,7 +332,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          <div className="max-w-4xl mx-auto">
             <div>
               <div className="space-y-8">
                 <div className="flex items-start gap-4">
@@ -394,17 +394,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="relative">
-              <img
-                src="/disposablephoto/contact-image.webp"
-                alt={t('home.contact.imageAlt')}
-                className="w-full h-96 object-cover rounded-2xl shadow-lg"
-                onError={(e) => {
-                  const target = e.target as HTMLImageElement;
-                  target.src = '/placeholder.svg';
-                }}
-              />
-            </div>
+
           </div>
         </div>
       </section>
