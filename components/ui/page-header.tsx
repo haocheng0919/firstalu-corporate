@@ -24,7 +24,7 @@ export function PageHeader({ title, description, backgroundImage }: PageHeaderPr
         { name: t('nav.products'), href: '/products' },
         { name: t('nav.news'), href: '/news' },
         { name: t('nav.faq'), href: '/#faq' },
-        { name: t('nav.contact'), href: '/#contact' },
+        { name: t('nav.contact'), href: '/contact' },
     ]
 
     const languages = [

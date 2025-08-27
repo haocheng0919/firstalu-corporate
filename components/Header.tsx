@@ -15,7 +15,7 @@ const Header = () => {
     const pathname = usePathname()
     
     // 判断是否为白色背景页面
-    const isWhiteBackgroundPage = pathname === '/about' || pathname === '/products' || pathname === '/news' || pathname.startsWith('/products/')
+    const isWhiteBackgroundPage = pathname === '/about' || pathname === '/products' || pathname === '/news' || pathname === '/contact' || pathname.startsWith('/products/')
 
     const menuItems = [
         { name: t('nav.home'), href: '/' },
@@ -23,7 +23,7 @@ const Header = () => {
         { name: t('nav.products'), href: '/products' },
         { name: t('nav.news'), href: '/news' },
         { name: t('nav.faq'), href: '/#faq' },
-        { name: t('nav.contact'), href: '/#contact' },
+        { name: t('nav.contact'), href: '/contact' },
     ]
 
     const languages = [

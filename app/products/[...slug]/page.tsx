@@ -197,12 +197,12 @@ export default async function DynamicProductPage({ params }: Props) {
               <section className="pt-32 pb-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <Breadcrumbs items={breadcrumbItems} />
-                  <div className="mt-8">
+                  <div className="mt-8 text-center">
                     <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                       {directProduct.name_i18n?.[locale] || directProduct.slug}
                     </h1>
                     {directProduct.introduction?.[locale] && (
-                      <p className="text-lg text-gray-600 max-w-2xl">
+                      <p className="text-lg text-gray-600 max-w-2xl mx-auto">
                         {directProduct.introduction[locale]}
                       </p>
                     )}
@@ -269,7 +269,7 @@ export default async function DynamicProductPage({ params }: Props) {
                         Back to Products
                       </Link>
                       <Link
-                        href="/#contact"
+                        href="/contact"
                         className="inline-flex items-center justify-center px-8 py-4 bg-white text-blue-600 font-medium rounded-xl border-2 border-blue-600 hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
                       >
                         <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -105,7 +105,7 @@ export function HeroSection() {
                                         size="lg"
                                         variant="ghost"
                                         className="h-10.5 rounded-xl px-5 text-white hover:bg-white/10 border border-white/20">
-                                        <Link href="/#contact">
+                                        <Link href="/contact">
                                             <span className="text-nowrap">{t('home.hero.contact')}</span>
                                         </Link>
                                     </Button>
@@ -151,7 +151,7 @@ export const HeroHeader = () => {
         { name: t('nav.products'), href: '/products' },
         { name: t('nav.news'), href: '/news' },
         { name: t('nav.faq'), href: '/#faq' },
-        { name: t('nav.contact'), href: '/#contact' },
+        { name: t('nav.contact'), href: '/contact' },
     ]
 
     const languages = [
