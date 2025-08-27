@@ -94,6 +94,52 @@ function isAluminumFoilProduct(categoryId: string): boolean {
   return aluminumFoilCategoryIds.includes(categoryId);
 }
 
+// Helper function to check if product is sugarcane tableware
+function isSugarcaneProduct(categoryId: string): boolean {
+  const sugarcaneCategoryId = 'df7abf38-1878-4bf4-a11f-a3da99788ab6'; // sugarcane-tableware
+  return categoryId === sugarcaneCategoryId;
+}
+
+// Helper function to render product features
+function renderProductFeatures(features: any[], locale: string): JSX.Element {
+  return (
+    <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-emerald-200">
+      <div className="text-center mb-6">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-500 to-green-600 rounded-full mb-4">
+          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">Product Features</h3>
+        <p className="text-gray-600">Eco-friendly and sustainable product characteristics</p>
+      </div>
+      <div className="bg-gradient-to-br from-emerald-50 via-green-50 to-teal-50 rounded-xl p-6 border border-emerald-200">
+        <div className="grid gap-4">
+          {features.map((feature, index) => (
+            <div key={index} className="flex items-start py-4 px-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+              <div className="flex-shrink-0 mr-4">
+                <div className="w-6 h-6 bg-emerald-500 rounded-full flex items-center justify-center">
+                  <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  </svg>
+                </div>
+              </div>
+              <div className="flex-1">
+                <h4 className="font-bold text-gray-800 text-lg mb-2">
+                  {feature.name?.[locale] || feature.name?.en || 'Feature'}
+                </h4>
+                <p className="text-gray-600 leading-relaxed">
+                  {feature.description?.[locale] || feature.description?.en || 'Description not available'}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // Helper function to format product description
 function formatProductDescription(description: string): JSX.Element {
   // Split by lines and process each line
@@ -296,6 +342,28 @@ export default async function DynamicProductPage({ params }: Props) {
 
                 {/* Product Information */}
                 <div className="lg:col-span-1 space-y-6">
+                  {/* Product Features - For Sugarcane Products */}
+                  {isSugarcaneProduct(directProduct.category_id) && (
+                    renderProductFeatures([
+                      {
+                        name: { en: "Food-grade material", zh: "食品级材料", fr: "Matériau de qualité alimentaire", de: "Lebensmittelechtes Material", es: "Material de grado alimentario" },
+                        description: { en: "Made from 100% natural sugarcane fiber, completely safe for food contact", zh: "采用100%天然甘蔗纤维制成，完全安全的食品接触材料", fr: "Fabriqué à partir de fibres de canne à sucre 100% naturelles, totalement sûr pour le contact alimentaire", de: "Hergestellt aus 100% natürlichen Zuckerrohfasern, völlig sicher für Lebensmittelkontakt", es: "Hecho de fibra de caña de azúcar 100% natural, completamente seguro para el contacto con alimentos" }
+                      },
+                      {
+                        name: { en: "Refrigerable/Microwaveable", zh: "可冷藏/微波", fr: "Réfrigérable/Micro-ondable", de: "Kühlbar/Mikrowellengeeignet", es: "Refrigerable/Apto para microondas" },
+                        description: { en: "Safe for refrigerator storage and microwave heating up to 120°C", zh: "可安全冷藏储存，微波加热温度可达120°C", fr: "Sûr pour le stockage au réfrigérateur et le chauffage au micro-ondes jusqu'à 120°C", de: "Sicher für Kühlschrankaufbewahrung und Mikrowellenerwärmung bis 120°C", es: "Seguro para almacenamiento en refrigerador y calentamiento en microondas hasta 120°C" }
+                      },
+                      {
+                        name: { en: "Solid quality", zh: "坚固质量", fr: "Qualité solide", de: "Solide Qualität", es: "Calidad sólida" },
+                        description: { en: "Durable construction that won't break or leak during normal use", zh: "坚固耐用的结构，正常使用时不会破裂或泄漏", fr: "Construction durable qui ne se cassera pas ou ne fuira pas lors d'une utilisation normale", de: "Langlebige Konstruktion, die bei normalem Gebrauch nicht bricht oder leckt", es: "Construcción duradera que no se romperá ni goteará durante el uso normal" }
+                      },
+                      {
+                        name: { en: "Compostable degradation", zh: "可堆肥降解", fr: "Dégradation compostable", de: "Kompostierbare Zersetzung", es: "Degradación compostable" },
+                        description: { en: "Fully biodegradable within 90 days in commercial composting facilities", zh: "在商业堆肥设施中90天内完全生物降解", fr: "Entièrement biodégradable en 90 jours dans les installations de compostage commercial", de: "Vollständig biologisch abbaubar innerhalb von 90 Tagen in kommerziellen Kompostieranlagen", es: "Completamente biodegradable en 90 días en instalaciones de compostaje comercial" }
+                      }
+                    ], locale)
+                  )}
+
                   {/* Technical Specifications - Priority Section - Only for Aluminum Foil Products */}
                   {directProduct.technical_specs && Object.keys(directProduct.technical_specs).length > 0 && isAluminumFoilProduct(directProduct.category_id) && (
                     <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-blue-200">
@@ -321,7 +389,47 @@ export default async function DynamicProductPage({ params }: Props) {
                     </div>
                   )}
 
+                  {/* Technical Specifications - For Sugarcane Products */}
+                  {directProduct.technical_specs && Object.keys(directProduct.technical_specs).length > 0 && isSugarcaneProduct(directProduct.category_id) && (
+                    <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-blue-200">
+                      <div className="text-center mb-6">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mb-4">
+                          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">Technical Specifications</h3>
+                        <p className="text-gray-600">Detailed product specifications and measurements</p>
+                      </div>
+                      <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-6 border border-blue-200">
+                        <div className="grid gap-4">
+                          {Object.entries(directProduct.technical_specs).map(([key, value]) => (
+                            <div key={key} className="flex justify-between items-center py-4 px-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                              <span className="font-bold text-gray-800 text-lg capitalize">{key.replace(/_/g, ' ')}:</span>
+                              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{String(value)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {directProduct.description_i18n?.[locale] && isAluminumFoilProduct(directProduct.category_id) && (
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        <svg className="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Additional Details
+                      </h2>
+                      <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-100">
+                        {formatProductDescription(directProduct.description_i18n[locale])}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Additional Details - For Sugarcane Products */}
+                  {directProduct.description_i18n?.[locale] && isSugarcaneProduct(directProduct.category_id) && (
                     <div className="bg-white rounded-2xl p-6 shadow-sm">
                       <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
                         <svg className="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
