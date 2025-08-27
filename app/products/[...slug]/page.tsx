@@ -49,6 +49,35 @@ function getProductImages(images: any): string[] {
   return [];
 }
 
+// Helper function to get related products
+async function getRelatedProducts(currentProductId: string, subcategoryId?: string, categoryId?: string): Promise<Product[]> {
+  let query = supabase
+    .from('products')
+    .select('id, slug, name_i18n, images')
+    .neq('id', currentProductId)
+    .limit(4);
+
+  // First try to get products from the same subcategory
+  if (subcategoryId) {
+    const { data: subcategoryProducts } = await query.eq('subcategory_id', subcategoryId);
+    if (subcategoryProducts && subcategoryProducts.length > 0) {
+      return subcategoryProducts;
+    }
+  }
+
+  // If no subcategory products, try same category
+  if (categoryId) {
+    const { data: categoryProducts } = await query.eq('category_id', categoryId);
+    if (categoryProducts && categoryProducts.length > 0) {
+      return categoryProducts;
+    }
+  }
+
+  // If still no products, get any random products
+  const { data: randomProducts } = await query;
+  return randomProducts || [];
+}
+
 // Helper function to format product description
 function formatProductDescription(description: string): JSX.Element {
   // Split by lines and process each line
@@ -162,7 +191,7 @@ export default async function DynamicProductPage({ params }: Props) {
     // Check if this is a direct product slug
     const { data: directProduct, error: directProductError } = await supabase
       .from('products')
-      .select('id, slug, name_i18n, description_i18n, introduction, images, technical_specs')
+      .select('id, slug, name_i18n, description_i18n, introduction, images, technical_specs, category_id, subcategory_id')
       .eq('slug', finalSlug)
       .single()
 
@@ -185,6 +214,13 @@ export default async function DynamicProductPage({ params }: Props) {
       });
 
       const productImages = getProductImages(directProduct.images);
+      
+      // Get related products
+      const relatedProducts = await getRelatedProducts(
+        directProduct.id,
+        directProduct.subcategory_id,
+        directProduct.category_id
+      );
 
       return (
         <>
@@ -215,77 +251,126 @@ export default async function DynamicProductPage({ params }: Props) {
           {/* Product Content */}
           <section className="py-8 bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              {/* Product Images - Full Width */}
-              <div className="mb-8">
-                <ProductImageCarousel images={productImages} productName={directProduct.name_i18n?.[locale] || directProduct.slug} />
-              </div>
-
-              {/* Product Information Grid */}
-              <div className="grid lg:grid-cols-2 gap-6">
-                {directProduct.description_i18n?.[locale] && (
-                  <div className="bg-white rounded-2xl p-6 shadow-sm">
-                    <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                      Additional Details
-                    </h2>
-                    <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-100">
-                      {formatProductDescription(directProduct.description_i18n[locale])}
-                    </div>
+              <div className="grid lg:grid-cols-3 gap-8">
+                {/* Product Images - Optimized Size */}
+                <div className="lg:col-span-1">
+                  <div className="sticky top-8">
+                    <ProductImageCarousel images={productImages} productName={directProduct.name_i18n?.[locale] || directProduct.slug} />
                   </div>
-                )}
+                </div>
 
-                {directProduct.technical_specs && Object.keys(directProduct.technical_specs).length > 0 && (
-                  <div className="bg-white rounded-2xl p-6 shadow-sm">
-                    <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                      <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                      </svg>
-                      Technical Specifications
-                    </h3>
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
-                      <div className="grid gap-3">
-                        {Object.entries(directProduct.technical_specs).map(([key, value]) => (
-                          <div key={key} className="flex justify-between items-center py-3 px-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                            <span className="font-semibold text-gray-700 capitalize">{key.replace(/_/g, ' ')}:</span>
-                            <span className="text-gray-900 font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{String(value)}</span>
-                          </div>
-                        ))}
+                {/* Product Information */}
+                <div className="lg:col-span-2 space-y-6">
+                  {directProduct.description_i18n?.[locale] && (
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        <svg className="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                        Additional Details
+                      </h2>
+                      <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-100">
+                        {formatProductDescription(directProduct.description_i18n[locale])}
                       </div>
                     </div>
-                  </div>
-                )}
-              </div>
+                  )}
 
-              {/* Action buttons - Centered */}
-              <div className="mt-8 flex justify-center">
-                <div className="bg-white rounded-2xl p-6 shadow-sm">
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Link
-                      href="/products"
-                      className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-                    >
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                      </svg>
-                      Back to Products
-                    </Link>
-                    <Link
-                      href="/contact"
-                      className="inline-flex items-center justify-center px-6 py-3 bg-white text-blue-600 font-medium rounded-lg border-2 border-blue-600 hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
-                    >
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                      </svg>
-                      Contact Us
-                    </Link>
+                  {directProduct.technical_specs && Object.keys(directProduct.technical_specs).length > 0 && (
+                    <div className="bg-white rounded-2xl p-6 shadow-sm">
+                      <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
+                        <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        </svg>
+                        Technical Specifications
+                      </h3>
+                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
+                        <div className="grid gap-3">
+                          {Object.entries(directProduct.technical_specs).map(([key, value]) => (
+                            <div key={key} className="flex justify-between items-center py-3 px-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+                              <span className="font-semibold text-gray-700 capitalize">{key.replace(/_/g, ' ')}:</span>
+                              <span className="text-gray-900 font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{String(value)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* Action buttons */}
+                  <div className="bg-white rounded-2xl p-6 shadow-sm">
+                    <div className="flex flex-col sm:flex-row gap-4">
+                      <Link
+                        href="/products"
+                        className="inline-flex items-center justify-center px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Back to Products
+                      </Link>
+                      <Link
+                        href="/contact"
+                        className="inline-flex items-center justify-center px-6 py-3 bg-white text-blue-600 font-medium rounded-lg border-2 border-blue-600 hover:bg-blue-50 transition-all duration-200 shadow-lg hover:shadow-xl hover:scale-105"
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+                        </svg>
+                        Contact Us
+                      </Link>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </section>
 
+          {/* Related Products Section */}
+          {relatedProducts.length > 0 && (
+            <section className="py-16 bg-white">
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl font-bold text-gray-900 mb-4">Related Products</h2>
+                  <p className="text-lg text-gray-600">Discover more products you might be interested in</p>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                  {relatedProducts.map((product) => {
+                    const productImages = getProductImages(product.images);
+                    const productImage = productImages[0] || '/placeholder-product.jpg';
+                    
+                    return (
+                      <Link
+                        key={product.id}
+                        href={`/products/${product.slug}`}
+                        className="group bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-all duration-300 hover:scale-105"
+                      >
+                        <div className="aspect-square relative overflow-hidden bg-gray-100">
+                          <Image
+                            src={productImage}
+                            alt={product.name_i18n?.[locale] || product.slug}
+                            fill
+                            className="object-cover group-hover:scale-110 transition-transform duration-300"
+                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+                          />
+                        </div>
+                        <div className="p-4">
+                          <h3 className="font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-200 line-clamp-2">
+                            {product.name_i18n?.[locale] || product.slug}
+                          </h3>
+                          <div className="mt-2 flex items-center text-sm text-blue-600 font-medium">
+                            <span>View Details</span>
+                            <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                            </svg>
+                          </div>
+                        </div>
+                      </Link>
+                    );
+                  })}
+                </div>
+              </div>
+            </section>
+          )}
 
         </>
       )
