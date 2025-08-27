@@ -1,138 +1,149 @@
-'use client';
+'use client'
 
-import { useState } from 'react';
-import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import React from 'react'
+import Link from 'next/link'
+import { Menu, X } from 'lucide-react'
+import { cn } from '@/lib/utils'
+import { useLanguage } from '@/lib/language-context'
+import { usePathname } from 'next/navigation'
 
 const Header = () => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isLangOpen, setIsLangOpen] = useState(false);
-  const router = useRouter();
-  const pathname = usePathname();
+    const [menuState, setMenuState] = React.useState(false)
+    const [isScrolled, setIsScrolled] = React.useState(false)
+    const [languageDropdown, setLanguageDropdown] = React.useState(false)
+    const { language, setLanguage, t } = useLanguage()
+    const pathname = usePathname()
+    
+    // 判断是否为白色背景页面
+    const isWhiteBackgroundPage = pathname === '/about' || pathname === '/products' || pathname === '/news' || pathname.startsWith('/products/')
 
-  const languages = [
-    { code: 'en', name: 'English' },
-    { code: 'de', name: 'Deutsch' },
-    { code: 'es', name: 'Español' },
-    { code: 'fr', name: 'Français' }
-  ];
+    const menuItems = [
+        { name: t('nav.home'), href: '/' },
+        { name: t('nav.about'), href: '/about' },
+        { name: t('nav.products'), href: '/products' },
+        { name: t('nav.news'), href: '/news' },
+        { name: t('nav.faq'), href: '/#faq' },
+        { name: t('nav.contact'), href: '/#contact' },
+    ]
 
-  const navigation = [
-    { name: 'Home', href: '/' },
-    { name: 'About', href: '/about' },
-    { name: 'Products', href: '/products' },
-    { name: 'News', href: '/news' },
-    { name: 'FAQ', href: '/faq' },
-    { name: 'Contact', href: '/contact' },
-  ];
+    const languages = [
+        { code: 'en', name: 'English' },
+        { code: 'es', name: 'Spanish' },
+        { code: 'fr', name: 'French' },
+        { code: 'de', name: 'German' }
+    ]
 
-  return (
-    <header className="bg-white shadow-lg sticky top-0 z-50">
-      <div className="container-max">
-        <div className="flex justify-between items-center py-4">
-          {/* Logo */}
-          <Link href="/" className="flex items-center space-x-2">
-            <img 
-              src="/logo/firstalu_logo.webp" 
-              alt="First Aluminum Technology" 
-              className="w-8 h-8 object-contain"
-            />
-            <span className="text-xl font-bold text-secondary-900">FAT</span>
-          </Link>
+    const selectedLanguage = languages.find(lang => lang.code === language)?.name || 'English'
 
-          {/* Desktop Navigation */}
-          <nav className="hidden lg:flex items-center space-x-8">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="text-secondary-700 hover:text-primary-600 font-medium transition-colors"
-              >
-                {item.name}
-              </Link>
-            ))}
-            
-            {/* Language Selector */}
-            <div className="relative">
-              <button
-                onClick={() => setIsLangOpen(!isLangOpen)}
-                className="flex items-center space-x-1 text-secondary-700 hover:text-primary-600 font-medium"
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 0a9 9 0 019-9m-9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
-                </svg>
-                <span>EN</span>
-              </button>
-              
-              {isLangOpen && (
-                <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg border">
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      className="block w-full text-left px-4 py-2 text-sm text-secondary-700 hover:bg-primary-50 hover:text-primary-600"
-                      onClick={() => setIsLangOpen(false)}
-                    >
-                      {lang.name}
-                    </button>
-                  ))}
+    React.useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 50)
+        }
+        window.addEventListener('scroll', handleScroll)
+        return () => window.removeEventListener('scroll', handleScroll)
+    }, [])
+
+    return (
+        <header>
+            <nav
+                data-state={menuState && 'active'}
+                className="fixed z-20 w-full px-2 group">
+                <div className={cn('mx-auto mt-2 max-w-6xl px-6 transition-all duration-300 lg:px-12 bg-background/20 backdrop-blur-sm border border-white/10 rounded-2xl', isScrolled && 'bg-background/80 max-w-4xl border-border backdrop-blur-lg lg:px-5')}>
+                    <div className="relative flex flex-wrap items-center justify-between gap-6 py-3 lg:gap-0 lg:py-4">
+                        <div className="flex w-full justify-between lg:w-auto">
+                            <Link
+                                href="/"
+                                aria-label="home"
+                                className="flex items-center space-x-2">
+                                <Logo />
+                            </Link>
+
+                            <button
+                                onClick={() => setMenuState(!menuState)}
+                                aria-label={menuState == true ? 'Close Menu' : 'Open Menu'}
+                                className={cn("relative z-20 -m-2.5 -mr-4 block cursor-pointer p-2.5 lg:hidden", 
+                                    isScrolled || isWhiteBackgroundPage ? "text-muted-foreground" : "text-white")}>
+                                <Menu className="in-data-[state=active]:rotate-180 group-data-[state=active]:scale-0 group-data-[state=active]:opacity-0 m-auto size-6 duration-200" />
+                                <X className="group-data-[state=active]:rotate-0 group-data-[state=active]:scale-100 group-data-[state=active]:opacity-100 absolute inset-0 m-auto size-6 -rotate-180 scale-0 opacity-0 duration-200" />
+                            </button>
+                        </div>
+
+                        <div className="absolute inset-0 m-auto hidden size-fit lg:block">
+                            <ul className="flex gap-8 text-sm items-center">
+                                {menuItems.map((item, index) => (
+                                    <li key={index}>
+                                        <Link
+                                            href={item.href}
+                                            className={cn("block duration-150", isScrolled || isWhiteBackgroundPage ? "text-muted-foreground hover:text-accent-foreground" : "text-white/90 hover:text-white")}>
+                                            <span>{item.name}</span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        <div className="hidden lg:block relative">
+                            <button 
+                                onClick={() => setLanguageDropdown(!languageDropdown)}
+                                className={cn("flex items-center space-x-2 px-4 py-2 rounded-full duration-150 border", 
+                                    isScrolled || isWhiteBackgroundPage 
+                                        ? "bg-muted hover:bg-accent text-muted-foreground hover:text-accent-foreground border-border" 
+                                        : "bg-white/10 hover:bg-white/20 text-white/90 hover:text-white border-white/20")}>
+                                <span className="font-medium">{selectedLanguage}</span>
+                                <svg className={`w-4 h-4 transition-transform ${languageDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </button>
+                            
+                            {languageDropdown && (
+                                <div className="absolute top-full right-0 mt-2 w-40 bg-background border rounded-lg shadow-lg z-50">
+                                    {languages.map((lang) => (
+                                        <button
+                                            key={lang.code}
+                                            onClick={() => {
+                                                setLanguage(lang.code as any)
+                                                setLanguageDropdown(false)
+                                            }}
+                                            className="w-full text-left px-4 py-2 hover:bg-muted text-sm first:rounded-t-lg last:rounded-b-lg">
+                                            {lang.name}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                        
+                        <div className="bg-background group-data-[state=active]:block lg:hidden mb-6 hidden w-full flex-wrap items-center justify-end space-y-8 rounded-3xl border p-6 shadow-2xl shadow-zinc-300/20">
+                            <div>
+                                <ul className="space-y-6 text-base">
+                                    {menuItems.map((item, index) => (
+                                        <li key={index}>
+                                            <Link
+                                                href={item.href}
+                                                className="text-muted-foreground hover:text-accent-foreground block duration-150">
+                                                <span>{item.name}</span>
+                                            </Link>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              )}
-            </div>
-          </nav>
-
-          {/* Mobile menu button */}
-          <button
-            onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="lg:hidden p-2"
-          >
-            {isMenuOpen ? (
-              <svg className="w-6 h-6 text-secondary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            ) : (
-              <svg className="w-6 h-6 text-secondary-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              </svg>
-            )}
-          </button>
-        </div>
-
-        {/* Mobile Navigation */}
-        {isMenuOpen && (
-          <div className="lg:hidden py-4 border-t">
-            <nav className="flex flex-col space-y-4">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-secondary-700 hover:text-primary-600 font-medium"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.name}
-                </Link>
-              ))}
-              
-              {/* Mobile Language Selector */}
-              <div className="pt-4 border-t">
-                <p className="text-sm font-medium text-secondary-500 mb-2">Language</p>
-                <div className="grid grid-cols-2 gap-2">
-                  {languages.map((lang) => (
-                    <button
-                      key={lang.code}
-                      className="text-sm text-secondary-700 hover:text-primary-600 text-left"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      {lang.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </nav>
-          </div>
-        )}
-      </div>
-    </header>
-  );
-};
+        </header>
+    )
+}
 
-export default Header;
+const Logo = ({ className }: { className?: string }) => {
+    return (
+        <div className={cn('flex items-center', className)}>
+            <img 
+                src="/logo/firstalu_logo.webp" 
+                alt="First Aluminum Technology" 
+                className="h-8 w-8 object-contain"
+            />
+        </div>
+    )
+}
+
+export default Header

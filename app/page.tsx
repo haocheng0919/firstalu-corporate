@@ -6,7 +6,7 @@ import { HeroSection } from '@/components/ui/hero-section-1';
 import { ModernSection } from '@/components/ui/modern-section';
 import { AnimatedGroup } from '@/components/ui/animated-group';
 import { Button } from '@/components/ui/button';
-import Footer from '../components/Footer';
+
 import { useLanguage } from '@/lib/language-context';
 import { getProductCategories, type AdaptedCategory } from '@/lib/supabase-service-adapted';
 
@@ -60,12 +60,12 @@ function ProductCategories() {
       {categories.map((category) => {
         // Fallback images for categories without thumbnails
         const fallbackImages: { [key: string]: string } = {
-          'aluminum-foil': '/disposablephoto/Aluminum Foil Products.webp',
-          'baking-paper': '/product_cat/Baking Paper.webp',
-          'kraft-packaging': '/product_cat/Kraft Packaging.webp',
-          'paper-cups': '/product_cat/Paper Cups.webp',
-          'disposable-cutlery': '/product_cat/Disposable Cutlery.webp',
-          'sugarcane-tableware': '/product_cat/Sugarcane Tableware.webp'
+          'aluminum-foil': '/product_cat/aluminum-foil.webp',
+          'baking-paper': '/product_cat/baking-paper.webp',
+          'kraft-packaging': '/product_cat/kraft-packaging.webp',
+          'paper-cups': '/product_cat/paper-cups.webp',
+          'disposable-cutlery': '/product_cat/disposable-cutlery.webp',
+          'sugarcane-tableware': '/product_cat/sugarcane-tableware.webp'
         };
 
         const imageUrl = category.thumbnail_url || fallbackImages[category.slug] || '/placeholder.svg';
@@ -409,7 +409,6 @@ export default function Home() {
         </div>
       </section>
 
-      <Footer />
     </>
   );
 }

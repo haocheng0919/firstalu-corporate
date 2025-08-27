@@ -42,7 +42,6 @@ export function HeroSection() {
 
     return (
         <>
-            <HeroHeader />
             <main className="overflow-hidden">
                 {/* Full-screen background image */}
                 <div className="absolute inset-0 z-0">

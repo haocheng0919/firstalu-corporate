@@ -1,14 +1,20 @@
-import Footer from '@/components/Footer';
-import { PageHeader } from '@/components/ui/page-header';
-
 export default function ContactPage() {
   return (
     <>
-      <PageHeader 
-        title="Contact Us"
-        description="Get in touch with our team for custom quotes and inquiries"
-        backgroundImage="https://images.unsplash.com/photo-1423666639041-f56000c27a9a?w=1920&h=1080&fit=crop&auto=format"
-      />
+      {/* Page Title Section */}
+      <section className="relative pt-24 md:pt-36 pb-16 overflow-hidden">
+        <div aria-hidden className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,var(--background)_75%)]" />
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+              Contact Us
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+              Get in touch with our team for custom quotes and inquiries
+            </p>
+          </div>
+        </div>
+      </section>
       <main>
         {/* Contact Form Section */}
         <section className="section-padding bg-white">
@@ -139,7 +145,7 @@ export default function ContactPage() {
           </div>
         </section>
       </main>
-      <Footer />
+
     </>
   );
 }

@@ -1,7 +1,5 @@
 'use client'
 
-import { PageHeader } from '@/components/ui/page-header';
-import Footer from '../../components/Footer';
 import Link from 'next/link';
 import { useLanguage } from '@/lib/language-context';
 
@@ -37,10 +35,20 @@ export default function ProductsClient({ categories }: ProductsClientProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <PageHeader 
-        title={t('products.title')} 
-        description={t('products.subtitle')}
-      />
+      {/* Page Title Section */}
+      <section className="relative pt-24 md:pt-36 pb-16 overflow-hidden">
+        <div aria-hidden className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,var(--background)_75%)]" />
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+              {t('products.title')}
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+              {t('products.subtitle')}
+            </p>
+          </div>
+        </div>
+      </section>
       
       <main className="container mx-auto px-4 py-12">
         {/* Categories Overview */}
@@ -79,7 +87,7 @@ export default function ProductsClient({ categories }: ProductsClientProps) {
         </section>
       </main>
       
-      <Footer />
+
     </div>
   );
 }

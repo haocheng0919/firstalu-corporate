@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-// import Footer from '@/components/Footer' // Temporarily disabled due to SSR issues
+
 import { Breadcrumbs } from '@/components/ui/breadcrumbs'
 // import { HeroHeader } from '@/components/ui/hero-section-1' // Moved to client component
 import ProductImageCarousel from '@/components/ui/product-image-carousel'
@@ -284,7 +284,7 @@ export default async function DynamicProductPage({ params }: Props) {
             </div>
           </section>
 
-          {/* <Footer /> */}
+
         </>
       )
     }
@@ -328,29 +328,38 @@ export default async function DynamicProductPage({ params }: Props) {
 
     const subcategories = subcategoriesResult.data || []
     
-    // Recursively get all descendant category IDs
-    const getAllDescendantIds = async (categoryId: string): Promise<string[]> => {
-      const { data: children } = await supabase
-        .from('categories')
-        .select('id')
-        .eq('parent_id', categoryId)
-      
-      if (!children || children.length === 0) {
-        return [categoryId]
+    // For container category, only get products from direct subcategories
+    // For other categories, get products from the category and all nested subcategories
+    let allCategoryIds: string[]
+    
+    if (currentCategory.slug === 'container') {
+      // Only get direct subcategories for container
+      const directSubcategoryIds = subcategories.map(sub => sub.id)
+      allCategoryIds = directSubcategoryIds
+    } else {
+      // Recursively get all descendant category IDs for other categories
+      const getAllDescendantIds = async (categoryId: string): Promise<string[]> => {
+        const { data: children } = await supabase
+          .from('categories')
+          .select('id')
+          .eq('parent_id', categoryId)
+        
+        if (!children || children.length === 0) {
+          return [categoryId]
+        }
+        
+        const allIds = [categoryId]
+        for (const child of children) {
+          const descendantIds = await getAllDescendantIds(child.id)
+          allIds.push(...descendantIds)
+        }
+        return allIds
       }
       
-      const allIds = [categoryId]
-      for (const child of children) {
-        const descendantIds = await getAllDescendantIds(child.id)
-        allIds.push(...descendantIds)
-      }
-      return allIds
+      allCategoryIds = await getAllDescendantIds(currentCategory.id)
     }
     
-    // Get all category IDs including nested subcategories
-    const allCategoryIds = await getAllDescendantIds(currentCategory.id)
-    
-    // Get products from this category and all nested subcategories
+    // Get products from the determined category IDs
     const productsResult = await supabase
       .from('products')
       .select('id, slug, name_i18n, images, description_i18n, category_id')
@@ -380,29 +389,6 @@ export default async function DynamicProductPage({ params }: Props) {
 
     return (
       <>
-        {/* Hero Header with Navigation */}
-        <div className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50">
-          <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
-          <div className="relative">
-            
-            {/* Category Hero Section */}
-            <section className="pt-32 pb-16">
-              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <Breadcrumbs items={categoryBreadcrumbs} />
-                <div className="mt-8">
-                  <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                    {currentCategory.name_i18n?.[locale] || currentCategory.slug}
-                  </h1>
-                  <p className="text-lg text-gray-600 max-w-2xl">
-                    Browse our premium {currentCategory.name_i18n?.[locale] || currentCategory.slug} collection
-                    {products.length > 0 && ` with ${products.length} products`}
-                  </p>
-                </div>
-              </div>
-            </section>
-          </div>
-        </div>
-
         {/* Category Client Component with Filtering */}
         <CategoryClient 
           products={products}
@@ -410,9 +396,10 @@ export default async function DynamicProductPage({ params }: Props) {
           currentCategorySlug={currentCategory.slug}
           locale={locale}
           slugPath={slugPath}
+          breadcrumbs={categoryBreadcrumbs}
         />
 
-        {/* <Footer /> */}
+
       </>
     )
 

@@ -1,8 +1,7 @@
 'use client';
-import { PageHeader } from '@/components/ui/page-header';
 import { ModernSection } from '@/components/ui/modern-section';
 import { AnimatedGroup } from '@/components/ui/animated-group';
-import Footer from '../../components/Footer';
+
 import { useLanguage } from '@/lib/language-context';
 
 export default function About() {
@@ -10,11 +9,27 @@ export default function About() {
   
   return (
     <>
-      <PageHeader 
-        title="About First Aluminum Technology"
-        description={t('about.subtitle')}
-        backgroundImage="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1920&h=1080&fit=crop&auto=format"
-      />
+      {/* Page Title Section */}
+      <section className="relative pt-24 md:pt-36 pb-16 overflow-hidden">
+        <div className="absolute inset-0 -z-20">
+          <img
+            src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=1920&h=1080&fit=crop&auto=format"
+            alt="background"
+            className="absolute inset-x-0 top-0 w-full h-full object-cover opacity-10"
+          />
+        </div>
+        <div aria-hidden className="absolute inset-0 -z-10 size-full [background:radial-gradient(125%_125%_at_50%_100%,transparent_0%,var(--background)_75%)]" />
+        <div className="mx-auto max-w-7xl px-6">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground mb-6">
+              About First Aluminum Technology
+            </h1>
+            <p className="mx-auto max-w-2xl text-lg text-muted-foreground">
+              {t('about.subtitle')}
+            </p>
+          </div>
+        </div>
+      </section>
       <main className="overflow-hidden">
 
         {/* Company Story */}
@@ -198,7 +213,7 @@ export default function About() {
 
 
       </main>
-      <Footer />
+
     </>
   );
 }

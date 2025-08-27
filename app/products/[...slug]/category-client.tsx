@@ -3,6 +3,169 @@
 import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
+import { Breadcrumbs } from '@/components/ui/breadcrumbs'
+
+// FilterDropdown Component
+interface FilterDropdownProps {
+  selectedFilter: string
+  selectedSubFilter: string
+  allowedSubcategories: Category[]
+  locale: string
+  onFilterChange: (filter: string) => void
+  onSubFilterChange: (subFilter: string) => void
+}
+
+function FilterDropdown({ 
+  selectedFilter, 
+  selectedSubFilter, 
+  allowedSubcategories, 
+  locale, 
+  onFilterChange, 
+  onSubFilterChange 
+}: FilterDropdownProps) {
+  const [isOpen, setIsOpen] = useState(false)
+  const [isSubOpen, setIsSubOpen] = useState(false)
+
+  const getFilterDisplayName = (filter: string) => {
+    if (filter === 'all') return 'All Products'
+    const subcategory = allowedSubcategories.find(sub => sub.slug === filter)
+    return subcategory?.name_i18n?.[locale] || filter
+  }
+
+  const getSubFilterOptions = () => {
+    if (selectedFilter === 'double-wall') {
+      return [
+        { value: '', label: 'All Double Wall' },
+        { value: 'paper-cups', label: 'Paper Cups' },
+        { value: 'cold-drink-cups', label: 'Cold Drink Cups' }
+      ]
+    }
+    if (selectedFilter === 'single-wall') {
+      return [
+        { value: '', label: 'All Single Wall' },
+        { value: 'paper-cups', label: 'Paper Cups' },
+        { value: 'paper-cups-hotels', label: 'Paper Cups for Hotels' },
+        { value: 'printed-paper-cups-lids', label: 'Printed Paper Cups (lids)' }
+      ]
+    }
+    if (selectedFilter === 'container-smoothwall' || selectedFilter === 'container-wrinklewall') {
+      return [
+        { value: '', label: 'All Containers' },
+        { value: 'rectangular', label: 'Rectangular' },
+        { value: 'round', label: 'Round' },
+        { value: 'square', label: 'Square' }
+      ]
+    }
+    return []
+  }
+
+  const subFilterOptions = getSubFilterOptions()
+  const hasSubFilters = subFilterOptions.length > 0
+
+  return (
+    <div className="relative flex gap-3">
+      {/* Main Filter Dropdown */}
+      <div className="relative">
+        <button
+          onClick={() => setIsOpen(!isOpen)}
+          className="inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md bg-white border-gray-200 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 min-w-[160px] justify-between"
+        >
+          <div className="flex items-center">
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+            </svg>
+            <span>{getFilterDisplayName(selectedFilter)}</span>
+          </div>
+          <svg className={`w-4 h-4 ml-2 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+          </svg>
+        </button>
+        
+        {isOpen && (
+          <div className="absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+            <div className="py-2">
+              <button
+                onClick={() => {
+                  onFilterChange('all')
+                  setIsOpen(false)
+                }}
+                className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center ${
+                  selectedFilter === 'all' ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                }`}
+              >
+                <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                </svg>
+                All Products
+              </button>
+              {allowedSubcategories.map((sub) => (
+                <button
+                  key={sub.id}
+                  onClick={() => {
+                    onFilterChange(sub.slug)
+                    setIsOpen(false)
+                  }}
+                  className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center ${
+                    selectedFilter === sub.slug ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                  }`}
+                >
+                  <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a1.994 1.994 0 01-1.414.586H7a4 4 0 01-4-4V7a4 4 0 014-4z" />
+                  </svg>
+                  {sub.name_i18n?.[locale] || sub.slug}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Sub Filter Dropdown */}
+      {hasSubFilters && (
+        <div className="relative">
+          <button
+            onClick={() => setIsSubOpen(!isSubOpen)}
+            className="inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md bg-white border-gray-200 text-gray-700 hover:bg-green-50 hover:border-green-300 hover:text-green-700 min-w-[180px] justify-between"
+          >
+            <div className="flex items-center">
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 3c2.755 0 5.455.232 8.083.678.533.09.917.556.917 1.096v1.044a2.25 2.25 0 01-.659 1.591l-5.432 5.432a2.25 2.25 0 00-.659 1.591v2.927a2.25 2.25 0 01-1.244 2.013L9.75 21v-6.568a2.25 2.25 0 00-.659-1.591L3.659 7.409A2.25 2.25 0 013 5.818V4.774c0-.54.384-1.006.917-1.096A48.32 48.32 0 0112 3z" />
+              </svg>
+              <span>{subFilterOptions.find(opt => opt.value === selectedSubFilter)?.label || subFilterOptions[0]?.label}</span>
+            </div>
+            <svg className={`w-4 h-4 ml-2 transition-transform duration-200 ${isSubOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+          
+          {isSubOpen && (
+            <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+              <div className="py-2">
+                {subFilterOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    onClick={() => {
+                      onSubFilterChange(option.value)
+                      setIsSubOpen(false)
+                    }}
+                    className={`w-full text-left px-4 py-2 text-sm hover:bg-gray-50 flex items-center ${
+                      selectedSubFilter === option.value ? 'bg-green-50 text-green-700' : 'text-gray-700'
+                    }`}
+                  >
+                    <svg className="w-4 h-4 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    </svg>
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
 
 interface Product {
   id: string
@@ -25,6 +188,7 @@ interface CategoryClientProps {
   currentCategorySlug: string
   locale: string
   slugPath: string[]
+  breadcrumbs: { label: string; href: string }[]
 }
 
 function getProductImages(images: any): string[] {
@@ -65,7 +229,8 @@ export default function CategoryClient({
   subcategories, 
   currentCategorySlug, 
   locale, 
-  slugPath 
+  slugPath,
+  breadcrumbs 
 }: CategoryClientProps) {
   const [selectedFilter, setSelectedFilter] = useState<string>('all')
   const [selectedSubFilter, setSelectedSubFilter] = useState<string>('')
@@ -146,6 +311,26 @@ export default function CategoryClient({
       }
     }
     
+    // Apply sub-filter for Container products
+    if ((selectedFilter === 'aluminum-foil-container-smoothwall' || selectedFilter === 'aluminum-foil-container-wrinklewall') && selectedSubFilter) {
+      if (selectedSubFilter === 'rectangular') {
+        // Filter for rectangular containers (C series)
+        filtered = filtered.filter(product => 
+          product.slug.startsWith('c-') || product.slug.match(/^c\d/)
+        )
+      } else if (selectedSubFilter === 'round') {
+        // Filter for round containers (Y series)
+        filtered = filtered.filter(product => 
+          product.slug.startsWith('y-') || product.slug.match(/^y\d/)
+        )
+      } else if (selectedSubFilter === 'square') {
+        // Filter for square containers (F series)
+        filtered = filtered.filter(product => 
+          product.slug.startsWith('f-') || product.slug.match(/^f\d/)
+        )
+      }
+    }
+    
     return filtered
   }, [products, subcategories, selectedFilter, selectedSubFilter])
 
@@ -172,7 +357,12 @@ export default function CategoryClient({
     }
     
     if (currentCategorySlug === 'aluminum-foil') {
-      const allowed = ['aluminum-foil-container', 'aluminum-foil-sheets']
+      const allowed = ['aluminum-foil-container-smoothwall', 'aluminum-foil-container-wrinklewall']
+      return subcategories.filter(sub => allowed.includes(sub.slug))
+    }
+    
+    if (currentCategorySlug === 'container') {
+      const allowed = ['container-smoothwall', 'container-wrinklewall']
       return subcategories.filter(sub => allowed.includes(sub.slug))
     }
     
@@ -181,150 +371,41 @@ export default function CategoryClient({
 
   return (
     <>
-
-      {/* Subcategories Filter */}
-      {allowedSubcategories.length > 0 && (
-        <section className="py-12 bg-gray-50">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            {/* Filter-style category navigation */}
-            <div className="mb-8">
-              <div className="flex flex-wrap gap-3">
-                {/* All products filter */}
-                <button
-                  onClick={() => handleFilterChange('all')}
-                  className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
-                    selectedFilter === 'all'
-                      ? 'bg-blue-600 border-blue-600 text-white'
-                      : 'bg-white border-gray-200 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700'
-                  }`}
-                >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                  </svg>
-                  All Products
-                </button>
-                
-                {/* Subcategory filters */}
-                {allowedSubcategories.map((sub) => (
-                  <button
-                    key={sub.id}
-                    onClick={() => handleFilterChange(sub.slug)}
-                    className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
-                      selectedFilter === sub.slug
-                        ? 'bg-blue-600 border-blue-600 text-white'
-                        : 'bg-white border-gray-200 text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700'
-                    }`}
-                  >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a1.994 1.994 0 01-1.414.586H7a4 4 0 01-4-4V7a4 4 0 014-4z" />
-                    </svg>
-                    {sub.name_i18n?.[locale] || sub.slug}
-                  </button>
-                ))}
-                
-                {/* Sub-filters for Double Wall */}
-                {selectedFilter === 'double-wall' && (
-                  <div className="w-full mt-4 pt-4 border-t border-gray-200">
-                    <div className="flex flex-wrap gap-3">
-                      <button
-                        onClick={() => handleSubFilterChange('paper-cups')}
-                        className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
-                          selectedSubFilter === 'paper-cups'
-                            ? 'bg-green-600 border-green-600 text-white'
-                            : 'bg-white border-gray-200 text-gray-700 hover:bg-green-50 hover:border-green-300 hover:text-green-700'
-                        }`}
-                      >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                        </svg>
-                        Paper Cups
-                      </button>
-                      <button
-                        onClick={() => handleSubFilterChange('cold-drink-cups')}
-                        className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
-                          selectedSubFilter === 'cold-drink-cups'
-                            ? 'bg-green-600 border-green-600 text-white'
-                            : 'bg-white border-gray-200 text-gray-700 hover:bg-green-50 hover:border-green-300 hover:text-green-700'
-                        }`}
-                      >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                        </svg>
-                        Cold Drink Cups
-                      </button>
-                    </div>
-                  </div>
-                )}
-                
-                {/* Sub-filters for Single Wall */}
-                {selectedFilter === 'single-wall' && (
-                  <div className="w-full mt-4 pt-4 border-t border-gray-200">
-                    <div className="flex flex-wrap gap-3">
-                      <button
-                        onClick={() => handleSubFilterChange('paper-cups')}
-                        className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
-                          selectedSubFilter === 'paper-cups'
-                            ? 'bg-green-600 border-green-600 text-white'
-                            : 'bg-white border-gray-200 text-gray-700 hover:bg-green-50 hover:border-green-300 hover:text-green-700'
-                        }`}
-                      >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                        </svg>
-                        Paper Cups
-                      </button>
-                      <button
-                        onClick={() => handleSubFilterChange('paper-cups-hotels')}
-                        className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
-                          selectedSubFilter === 'paper-cups-hotels'
-                            ? 'bg-green-600 border-green-600 text-white'
-                            : 'bg-white border-gray-200 text-gray-700 hover:bg-green-50 hover:border-green-300 hover:text-green-700'
-                        }`}
-                      >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
-                        </svg>
-                        Paper Cups for Hotels
-                      </button>
-                      <button
-                        onClick={() => handleSubFilterChange('printed-paper-cups-lids')}
-                        className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
-                          selectedSubFilter === 'printed-paper-cups-lids'
-                            ? 'bg-green-600 border-green-600 text-white'
-                            : 'bg-white border-gray-200 text-gray-700 hover:bg-green-50 hover:border-green-300 hover:text-green-700'
-                        }`}
-                      >
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2M9 12l2 2 4-4" />
-                        </svg>
-                        Printed Paper Cups (lids)
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
+      {/* Hero Header with Navigation and Filters */}
+      <div className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
+        <div className="relative">
+          <section className="pt-32 pb-16">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              {/* Breadcrumbs and Filters */}
+               <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-8">
+                 {/* Breadcrumbs */}
+                 <div className="flex-shrink-0">
+                   <Breadcrumbs items={breadcrumbs} />
+                 </div>
+                 
+                 {/* Filters */}
+                 <div className="flex-grow flex justify-end">
+                   <FilterDropdown
+                     selectedFilter={selectedFilter}
+                     selectedSubFilter={selectedSubFilter}
+                     allowedSubcategories={allowedSubcategories}
+                     locale={locale}
+                     onFilterChange={handleFilterChange}
+                     onSubFilterChange={handleSubFilterChange}
+                   />
+                 </div>
+               </div>
             </div>
-          </div>
-        </section>
-      )}
+          </section>
+        </div>
+      </div>
 
       {/* Products */}
       {filteredProducts.length > 0 && (
         <section className="py-12 bg-white">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="text-center mb-12">
-              <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-                {selectedFilter === 'all' 
-                  ? 'All Products' 
-                  : selectedFilter === 'double-wall' && selectedSubFilter
-                    ? `${allowedSubcategories.find(sub => sub.slug === selectedFilter)?.name_i18n?.[locale] || selectedFilter} - ${selectedSubFilter === 'paper-cups' ? 'Paper Cups' : 'Cold Drink Cups'} Products`
-                    : `${allowedSubcategories.find(sub => sub.slug === selectedFilter)?.name_i18n?.[locale] || selectedFilter} Products`
-                }
-              </h2>
-              <p className="text-gray-600">
-                {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} found
-              </p>
-            </div>
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
               {filteredProducts.map((product) => (
                 <Link

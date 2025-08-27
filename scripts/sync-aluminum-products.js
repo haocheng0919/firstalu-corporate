@@ -5,13 +5,10 @@ const path = require('path');
 const CONTAINER_BASE_PATH = '/Users/haochengwang/Desktop/claude/firstalu/public/product_img/Aluminum-Foil/Container';
 const IMAGE_URL_BASE = '/product_img/Aluminum-Foil/Container';
 
-// Category mappings
+// Category mappings - Container下的Smoothwall和Wrinklewall分类
 const CATEGORY_MAPPINGS = {
-  'smoothwall-rectangle': 'smoothwall-containers',
-  'smoothwall-round': 'smoothwall-containers', 
-  'wrinklewall-rectangle': 'wrinklewall-containers',
-  'wrinklewall-round': 'wrinklewall-containers',
-  'wrinklewall-square': 'wrinklewall-containers'
+  'smoothwall': 'container-smoothwall',
+  'wrinklewall': 'container-wrinklewall'
 };
 
 function scanProductFolders() {
@@ -126,8 +123,7 @@ function generateSKU(type, shape, code) {
 }
 
 function getCategorySlug(type, shape) {
-  const key = `${type}-${shape}`;
-  return CATEGORY_MAPPINGS[key] || 'aluminum-foil-container';
+  return CATEGORY_MAPPINGS[type] || 'aluminum-foil-container';
 }
 
 function createProductData(product) {
