@@ -442,7 +442,7 @@ export default function CategoryClient({
                     }
                   </div>
                   <div className="p-6">
-                    <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
+                    <h3 className="text-sm font-medium text-gray-800 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2 leading-relaxed">
                       {product.name_i18n?.[locale] || product.slug}
                     </h3>
                   </div>

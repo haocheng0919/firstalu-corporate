@@ -270,8 +270,8 @@ export default async function DynamicProductPage({ params }: Props) {
           {/* Product Content */}
           <section className="py-8 bg-gray-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="grid lg:grid-cols-3 gap-8">
-                {/* Product Images - Optimized Size */}
+              <div className="grid lg:grid-cols-2 gap-12">
+                {/* Product Images - Larger Size */}
                 <div className="lg:col-span-1">
                   <div className="sticky top-8">
                     <ProductImageCarousel images={productImages} productName={directProduct.name_i18n?.[locale] || directProduct.slug} />
@@ -279,7 +279,32 @@ export default async function DynamicProductPage({ params }: Props) {
                 </div>
 
                 {/* Product Information */}
-                <div className="lg:col-span-2 space-y-6">
+                <div className="lg:col-span-1 space-y-6">
+                  {/* Technical Specifications - Priority Section */}
+                  {directProduct.technical_specs && Object.keys(directProduct.technical_specs).length > 0 && (
+                    <div className="bg-white rounded-2xl p-8 shadow-lg border-2 border-blue-200">
+                      <div className="text-center mb-6">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-full mb-4">
+                          <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                          </svg>
+                        </div>
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">Technical Specifications</h3>
+                        <p className="text-gray-600">Detailed product specifications and measurements</p>
+                      </div>
+                      <div className="bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 rounded-xl p-6 border border-blue-200">
+                        <div className="grid gap-4">
+                          {Object.entries(directProduct.technical_specs).map(([key, value]) => (
+                            <div key={key} className="flex justify-between items-center py-4 px-6 bg-white rounded-xl border border-gray-200 shadow-sm hover:shadow-md transition-shadow">
+                              <span className="font-bold text-gray-800 text-lg capitalize">{key.replace(/_/g, ' ')}:</span>
+                              <span className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{String(value)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {directProduct.description_i18n?.[locale] && (
                     <div className="bg-white rounded-2xl p-6 shadow-sm">
                       <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
@@ -290,27 +315,6 @@ export default async function DynamicProductPage({ params }: Props) {
                       </h2>
                       <div className="bg-gradient-to-br from-emerald-50 to-green-50 rounded-xl p-4 border border-emerald-100">
                         {formatProductDescription(directProduct.description_i18n[locale])}
-                      </div>
-                    </div>
-                  )}
-
-                  {directProduct.technical_specs && Object.keys(directProduct.technical_specs).length > 0 && (
-                    <div className="bg-white rounded-2xl p-6 shadow-sm">
-                      <h3 className="text-xl font-bold text-gray-900 mb-4 flex items-center">
-                        <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                        </svg>
-                        Technical Specifications
-                      </h3>
-                      <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-100">
-                        <div className="grid gap-3">
-                          {Object.entries(directProduct.technical_specs).map(([key, value]) => (
-                            <div key={key} className="flex justify-between items-center py-3 px-4 bg-white rounded-lg border border-gray-200 shadow-sm">
-                              <span className="font-semibold text-gray-700 capitalize">{key.replace(/_/g, ' ')}:</span>
-                              <span className="text-gray-900 font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">{String(value)}</span>
-                            </div>
-                          ))}
-                        </div>
                       </div>
                     </div>
                   )}

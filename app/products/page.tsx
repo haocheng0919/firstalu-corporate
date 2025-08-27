@@ -29,35 +29,24 @@ export default async function ProductsPage() {
       )
     }
 
-    // Get product count for category by only counting products in leaf categories (categories without children)
+    // Get product count for category by counting products in all descendant categories
     const getProductCountForCategory = async (categoryId: string): Promise<number> => {
-      // Get all descendant leaf category IDs (categories that have no children)
-      const getLeafDescendantIds = async (catId: string): Promise<string[]> => {
-        const { data: children } = await supabase
-          .from('categories')
-          .select('id')
-          .eq('parent_id', catId)
+      // Use RPC function to get all descendant category IDs
+      const { data: descendantIds, error } = await supabase
+        .rpc('get_descendant_category_ids', { parent_category_id: categoryId })
 
-        if (!children || children.length === 0) {
-          // This is a leaf category
-          return [catId]
-        }
-
-        // This category has children, so get leaf descendants from all children
-        const leafIds: string[] = []
-        for (const child of children) {
-          const childLeafIds = await getLeafDescendantIds(child.id)
-          leafIds.push(...childLeafIds)
-        }
-        return leafIds
+      if (error) {
+        console.error('Error getting descendant categories:', error)
+        return 0
       }
 
-      const leafCategoryIds = await getLeafDescendantIds(categoryId)
+      // Include the parent category itself
+      const allCategoryIds = [categoryId, ...(descendantIds || [])]
 
       const { count } = await supabase
         .from('products')
         .select('id', { count: 'exact', head: true })
-        .in('category_id', leafCategoryIds)
+        .in('category_id', allCategoryIds)
 
       return count || 0
     }
