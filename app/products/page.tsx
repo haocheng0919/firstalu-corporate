@@ -29,17 +29,41 @@ export default async function ProductsPage() {
       )
     }
 
-    // Get product count for category - simplified approach
+    // Get product count for category including all subcategories
     const getProductCountForCategory = async (categoryId: string): Promise<number> => {
       try {
-        // Count products directly in this category
+        // Use recursive CTE to get all descendant category IDs
+        const { data: categoryIds, error: categoryError } = await supabase
+          .rpc('get_category_descendants', { parent_category_id: categoryId })
+
+        if (categoryError) {
+          console.error('Error getting category descendants for', categoryId, ':', categoryError)
+          // Fallback to direct count if RPC fails
+          const { count, error } = await supabase
+            .from('products')
+            .select('id', { count: 'exact', head: true })
+            .eq('category_id', categoryId)
+            .eq('status', 'active')
+
+          if (error) {
+            console.error('Error counting products for', categoryId, ':', error)
+            return 0
+          }
+          return count || 0
+        }
+
+        // Include the parent category itself
+        const allCategoryIds = [categoryId, ...(categoryIds || [])]
+
+        // Count products in all categories
         const { count, error } = await supabase
           .from('products')
           .select('id', { count: 'exact', head: true })
-          .eq('category_id', categoryId)
+          .in('category_id', allCategoryIds)
+          .eq('status', 'active')
 
         if (error) {
-          console.error('Error counting products for', categoryId, ':', error)
+          console.error('Error counting products for categories', allCategoryIds, ':', error)
           return 0
         }
 
