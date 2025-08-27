@@ -198,18 +198,18 @@ export default async function DynamicProductPage({ params }: Props) {
     if (!directProductError && directProduct) {
       // Verify that the category path matches the slug path
       // Get the full category hierarchy for this product
-      const { data: categoryHierarchy } = await supabase.rpc('get_category_path', {
+      const { data: categoryPath } = await supabase.rpc('get_category_path', {
         category_id: directProduct.category_id
       })
       
-      // If we have category hierarchy, verify the path matches
-      if (categoryHierarchy && categoryHierarchy.length > 0) {
-        const expectedPath = categoryHierarchy[0].path.split('/')
+      // If we have category path, verify the path matches
+      if (categoryPath && typeof categoryPath === 'string') {
+        const expectedPath = categoryPath.split('/')
         const providedCategoryPath = slugPath.slice(0, -1) // Remove product slug
         
         // Check if the provided path matches the expected category path
-         const pathMatches = expectedPath.length === providedCategoryPath.length &&
-           expectedPath.every((slug: string, index: number) => slug === providedCategoryPath[index])
+        const pathMatches = expectedPath.length === providedCategoryPath.length &&
+          expectedPath.every((slug: string, index: number) => slug === providedCategoryPath[index])
         
         if (!pathMatches) {
           return notFound()

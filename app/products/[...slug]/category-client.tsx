@@ -445,17 +445,6 @@ export default function CategoryClient({
                     <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">
                       {product.name_i18n?.[locale] || product.slug}
                     </h3>
-                    {product.description_i18n?.[locale] && (
-                      <p className="text-sm text-gray-600 line-clamp-2 leading-relaxed mb-4">
-                        {product.description_i18n[locale].split('\n')[0]}
-                      </p>
-                    )}
-                    <div className="flex items-center text-blue-600 text-sm font-medium group-hover:text-blue-700">
-                      <span>View Details</span>
-                      <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform duration-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                      </svg>
-                    </div>
                   </div>
                 </Link>
               ))}
