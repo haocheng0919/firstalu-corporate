@@ -316,17 +316,17 @@ export default function CategoryClient({
       if (selectedSubFilter === 'rectangular') {
         // Filter for rectangular containers (C series)
         filtered = filtered.filter(product => 
-          product.slug.startsWith('c-') || product.slug.match(/^c\d/)
+          product.slug.includes('-c') || product.slug.match(/^c\d/) || product.slug.match(/aluminum-foil-container-c\d/)
         )
       } else if (selectedSubFilter === 'round') {
         // Filter for round containers (Y series)
         filtered = filtered.filter(product => 
-          product.slug.startsWith('y-') || product.slug.match(/^y\d/)
+          product.slug.includes('-y') || product.slug.match(/^y\d/) || product.slug.match(/aluminum-foil-container-y\d/)
         )
       } else if (selectedSubFilter === 'square') {
         // Filter for square containers (F series)
         filtered = filtered.filter(product => 
-          product.slug.startsWith('f-') || product.slug.match(/^f\d/)
+          product.slug.includes('-f') || product.slug.match(/^f\d/) || product.slug.match(/aluminum-foil-container-f\d/)
         )
       }
     }
