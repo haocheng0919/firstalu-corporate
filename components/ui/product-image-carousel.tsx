@@ -22,7 +22,7 @@ export default function ProductImageCarousel({ images, productName }: ProductIma
 
   if (!images || images.length === 0) {
     return (
-      <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center">
+      <div className="aspect-[4/3] bg-gray-100 rounded-lg flex items-center justify-center">
         <span className="text-gray-400">No image available</span>
       </div>
     )
@@ -30,7 +30,7 @@ export default function ProductImageCarousel({ images, productName }: ProductIma
 
   return (
     <div className="relative">
-      <div className="aspect-square overflow-hidden rounded-lg bg-gray-100">
+      <div className="aspect-[4/3] overflow-hidden rounded-lg bg-gray-100">
         <img
           src={images[currentImageIndex]}
           alt={`${productName} - Image ${currentImageIndex + 1}`}

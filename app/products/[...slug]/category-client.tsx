@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 
@@ -29,14 +29,34 @@ interface CategoryClientProps {
 
 function getProductImages(images: any): string[] {
   if (!images) return []
+  
+  // If images is a string, try to parse it
   if (typeof images === 'string') {
     try {
       const parsed = JSON.parse(images)
+      if (parsed.gallery && Array.isArray(parsed.gallery)) {
+        return parsed.gallery
+      }
+      if (parsed.thumbnail) {
+        return [parsed.thumbnail]
+      }
       return Array.isArray(parsed) ? parsed : []
     } catch {
       return []
     }
   }
+  
+  // If images is an object with gallery or thumbnail
+  if (typeof images === 'object') {
+    if (images.gallery && Array.isArray(images.gallery)) {
+      return images.gallery
+    }
+    if (images.thumbnail) {
+      return [images.thumbnail]
+    }
+  }
+  
+  // If images is already an array
   return Array.isArray(images) ? images : []
 }
 
@@ -48,8 +68,19 @@ export default function CategoryClient({
   slugPath 
 }: CategoryClientProps) {
   const [selectedFilter, setSelectedFilter] = useState<string>('all')
+  const [selectedSubFilter, setSelectedSubFilter] = useState<string>('')
 
-  // Filter products based on selected subcategory
+  const handleFilterChange = (filter: string) => {
+    setSelectedFilter(filter)
+    // Reset sub-filter when main filter changes
+    setSelectedSubFilter('')
+  }
+
+  const handleSubFilterChange = (subFilter: string) => {
+    setSelectedSubFilter(subFilter)
+  }
+
+  // Filter products based on selected subcategory and sub-filter
   const filteredProducts = useMemo(() => {
     if (selectedFilter === 'all') {
       return products
@@ -57,25 +88,100 @@ export default function CategoryClient({
     
     // Find the selected subcategory
     const selectedSubcategory = subcategories.find(sub => sub.slug === selectedFilter)
+    
     if (!selectedSubcategory) {
       return products
     }
     
     // Filter products that belong to the selected subcategory
-    return products.filter(product => product.category_id === selectedSubcategory.id)
-  }, [products, subcategories, selectedFilter])
+    let filtered = products.filter(product => product.category_id === selectedSubcategory.id)
+    
+    // Apply sub-filter for Double Wall products
+    if (selectedFilter === 'double-wall' && selectedSubFilter) {
+      if (selectedSubFilter === 'paper-cups') {
+         // Filter for double-wall-cup products
+         filtered = filtered.filter(product => {
+           const images = getProductImages(product.images)
+           return images.some((img: string) => 
+             img.includes('double-wall-cup') && !img.includes('cold-drink-cup')
+           )
+         })
+       } else if (selectedSubFilter === 'cold-drink-cups') {
+         // Filter for cold-drink-cup products
+         filtered = filtered.filter(product => {
+           const images = getProductImages(product.images)
+           return images.some((img: string) => 
+             img.includes('cold-drink-cup')
+           )
+         })
+      }
+    }
+    
+    // Apply sub-filter for Single Wall products
+    if (selectedFilter === 'single-wall' && selectedSubFilter) {
+      if (selectedSubFilter === 'paper-cups') {
+         // Filter for single-wall-cup products
+         filtered = filtered.filter(product => {
+           const images = getProductImages(product.images)
+           return images.some((img: string) => 
+             img.includes('single-wall-cup')
+           )
+         })
+       } else if (selectedSubFilter === 'paper-cups-hotels') {
+         // Filter for hotel paper cups within Single Wall products
+         filtered = filtered.filter(product => {
+           const images = getProductImages(product.images)
+           return images.some((img: string) => 
+             img.includes('dome-lid-cup') || (img.includes('paper-cup') && img.includes('Paper Cups for Hotels'))
+           )
+         })
+       } else if (selectedSubFilter === 'printed-paper-cups-lids') {
+         // Filter for printed paper cups and lids
+         filtered = filtered.filter(product => {
+           const images = getProductImages(product.images)
+           return images.some((img: string) => 
+             (img.includes('lid-80mm') || img.includes('lid-90mm') || (img.includes('paper-cup') && img.includes('Printed')))
+           )
+         })
+      }
+    }
+    
+    return filtered
+  }, [products, subcategories, selectedFilter, selectedSubFilter])
 
-  // Only show specific subcategories for Sugarcane Tableware
+  // Only show specific subcategories for certain categories
   const allowedSubcategories = useMemo(() => {
     if (currentCategorySlug === 'sugarcane-tableware') {
-      const allowed = ['bowls', 'chamshell', 'plate', 'tray']
+      const allowed = ['sugarcane-bowls', 'sugarcane-clamshells', 'sugarcane-plates', 'sugarcane-trays']
       return subcategories.filter(sub => allowed.includes(sub.slug))
     }
+    
+    if (currentCategorySlug === 'paper-cups') {
+      const allowed = ['single-wall', 'double-wall', 'ripple-wall']
+      return subcategories.filter(sub => allowed.includes(sub.slug))
+    }
+    
+    if (currentCategorySlug === 'kraft-packaging') {
+      const allowed = ['round-kraft-soup-cups-lids', 'round-kraft-salad-bowls-lids', 'round-kraft-deli-bowls-lids', 'take-away-kraft-boxes-pe-lined', 'kraft-trays-pe-lined']
+      return subcategories.filter(sub => allowed.includes(sub.slug))
+    }
+    
+    if (currentCategorySlug === 'disposable-cutlery') {
+      const allowed = ['bamboo-cutlery', 'wooden-cutlery']
+      return subcategories.filter(sub => allowed.includes(sub.slug))
+    }
+    
+    if (currentCategorySlug === 'aluminum-foil') {
+      const allowed = ['aluminum-foil-container', 'foil-sheets']
+      return subcategories.filter(sub => allowed.includes(sub.slug))
+    }
+    
     return subcategories
-  }, [subcategories, currentCategorySlug])
+  }, [subcategories, currentCategorySlug, locale])
 
   return (
     <>
+
       {/* Subcategories Filter */}
       {allowedSubcategories.length > 0 && (
         <section className="py-12 bg-gray-50">
@@ -85,7 +191,7 @@ export default function CategoryClient({
               <div className="flex flex-wrap gap-3">
                 {/* All products filter */}
                 <button
-                  onClick={() => setSelectedFilter('all')}
+                  onClick={() => handleFilterChange('all')}
                   className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
                     selectedFilter === 'all'
                       ? 'bg-blue-600 border-blue-600 text-white'
@@ -102,7 +208,7 @@ export default function CategoryClient({
                 {allowedSubcategories.map((sub) => (
                   <button
                     key={sub.id}
-                    onClick={() => setSelectedFilter(sub.slug)}
+                    onClick={() => handleFilterChange(sub.slug)}
                     className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
                       selectedFilter === sub.slug
                         ? 'bg-blue-600 border-blue-600 text-white'
@@ -115,6 +221,87 @@ export default function CategoryClient({
                     {sub.name_i18n?.[locale] || sub.slug}
                   </button>
                 ))}
+                
+                {/* Sub-filters for Double Wall */}
+                {selectedFilter === 'double-wall' && (
+                  <div className="w-full mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex flex-wrap gap-3">
+                      <button
+                        onClick={() => handleSubFilterChange('paper-cups')}
+                        className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
+                          selectedSubFilter === 'paper-cups'
+                            ? 'bg-green-600 border-green-600 text-white'
+                            : 'bg-white border-gray-200 text-gray-700 hover:bg-green-50 hover:border-green-300 hover:text-green-700'
+                        }`}
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                        Paper Cups
+                      </button>
+                      <button
+                        onClick={() => handleSubFilterChange('cold-drink-cups')}
+                        className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
+                          selectedSubFilter === 'cold-drink-cups'
+                            ? 'bg-green-600 border-green-600 text-white'
+                            : 'bg-white border-gray-200 text-gray-700 hover:bg-green-50 hover:border-green-300 hover:text-green-700'
+                        }`}
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                        </svg>
+                        Cold Drink Cups
+                      </button>
+                    </div>
+                  </div>
+                )}
+                
+                {/* Sub-filters for Single Wall */}
+                {selectedFilter === 'single-wall' && (
+                  <div className="w-full mt-4 pt-4 border-t border-gray-200">
+                    <div className="flex flex-wrap gap-3">
+                      <button
+                        onClick={() => handleSubFilterChange('paper-cups')}
+                        className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
+                          selectedSubFilter === 'paper-cups'
+                            ? 'bg-green-600 border-green-600 text-white'
+                            : 'bg-white border-gray-200 text-gray-700 hover:bg-green-50 hover:border-green-300 hover:text-green-700'
+                        }`}
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
+                        </svg>
+                        Paper Cups
+                      </button>
+                      <button
+                        onClick={() => handleSubFilterChange('paper-cups-hotels')}
+                        className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
+                          selectedSubFilter === 'paper-cups-hotels'
+                            ? 'bg-green-600 border-green-600 text-white'
+                            : 'bg-white border-gray-200 text-gray-700 hover:bg-green-50 hover:border-green-300 hover:text-green-700'
+                        }`}
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                        </svg>
+                        Paper Cups for Hotels
+                      </button>
+                      <button
+                        onClick={() => handleSubFilterChange('printed-paper-cups-lids')}
+                        className={`inline-flex items-center px-6 py-3 border rounded-full text-sm font-medium transition-all duration-200 shadow-sm hover:shadow-md ${
+                          selectedSubFilter === 'printed-paper-cups-lids'
+                            ? 'bg-green-600 border-green-600 text-white'
+                            : 'bg-white border-gray-200 text-gray-700 hover:bg-green-50 hover:border-green-300 hover:text-green-700'
+                        }`}
+                      >
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-10 0a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V6a2 2 0 00-2-2M9 12l2 2 4-4" />
+                        </svg>
+                        Printed Paper Cups (lids)
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>
@@ -127,7 +314,12 @@ export default function CategoryClient({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="text-center mb-12">
               <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4">
-                {selectedFilter === 'all' ? 'All Products' : `${allowedSubcategories.find(sub => sub.slug === selectedFilter)?.name_i18n?.[locale] || selectedFilter} Products`}
+                {selectedFilter === 'all' 
+                  ? 'All Products' 
+                  : selectedFilter === 'double-wall' && selectedSubFilter
+                    ? `${allowedSubcategories.find(sub => sub.slug === selectedFilter)?.name_i18n?.[locale] || selectedFilter} - ${selectedSubFilter === 'paper-cups' ? 'Paper Cups' : 'Cold Drink Cups'} Products`
+                    : `${allowedSubcategories.find(sub => sub.slug === selectedFilter)?.name_i18n?.[locale] || selectedFilter} Products`
+                }
               </h2>
               <p className="text-gray-600">
                 {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} found

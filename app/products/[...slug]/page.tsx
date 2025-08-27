@@ -54,57 +54,97 @@ function formatProductDescription(description: string): JSX.Element {
   // Split by lines and process each line
   const lines = description.split('\n');
   const elements: JSX.Element[] = [];
+  let currentBullets: string[] = [];
+  
+  const flushBullets = (index: number) => {
+    if (currentBullets.length > 0) {
+      elements.push(
+        <div key={`bullets-section-${index}`} className="mb-6">
+          <div className="bg-white rounded-lg p-4 border border-blue-200 shadow-sm">
+            <div className="space-y-3">
+              {currentBullets.map((bullet, idx) => (
+                <div key={`bullet-${idx}`} className="flex items-start">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
+                  <span className="text-gray-700 leading-relaxed font-medium">{bullet}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+      currentBullets = [];
+    }
+  };
   
   lines.forEach((line, index) => {
     const trimmedLine = line.trim();
     
     if (!trimmedLine) {
-      elements.push(<br key={`br-${index}`} />);
-      return;
+      return; // Skip empty lines
     }
     
-    // Handle bold text with **
-    if (trimmedLine.includes('**')) {
+    // Handle section headers (bold text surrounded by **)
+    if (trimmedLine.startsWith('**') && trimmedLine.endsWith('**') && trimmedLine.length > 4) {
+      flushBullets(index);
+      const headerText = trimmedLine.slice(2, -2);
+      elements.push(
+        <div key={`header-${index}`} className="mb-4 mt-6 first:mt-0">
+          <div className="flex items-center">
+            <div className="w-1 h-8 bg-gradient-to-b from-blue-500 to-blue-600 rounded-full mr-4"></div>
+            <h3 className="text-xl font-bold text-gray-900 tracking-tight">{headerText}</h3>
+          </div>
+          <div className="ml-6 mt-2 h-px bg-gradient-to-r from-blue-200 to-transparent"></div>
+        </div>
+      );
+    }
+    // Handle inline bold text
+    else if (trimmedLine.includes('**')) {
+      flushBullets(index);
       const parts = trimmedLine.split('**');
       const processedParts: (string | JSX.Element)[] = [];
       
       parts.forEach((part, partIndex) => {
-        if (partIndex % 2 === 1) {
+        if (partIndex % 2 === 1 && part.trim()) {
           // This is bold text
           processedParts.push(
-            <strong key={`bold-${index}-${partIndex}`} className="font-bold text-gray-900">
+            <span key={`bold-${index}-${partIndex}`} className="font-bold text-gray-900 bg-blue-100 px-2 py-1 rounded">
               {part}
-            </strong>
+            </span>
           );
-        } else {
+        } else if (part.trim()) {
           processedParts.push(part);
         }
       });
       
       elements.push(
-        <p key={`line-${index}`} className="mb-3 text-gray-700 leading-relaxed">
-          {processedParts}
-        </p>
-      );
-    } else if (trimmedLine.startsWith('- ')) {
-      // Handle bullet points
-      elements.push(
-        <div key={`bullet-${index}`} className="flex items-start mb-2">
-          <div className="w-2 h-2 bg-blue-500 rounded-full mt-2 mr-3 flex-shrink-0"></div>
-          <span className="text-gray-700 leading-relaxed">{trimmedLine.substring(2)}</span>
+        <div key={`line-${index}`} className="mb-4 p-4 bg-gray-50 rounded-lg border-l-4 border-blue-400">
+          <p className="leading-relaxed text-gray-700 font-medium">
+            {processedParts}
+          </p>
         </div>
       );
-    } else {
-      // Regular text
+    }
+    // Handle bullet points
+    else if (trimmedLine.startsWith('- ')) {
+      currentBullets.push(trimmedLine.substring(2));
+    }
+    // Regular paragraph
+    else {
+      flushBullets(index);
       elements.push(
-        <p key={`line-${index}`} className="mb-3 text-gray-700 leading-relaxed">
-          {trimmedLine}
-        </p>
+        <div key={`text-${index}`} className="mb-4 p-4 bg-white rounded-lg border border-gray-200 shadow-sm">
+          <p className="leading-relaxed text-gray-700 font-medium">
+            {trimmedLine}
+          </p>
+        </div>
       );
     }
   });
   
-  return <div className="space-y-1">{elements}</div>;
+  // Flush any remaining bullets
+  flushBullets(lines.length);
+  
+  return <div className="space-y-2">{elements}</div>;
 }
 
 export default async function DynamicProductPage({ params }: Props) {
@@ -155,7 +195,7 @@ export default async function DynamicProductPage({ params }: Props) {
               <HeroHeader />
               
               {/* Product Hero Section */}
-              <section className="pt-24 pb-16">
+              <section className="pt-32 pb-16">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                   <Breadcrumbs items={breadcrumbItems} />
                   <div className="mt-8">
@@ -190,7 +230,7 @@ export default async function DynamicProductPage({ params }: Props) {
                         <svg className="w-6 h-6 mr-3 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                         </svg>
-                        Product Details
+                        Technical Specifications
                       </h2>
                       <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-100 shadow-inner">
                         {formatProductDescription(directProduct.description_i18n[locale])}
@@ -285,6 +325,7 @@ export default async function DynamicProductPage({ params }: Props) {
         .from('categories')
         .select('id, slug, name_i18n')
       .eq('parent_id', currentCategory.id)
+      .order('slug')
 
     const subcategories = subcategoriesResult.data || []
     
