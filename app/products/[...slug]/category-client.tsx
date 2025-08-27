@@ -172,7 +172,7 @@ export default function CategoryClient({
     }
     
     if (currentCategorySlug === 'aluminum-foil') {
-      const allowed = ['aluminum-foil-container', 'foil-sheets']
+      const allowed = ['aluminum-foil-container', 'aluminum-foil-sheets']
       return subcategories.filter(sub => allowed.includes(sub.slug))
     }
     

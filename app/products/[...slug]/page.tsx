@@ -2,9 +2,9 @@ import { supabase } from '@/lib/supabase'
 import { notFound } from 'next/navigation'
 import Image from 'next/image'
 import Link from 'next/link'
-import Footer from '@/components/Footer'
+// import Footer from '@/components/Footer' // Temporarily disabled due to SSR issues
 import { Breadcrumbs } from '@/components/ui/breadcrumbs'
-import { HeroHeader } from '@/components/ui/hero-section-1'
+// import { HeroHeader } from '@/components/ui/hero-section-1' // Moved to client component
 import ProductImageCarousel from '@/components/ui/product-image-carousel'
 import CategoryClient from './category-client'
 
@@ -192,7 +192,6 @@ export default async function DynamicProductPage({ params }: Props) {
           <div className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50">
             <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
             <div className="relative">
-              <HeroHeader />
               
               {/* Product Hero Section */}
               <section className="pt-32 pb-16">
@@ -285,7 +284,7 @@ export default async function DynamicProductPage({ params }: Props) {
             </div>
           </section>
 
-          <Footer />
+          {/* <Footer /> */}
         </>
       )
     }
@@ -385,7 +384,6 @@ export default async function DynamicProductPage({ params }: Props) {
         <div className="relative bg-gradient-to-br from-blue-50 via-white to-purple-50">
           <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
           <div className="relative">
-            <HeroHeader />
             
             {/* Category Hero Section */}
             <section className="pt-32 pb-16">
@@ -414,7 +412,7 @@ export default async function DynamicProductPage({ params }: Props) {
           slugPath={slugPath}
         />
 
-        <Footer />
+        {/* <Footer /> */}
       </>
     )
 
